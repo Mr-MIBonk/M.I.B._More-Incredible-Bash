@@ -4,3 +4,6 @@ patches/MHI*/
 
 # Ignoring files
 patches/[Ii]nfo.txt
+backup/logs/*
+backup/MU*
+
