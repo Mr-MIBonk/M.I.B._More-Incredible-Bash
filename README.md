@@ -1,5 +1,7 @@
 # M.I.B. - More Incredible Bash
 
+![GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/GEM.png)
+
 ## NOTE:
 - M.I.B. is running on Harman MHI2(Q) units (MIB 2.x) only.
 - Minimum requirement to run M.I.B. in GEM is GEM version 4.1+.
@@ -68,6 +70,8 @@
 - Increase the window seize manually.
 
 You should see (a more colourful) menu with the following content:
+
+![bash](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/bash.png)
 
 ******************************************************************************************************************************************
 
