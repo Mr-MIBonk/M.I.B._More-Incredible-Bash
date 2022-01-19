@@ -176,7 +176,7 @@ while [ -z $opt ] || [ $opt != '' ]
         ;;
         h|H) echo -e "\033c";
             option_picked "Option H - Help";
-            cat $thisdir/README.txt;
+            cat $thisdir/README.md;
             show_blue;
         ;;
 		l|L) echo -e "\033c";
