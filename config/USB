@@ -1,0 +1,37 @@
+# USB check v0.1.0 (2020-11-16 by MIBonk)
+
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software Foundation,
+#Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+#Check SD-card or USB stick present
+if [ -d /net/mmx/fs/sda0 ]; then
+	[ -z "$GEM" ] && echo -ne "Using SD1...\n\n"
+	VOLUME="/net/mmx/fs/sda0"
+elif [ -d /net/mmx/fs/sdb0 ]; then
+	[ -z "$GEM" ] && echo -ne "Using SD2...\n\n"
+	VOLUME="/net/mmx/fs/sdb0"
+elif [ -d /net/mmx/fs/usb0_0 ]; then
+	[ -z "$GEM" ] && echo -ne "Using USB...\n\n"
+	VOLUME="/net/mmx/fs/usb0_0"
+else
+		[ -z "$GEM" ] && echo -en "No storage found!\n\n"
+	VOLUME="."
+fi
+
+if [ -f $VOLUME/start ]; then
+	return 2> /dev/null
+else
+	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on USB Device!\n\n"
+	exit 0
+fi

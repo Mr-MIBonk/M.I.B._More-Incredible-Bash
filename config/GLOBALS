@@ -1,0 +1,68 @@
+# GLOBALS v0.2.0 (2021-10-25 by MIBonk)
+#
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software Foundation,
+#Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# USB Mountpoint...
+. $thisdir/mounts -usb
+
+# global bin's
+SHA="/net/rcc/usr/bin/sha1sum"
+FLASHLOCK="on -f rcc /usr/bin/flashlock"
+VERSIONS="/net/rcc/dev/shmem/version.txt"
+XXD="$VOLUME/apps/sbin/xxd" # not on any unit
+GZIP="$VOLUME/apps/sbin/gzip" # /net/mmx/mnt/app/armle/bin
+TEE="$VOLUME/apps/sbin/tee" # /net/mmx/usr/bin
+BC="$VOLUME/apps/sbin/bc" # /net/mmx/mnt/app/armle/usr/bin
+SED="$VOLUME/apps/sbin/sed" # /net/mmx/mnt/app/armle/usr/bin
+DD="$VOLUME/apps/sbin/dd" # /net/mmx/bin
+PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/
+PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
+VERSIONS="/net/rcc/dev/shmem/version.txt"
+
+# Set temp
+TMP="/net/rcc/dev/shmem"
+
+# set storage
+fs0p0="/net/rcc/dev/fs0p0"
+
+if [ -f /usr/apps/MIBRoot ]; then
+	ME="RCC"
+else
+	ME="MMX"
+fi
+
+# Set dev globals
+if [ -f $thisdir/../../devconfig/GLOBALS ]; then
+	# only used on Dev....
+	. $thisdir/../../devconfig/GLOBALS
+else
+	# Set globals
+	TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+	MUVERSION="MU$(on -f mmx $PC s:30:1966083 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+	FAZIT="$($PERSR 0 3221291024 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
+	NAND=$MNT/$MUVERSION/
+fi
+
+# internals...
+VERSION="$(cat $VOLUME/VERSION)"
+
+# Set Backup
+BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
+
+# first, set LOGS var...
+. $thisdir/../config/LOGS
+
+return 2> /dev/null

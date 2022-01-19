@@ -1,0 +1,69 @@
+#!/bin/sh
+
+revision="hex2ascii v0.1.0 (2021-12-14 Mib-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS > /dev/null
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+	case $1 in
+
+	-convert) {
+
+		STRING=$2
+
+		  I=0
+		  while [ $I -lt ${#STRING} ];
+		  do
+			echo -ne "0x"$(echo $STRING | cut -b "$(($I+1))"-"$(($I+2))") | awk '{printf "%c", $1}' 2>> $LOG
+			let I=$I+2
+		  done
+		  
+		  echo -ne "\n"
+
+		trap 2
+
+		return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION] [HEX string]"
+		echo ""
+		echo "Options:"
+		echo "        -convert 			converts given hex string to ascii"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

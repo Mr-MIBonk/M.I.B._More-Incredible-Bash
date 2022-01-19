@@ -1,0 +1,78 @@
+#!/bin/sh
+
+revision_local="mounts v0.1.0 (2020-11-16 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+	case $1 in
+
+	-usb) {
+
+. $thisdir/../config/USB
+
+# Mount USB writeable
+mount -uw $VOLUME 2> /dev/null
+sleep 1
+
+};;
+
+	-w) {
+
+# Set Mountpoints
+mount -uw /net/mmx/mnt/app 2> /dev/null
+mount -uw /net/rcc/mnt/efs-persist 2> /dev/null
+sleep 1
+
+	};;
+
+
+	-r) {
+
+# unset Mountpoints
+mount -ur /net/mmx/mnt/app 2> /dev/null
+mount -ur /net/rcc/mnt/efs-persist 2> /dev/null
+sleep 1
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision_local
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -w			Mountpoints writeable"
+		echo "        -r 			Mountpoints readable"
+		echo "        -usb 			USB mount writeable"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+return 2> /dev/null
+exit 0
+

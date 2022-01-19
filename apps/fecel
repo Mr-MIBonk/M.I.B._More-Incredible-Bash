@@ -1,0 +1,158 @@
+#!/bin/sh
+
+revision="copy FEC/EL v0.1.4 (2021-04-10 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-el) {
+
+$thisdir/mounts -w
+
+# copy EL to Unit, if no one in patch directory check backup folder
+if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
+	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt ];then
+		echo -ne "copy EL file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+		ERROR
+	elif [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
+		echo -ne "copy EL file from  backup "$FAZIT"...." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+		ERROR
+	else
+		echo -ne "nothing there to copy!\n" | $TEE -a $LOG
+	fi
+else
+	echo -ne "please do first EL Backup!\n" | $TEE -a $LOG
+fi
+
+[ -z "$GEM" ] && echo -ne "\n"
+
+$thisdir/mounts -r
+return 2> /dev/null
+
+	};;
+
+
+	-fec) {
+
+$thisdir/mounts -w
+
+# generate FEC
+#echo -ne "Check FEC File in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+#if [ ! -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ] && [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
+	. $thisdir/addfec -a
+#else
+#	echo -ne "already exists!\n\n" | $TEE -a $LOG
+#fi
+
+# copy FEC to Unit, if no one in patch directory check backup folder
+#if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
+		echo -ne "copy FEC file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		ERROR
+	elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+		echo -ne "copy FEC file from  backup "$FAZIT"..." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		ERROR
+	else
+		echo -ne "nothing there to copy!\n\n" | $TEE -a $LOG
+	fi
+#else
+#	echo -ne "please do first FEC Backup!\n" | $TEE -a $LOG
+#fi
+
+[ -z "$GEM" ] && echo -ne "\n"
+
+$thisdir/mounts -r
+return 2> /dev/null
+
+	};;
+
+
+	-b) {
+
+$thisdir/mounts -w
+
+# copy FEC and EL from Backup to Unit
+if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
+	echo -ne "copy EL file from backup "$FAZIT"..." | $TEE -a $LOG
+	cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+	ERROR
+	echo -ne "\n" | $TEE -a $LOG
+else
+	echo -ne "there no EL in Backup!\n\n" | $TEE -a $LOG
+fi
+
+if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+	echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
+	cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+	ERROR
+	echo -ne "\n" | $TEE -a $LOG
+else
+	echo -ne "there is no FEC in Backup!\n\n" | $TEE -a $LOG
+fi
+
+$thisdir/mounts -r
+return 2> /dev/null
+
+	};;
+
+
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -fec 			copy FEC to Unit"
+		echo "        -el 			copy EL to Unit"
+		echo "        -b 			copy FEC and EL from Backup to Unit"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+exit 0
+

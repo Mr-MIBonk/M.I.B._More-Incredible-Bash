@@ -1,0 +1,119 @@
+#!/bin/sh
+
+revision="restore v0.1.0 (2021-12-29 by MIBonk & MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+# TODO
+# Move backup restore from NAND here?
+# and ifs-root-stage2 recovery from backup?
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+-rstorage) {
+
+trap '' 2
+
+	echo -ne "restore storage .raw.........\n" | $TEE -i -a $LOG
+	mount -uw /mnt/efs-persist/
+	if [ -f $BACKUPFOLDER/$MUVERSION-storage1.raw ]; then
+		echo -ne "storage1.raw found\n"
+		cp -r $BACKUPFOLDER/$MUVERSION-storage1.raw /mnt/efs-persist/storage1.raw 2>> $LOG
+		ERROR
+	elif [ -f $BACKUPFOLDER/$MUVERSION-storage2.raw ]; then
+		echo -ne "storage2.raw found\n"
+		cp -r $BACKUPFOLDER/$MUVERSION-storage2.raw /mnt/efs-persist/storage2.raw 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> storage1.raw is missing\n" | $TEE -i -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-fecrestore) {
+
+trap '' 2
+
+	echo -ne "restore FecContainer.fec.....\n" | $TEE -i -a $LOG
+	mount -uw /net/rcc/mnt/efs-persist/
+	if [ -f $BACKUPFOLDER/FEC/backup/FecContainer.fec ];then
+		cp -r $BACKUPFOLDER/FEC/backup/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		echo -ne "Copied FecContainer.fec from M.I.B backup to unit\n" | $TEE -a $LOG
+	elif [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
+		cp -r /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		echo -ne "Copied FecContainer.fec /net/rcc/mnt/efs-persist/backup/FEC to unit \n" | $TEE -a $LOG
+	else
+		echo -ne "No backup FecContainer.fec found\n" | $TEE -a $LOG
+		echo -ne "Trying to copy FecContainer.fec from M.I.B patch folder\n" | $TEE -a $LOG
+		echo -ne $VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/FecContainer.fec\n"
+		if [ -f $VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
+			cp -r $VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+			echo -ne "FecContainer.fec copied to unit\n" | $TEE -a $LOG
+		else
+			echo -ne "No file found. Create FecContainer.fec, copy to patch folder and run again.\n" | $TEE -a $LOG	
+			echo -ne "Go back...\n" | $TEE -a $LOG	
+		fi
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -rstorage		restore storage.raw"
+		echo "        -fecrestore		restore storage.raw"
+		echo "        --help			show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
+

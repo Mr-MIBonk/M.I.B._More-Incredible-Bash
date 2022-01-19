@@ -1,0 +1,480 @@
+#!/bin/sh
+
+revision="backup v0.3.0 (2021-10-27 by MIBonk & MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+if [ "$1" = "-b" ]; then
+	AB=$1
+else
+	AB=""
+fi
+
+B2NAND() {
+
+	echo -ne "backing up backup" | $TEE -i -a $LOG
+    echo -ne "\n"
+	SEIZE="$(df -k /net/mmx/mnt/boardbook | awk '{print $4}')"
+	mount -uw /net/mmx/mnt/boardbook 2>> $LOG
+	if [ ! -d $NAND ]; then
+		mkdir -p $NAND
+				if [[ $SEIZE -gt 5000 ]]; then
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-EEProm.bin /net/rcc/mnt/efs-persist/FEC/archiv/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-EEProm.bin /net/rcc/mnt/efs-system/backup/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-EEProm.bin $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-allversions.txt $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-storage1.raw $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-storage2.raw $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-datasets.csv $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/FEC/ $NAND/FEC/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-version.txt $NAND/ 2>> $LOG
+			on -f mmx cp -r $VOLUME/VERSION $NAND/M.I.B-version.txt 2>> $LOG
+			echo -ne " -> part 1 done"
+		else
+			echo -ne " -> part 1 failed :-("
+		fi
+	else
+		echo -ne " -> Backup is already there!" | $TEE -i -a $LOG
+	fi
+	if [ ! -f $NAND/$MUVERSION-RCC_fs0.bin ]; then
+		if [[ $SEIZE -gt 150000 ]]; then
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin $NAND/ 2>> $LOG
+			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin $NAND/ 2>> $LOG
+			echo " -> part 2 done :-)"
+		else
+			echo " -> part 2 failed :-("
+			echo "not enough space on NAND - only "$SEIZE" kbytes left" | $TEE -i -a $LOG
+		fi
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	echo -ne "\nls -als /net/mmx/mnt/boardbook --> " >> $LOG
+    ls -als $NAND/.. >> $LOG
+	SEIZE="$(df -h /net/mmx/mnt/boardbook | awk '{print $4}')"
+	echo -ne "Free space on /net/mmx/mnt/boardbook "$SEIZE"\n" >> $LOG
+
+}
+	case $1 in
+
+	-a|-b) {
+
+trap '' 2
+
+if [ $ME != "RCC" ]; then
+	echo -ne "\nBackup will only work in RCC bash!\n\n"
+exit 0
+fi
+
+[ -n "$GEM" ] && touch $TMP/backup.mib
+
+. $thisdir/offset -log
+
+if [ -d $BACKUPFOLDER ]; then
+	echo -ne "Found $FAZIT Backup, will check if all complete...\n" | $TEE -i -a $LOG
+	[ -z "$GEM" ] && echo -ne "\n"
+else
+	mkdir -p $BACKUPFOLDER
+	sleep 1
+fi
+
+[ -z "$GEM" ] && echo -ne "\033[31m"
+echo -ne "Note: "
+if [ -z $AB ]; then
+	echo -ne "Advanced-"
+fi
+echo -ne "Backup will require a few minutes to complete!\n"
+echo -ne "Wait until All done message on screen!\n"
+sleep 4
+[ -z "$GEM" ] && echo -ne "\n"
+[ -z "$GEM" ] && echo -ne "\033[36m"
+
+echo -ne "Partition info..." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-Partition.txt ]; then
+	echo -ne "fstab MMX mount ->\n\n" >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+	on -f mmx cat /net/mmx/etc/fstab >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+	if [[ "$TRAINVERSION" != *MHI2Q* ]]; then
+		echo -ne "\nfdisk mnand0 show ->\n\n" > $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+		/net/mmx/bin/fdisk /net/mmx/dev/mnand0 show >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+		echo -ne "fdisk mnand0 info ->\n\n" >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+		/net/mmx/bin/fdisk /net/mmx/dev/mnand0 info >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+		echo -ne "df MMX mount ->\n\n" >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+		on -f mmx df -k >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
+	fi
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+if [ -z $AB ]; then
+	echo -ne "SWDL............." | $TEE -i -a $LOG
+	if [ ! -d $BACKUPFOLDER/SWDL ]; then
+		cp -rc /HBpersistence/SWDL/* $BACKUPFOLDER/SWDL/ 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+fi
+
+echo -ne "Version info....." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-version.txt ]; then
+	cp -r $TMP/version.txt $BACKUPFOLDER/$MUVERSION-version.txt 2>> $LOG
+	if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
+		on -f mmx cp /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar $BACKUPFOLDER/$MUVERSION-GEM.jar 2>> $LOG
+		if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_GEM.jar ]; then
+		on -f mmx cp /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_GEM.jar $BACKUPFOLDER/$MUVERSION-GEM.jar 2>> $LOG
+		fi
+	elif [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/AppDevelopment.jar ]; then
+		on -f mmx cp /net/mmx/mnt/app/eso/hmi/lsd/jars/AppDevelopment.jar $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar 2>> $LOG
+		if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_AppDevelopment.jar ]; then
+		on -f mmx cp /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_AppDevelopment.jar $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar 2>> $LOG
+		fi
+	fi
+	on -f mmx cp /net/mmx/mnt/app/eso/hmi/splashscreen/StartupImageConfig.txt $BACKUPFOLDER/$MUVERSION-StartupImageConfig.txt 2>> $LOG
+	on -f mmx $VOLUME/apps/allversions -p > $BACKUPFOLDER/$MUVERSION-allversions.txt 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "Folder lists....." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-folders.txt ]; then
+	echo -ne "---------------------------------------\n" > $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/rcc/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/rcc/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/rcc/sbin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/rcc/sbin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/rcc/usr/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/rcc/usr/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/sbin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/sbin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/usr/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/usr/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/app/eso/bin/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/app/eso/bin/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/app/eso/bin/apps/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/app/eso/bin/apps/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/app/armle/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/app/armle/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/app/armle/usr/bin\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/app/armle/usr/bin >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/app/eso/hmi/lsd/jars/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/app/eso/hmi/lsd/jars/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "---------------------------------------\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt
+	echo -ne "ls -alv /net/mmx/mnt/media/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/media  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/media/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/mmx/mnt/gracenotedb/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/gracenotedb  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/gracenotedb/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/mmx/mnt/boardbook/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/boardbook  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/boardbook/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/mmx/mnt/adb/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/adb  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/adb/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/mmx/mnt/system/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/system  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/system/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/rcc/usr/apps/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/rcc/usr/apps  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/rcc/usr/apps/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+#echo -ne "Protection......." | $TEE -i -a $LOG
+#if [ ! -f $BACKUPFOLDER/profile ]; then
+#	cp -r /net/rcc/etc/profile $BACKUPFOLDER/profile 2>> $LOG
+#	ERROR
+#	sleep 1
+#else
+#	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+#fi
+
+echo -ne "FEC folders......" | $TEE -i -a $LOG
+if [ ! -d $BACKUPFOLDER/FEC ]; then
+	cp -rc /net/rcc/mnt/efs-persist/FEC/* $BACKUPFOLDER/FEC/ 2>> $LOG
+	cp -rc /net/rcc/mnt/efs-system/backup/FEC/* $BACKUPFOLDER/FEC/backup/ 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "HMI folders......" | $TEE -i -a $LOG
+if [ ! -d $BACKUPFOLDER/HMI ]; then
+	on -f mmx cp -rc /net/mmx/mnt/ols/rhmi/* $BACKUPFOLDER/HMI/rhmi 2>> $LOG
+	if [[ -f /net/mmx/ramdisk/credentials ]]; then
+		on -f mmx cp -c /net/mmx/ramdisk/credentials $BACKUPFOLDER/HMI/credentials 2>> $LOG
+	fi
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "Shadow files....." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-shadow ] || [ ! -f $BACKUPFOLDER/$MUVERSION-shadow_rcc ]; then
+	cp -r /net/rcc/etc/shadow_rcc $BACKUPFOLDER/$MUVERSION-shadow_rcc 2>> $LOG
+	cp -r /net/rcc/etc/shadow $BACKUPFOLDER/$MUVERSION-shadow 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "Dataset's........" | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv ]; then
+	echo -ne "Dataset list\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 3221291030 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Datasets\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 3221422080 3221422119 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Long_coding\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 4101 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Vehicle_Configuration\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 3221356628 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Car_Function_Adaptations_Gen2\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 4098 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Car_Function_List_BAP_Gen2\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 4099 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Car_function_list_bap_gen2_extended\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 4102 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Car_Function_List_CAN_Gen2\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 4100 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Dashboard_Display_Configuration\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 0 3221356656 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Adaptions-1\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 52166966 207 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Adaptions-2\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 28442848 100 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	echo -ne "Adaptions-3\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	on -f mmx $VOLUME/apps/pers -r 28442848 104 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "EEPROM..........." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.bin ]; then
+	/usr/apps/modifyE2P r 0 8000 > $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
+	on -f mmx sh $VOLUME/apps/eeprom2bin -bin $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "storage1........." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-storage1.raw ]; then
+	cp -r /mnt/efs-persist/storage1.raw $BACKUPFOLDER/$MUVERSION-storage1.raw 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+if [ -z $AB ]; then
+	echo -ne "storage2........." | $TEE -i -a $LOG
+	if [ ! -f $BACKUPFOLDER/$MUVERSION-storage2.raw ]; then
+		cp -r /mnt/efs-persist/storage2.raw $BACKUPFOLDER/$MUVERSION-storage2.raw 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+fi
+
+#if [ -z $AB ]; then
+#	echo -ne "MIBRoot.........." | $TEE -i -a $LOG
+#	if [ ! -f $BACKUPFOLDER/$MUVERSION-MIBRoot ]; then
+#		cp -r /usr/apps/MIBRoot $BACKUPFOLDER/$MUVERSION-MIBRoot 2>> $LOG
+#		ERROR
+#		sleep 1
+#	else
+#		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+#	fi
+#fi
+
+echo -ne "RCC Flashlock...." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log ]; then
+	/usr/bin/flashlock > $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "RCC.............." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
+	cat /dev/fs0 > $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+if [ -z $AB ]; then
+	if [[ "$TRAINVERSION" != *MHI2Q* ]]; then
+		echo -ne "MMX.............." | $TEE -i -a $LOG
+		if [ ! -f $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin ]; then
+			on -f mmx cat /net/mmx/dev/fs0 > $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin 2>> $LOG
+			ERROR
+			sleep 1
+		else
+			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+		fi
+	fi	
+fi
+
+echo -ne "IFS-stage2......." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs ]; then
+	if [ ! -z $SKIPBLOCKS ];then
+		SKIP="1344"
+		COUNTBLOCKS="6144"
+		((COUNT=$COUNTBLOCKS-($SKIPBLOCKS-$SKIP)))
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$BACKUPFOLDER/$MUVERSION-RCC_fs0.bin count=$COUNT of=$BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs 2>> $LOG
+#		$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 of=$BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs 2>> $LOG
+		ERROR
+	else
+		echo -ne "OFFSET unkown, aborted!\n" | $TEE -i -a $LOG
+	fi
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "OFFSET's........." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt ]; then
+	echo -ne "OFFSET: 0x00"$OFFSETPART2"-"$STAGE2SIZE"\n" > $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+if [ -z $AB ]; then
+	B2NAND
+fi
+
+[ -z "$GEM" ] && echo -ne "\033[00;00m"
+# cleanup 0 Bytes Error files and empty folder...
+echo $(find $BACKUPFOLDER -type f -size 0 -exec rm -rf {} \; 2> /dev/null)
+echo $(find $BACKUPFOLDER -type d -empty -exec rmdir {} \; 2> /dev/null)
+echo -ne "$TRAINVERSION $MUVERSION - Please check Log for Errors...\n"
+[ -z "$GEM" ] && echo -ne "\n"
+echo -ne "\n" >> $LOG
+
+rm -rf $TMP/backup.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+-nand) {
+
+trap '' 2
+
+B2NAND
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-rnand) {
+
+trap '' 2
+
+	echo -ne "recover backup from unit......\n" | $TEE -i -a $LOG
+	if [ -d $NAND ]; then
+		echo -ne " -> Backup folder found\n"
+		echo -ne "copying files to SD...........\n"
+		on -f mmx cp -cr $NAND/* $BACKUPFOLDER/NAND-backup
+		echo -ne "Files are located in folder: "$BACKUPFOLDER"/NAND-backup\n"
+		ERROR
+		sleep 3		
+	else
+		echo -ne " -> No backup folder found on unit :-(\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -a 		advanced Backup"
+		echo "        -b 		Backup"
+		echo "        -nand 		copy backup to NAND"
+		echo "        -rnand 		recover backup from NAND to SD"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
+

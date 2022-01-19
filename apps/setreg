@@ -1,0 +1,227 @@
+#!/bin/sh
+
+# esd setregeu v0.1.0 (2021-09-17 by MIB-Wiki)
+
+export PATH=.:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/lib:/mnt/app/root/lib-target:/eso/lib:/mnt/app/usr/lib:/mnt/app/armle/lib:/mnt/app/armle/lib/dll:/mnt/app/armle/usr/lib
+unset LD_PRELOAD
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-eu) {
+
+trap '' 2
+
+echo -ne "1-Click EU Coding\n"
+mount -uw /net/rcc/mnt/efs-persist
+	if [[ "$TRAINVERSION" = *ER* ]]; then
+		echo -ne "EU train found\n" | $TEE -a $LOG
+		#echo -ne "NOTE: This will disable DAB functions\n"
+		#echo -ne "Converted units do not have DAB...\n"
+		echo -ne "--------\n"
+		sleep 3
+		echo -ne "visible_MMI_language_dataset - 0x2d00 - EU\n"
+		on -f mmx $PC b:10:0xC0030006 1B64655F444503656E5F47420366725F46520169745F49540165735F45530163735F435A016E6C5F4E4C0170745F50540172755F52550173765F53450174725F545202706C5F504C016E6F5F4E4F0164615F444B01656C5F47520168725F48520168755F48550166695F46490162735F424101726F5F524F01736B5F534B01736C5F53490173725F52530162675F4247016C745F4C54016C765F4C5601756B5F554101656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000304214B7
+		sleep 1
+		echo -ne "language dataset - 0x280 - GB_en\n"
+		on -f mmx $PC b:10:0xC0030005 656E5F474200656E5F474200656E5F4742004331E45D
+		sleep 1
+		echo -ne "summertime algo.\n"
+		on -f mmx $PC i:28442848:503 2
+					#  "none" 0
+					#  "manual" 1
+					#  "MESZ" 2
+					#  "USA" 3
+					sleep 1
+		echo -ne "FM Bandsetting\n"
+		on -f mmx $PC i:0:0x5018240F 1
+					# 0:		BAND_FM_NO_SETTING
+					# 1:		BAND_FM_EU_RDW
+					# 2:		BAND_FM_NAR
+					# 3:		BAND_FM_JP
+					# 4:		BAND_FM_KOR
+					sleep 1
+		echo -ne "AM Bandsetting\n"
+		on -f mmx $PC i:0:0x501824F0 1
+					# 0:		BAND_AM_NO_SETTING
+					# 1:		BAND_AM_EU_RDW
+					# 2:		BAND_AM_NAR
+					# 3:		BAND_AM_JP
+					# 4:		BAND_AM_EU
+					# 5:		BAND_AM_AUS	
+					sleep 1			
+		#echo -ne "DAB Bandsetting 1\n"
+		#on -f mmx $PC i:0:0x5018280F 0
+					# 0:		BAND_DAB1_OFF
+					# 1:		BAND_DAB1_EU_BAND_III-N
+					# 2:		BAND_DAB1_EU_BAND_III (EU default)
+					# 3:		BAND_DAB1_CANADA_L_BAND
+					# 4:		BAND_DAB1_KOREA_BAND_III
+					# 5:		BAND_DAB1_CHINA_BAND_III
+					# 6:		BAND_DAB1_DOWNLOAD_TABLE_1
+					# 7:		BAND_DAB1_NEW_ZEALAND_BAND_III
+					sleep 1			
+		#echo -ne "DAB Bandsetting 2\n"
+		#on -f mmx $PC i:0:0x501828F0 0
+					# 0:		BAND_DAB2_OFF
+					# 1:		BAND_DAB2_L_BAND (EU default)
+					# 2:		BAND_DAB2_DOWNLOAD_TABLE_2
+					sleep 1
+		echo -ne "Radiotext+ off/on\n"
+		on -f mmx $PC i:0:0x50183408 1
+		sleep 1
+		echo -ne "Navigation Country\n"
+		on -f mmx $PC i:0:0x50180CFF 1
+					#  "EU" 1
+					#  "NAR" 2
+					#  "MSA" 3
+					#  "Korea" 4
+					#  "China" 5
+					#  "Japan" 6
+					#  "AsiaPacific" 7
+					#  "Australia" 8
+					#  "South Africa" 9
+					#  "NEAST" 10
+					#  "NMAfrica" 11
+					#  "MEAST" 12
+					#  "CentralAsia" 13
+					#  "India" 14
+					#  "Israel" 15
+					#  "Taiwan" 16
+					#  "MSA 2 (Chile)" 17
+				sleep 1
+		echo -ne "Import media\n"
+		on -f mmx $PC i:0:0x50186010 1
+		sleep 1
+		echo -ne "Media Ripping\n"
+		on -f mmx $PC i:0:0x50186020 1
+		sleep 1
+		echo -ne "Regionalcodes DVD\n"
+		on -f mmx $PC i:28442848:515 2
+		sleep 1
+		echo -ne "Regionalcodes Blueray\n"
+		on -f mmx $PC i:28442848:516 2
+		sleep 1
+		echo -ne "R. Codes DVD Counter\n"
+		on -f mmx $PC i:28442848:517 5
+		sleep 1
+		echo -ne "R. Codes Blueray Counter\n"
+		on -f mmx $PC i:28442848:518 5
+		sleep 1
+		echo -ne "TMCPro EU\n"
+		on -f mmx $PC i:28442848:520 32783
+		sleep 1
+		echo -ne "Gracenote local ON\n"
+		on -f mmx $PC b:0:3221356628:1.6 1
+		on -f mmx $PC b:0:3221356628:1.7 1
+		sleep 1
+		echo -ne "Radio stationlogo DB\n"
+		on -f mmx $PC b:0:3221356628:6 1
+			#	"none" 0
+			#	"EU" 1
+			#	"Taiwan" EA
+			#	"Korea" CD
+			#	"Hongkong" 66
+			#	"China" 28
+			#	"Macao" 67
+			sleep 1
+		echo -ne "SDS region Flag\n"
+		on -f mmx $PC b:0:3221356628:9 1
+			#	"no region" 0
+			#	"EU" 1
+			#	"NAR" 2
+			#	"MSA" 3
+			#	"Korea" 4
+			#	"China" 5
+			#	"Japan" 6
+			#	"AsiaPacific" 7
+			#	"Australia" 8
+			#	"South Africa" 9
+			#	"NEAST" 10
+			#	"NMAfrica" 11
+			#	"MEAST" 12
+			#	"CentralAsia" 13
+			#	"India" 14
+			#	"Israel" 15
+			#	"Taiwan" 16
+			#	"MSA 2 (Chile)" 17
+			#	"China 2" 18
+			#	"China 3" 19
+			sleep 1
+		echo -ne "variant region\n"
+		on -f mmx $PC i:0x286f058c:9 2
+			#   "Europe/ROW" 1
+			#   "Europe" 2  
+			#   "NAR" 3
+			#   "ROW" 4 
+			#   "China" 5
+			#   "Japan" 6   
+			#   "Korea" 7
+			#   "Asia" 8
+			#   "Taiwan" 9
+			sleep 1
+		echo -ne "switch variant feature byte type to High\n"
+		on -f mmx $PC i:0x286f058c:4 1
+			sleep 1
+		echo -ne "disable variant feature byte sirius\n"
+		on -f mmx $PC i:0x286f058c:8 0
+			sleep 1
+		echo -ne "store changes to persistence\n"
+		on -f mmx $PC b:0:1 0
+			sleep 2
+		echo -ne "\nAll done! now you can go back...\n"
+	else
+		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
+	fi
+	
+return 2> /dev/null
+
+trap 2
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -eu			set Region to EU"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

@@ -1,0 +1,177 @@
+#!/bin/sh
+
+revision="VIM v0.1.6 (2021-03-21 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ "$1" = "-s" ] && [ -z $3 ]; then
+	VALUE=""
+else
+	VALUE=$1
+fi
+
+VIM=$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422082 2> /dev/null)
+VIM=$(echo $VIM | awk '{print toupper($0)}')  
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo $thisname" or reboot is already running..."
+	return 2> /dev/null
+fi
+
+	case $VALUE in
+
+	-s) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+if [ ! -z $VIM 2>/dev/null ]; then
+	echo -ne "VIM on Unit: "$VIM"\n" >> $LOG
+	POSITION=$2
+	HEXVALUE=$3
+	echo -ne "Position->"$POSITION" - HEX-Value->"$HEXVALUE"\n\n" >> $LOG
+	if [ $(echo $HEXVALUE | wc -c) -eq 3 ] ; then	
+		HEXVALUE=$(echo $HEXVALUE | awk '{print toupper($0)}') 
+		VIM=$(echo $VIM | cut -c1-56)
+		LENGTH=$(echo $VIM | wc -c)
+		LENGTH=$(echo $LENGTH -3 | $BC)
+		if [ $POSITION -le $LENGTH ] && [ $(( $POSITION % 2 )) -eq 0 ]; then
+			if [ $POSITION -ge "2" ]; then
+				PRI=$(echo $VIM | cut -c1-$POSITION)
+			else
+			PRE=""
+			fi
+			if [ $POSITION -ne $LENGTH ]; then
+				POSITION=$(echo $POSITION +3 | $BC)
+				SEC=$(echo $VIM | cut -c$POSITION-$(echo $LENGTH +2 | $BC))
+			else
+				SEC=""
+			fi
+			VIMPATCH=$PRI$HEXVALUE$SEC
+			. $thisdir/crc16 $VIMPATCH
+			VIMPATCH=$VIMPATCH$crcsum
+			on -f mmx $PC b:0:3221422082 $VIMPATCH 2>> $LOG
+			on -f mmx $PC b:0:1 0 2>> $LOG
+			DEZ=$(echo "ibase=16; $HEXVALUE" | $BC)
+			echo -ne "VIM is now patched on Byte $2 with $DEZ km/h (0x$HEXVALUE)\n" | $TEE -a $LOG
+			[ -z "$GEM" ] && echo -ne "\n"
+			rm -rf $TMP/$thisname.mib 2>/dev/null
+			. $thisdir/reboot -t 10
+			exit 0
+		else
+			echo -ne "Wrong Position\n\n"
+		fi
+	else	
+		echo -ne "no binary hex digits in Value\n\n" | $TEE -a $LOG
+	fi
+else
+	echo -ne "There is no Flashpart for VIM!\n\n" | $TEE -a $LOG
+fi
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	-r) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+if [ ! -z $VIM 2>/dev/null ]; then
+	echo -ne "VIM on Unit: "$VIM"\n\n" | $TEE -a $LOG
+
+fi
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	-w) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ ! -z $VIM 2>/dev/null ]; then
+	echo -ne "VIM on Unit: "$VIM"\n\n" | $TEE -a $LOG
+	VIMPATCH=$(echo $VIM | cut -c1-56)
+	. $thisdir/crc16 $VIMPATCH
+	VIMPATCH=$VIMPATCH$crcsum
+	on -f mmx $PC b:0:3221422082 $VIMPATCH 2>> $LOG
+	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "VIM is now patched to $VIMPATCH\n" | $TEE -a $LOG
+	[ -z "$GEM" ] && echo "\n"
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	. $thisdir/reboot -t 10
+	exit 0
+
+else
+	echo -ne "There is no Flashpart for VIM!\n\n" | $TEE -a $LOG
+fi
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -s <POSITION> <HEXVALUE> change Byte"
+		echo "        -r 	read String"
+		echo "        -w 	write string to Persistance"
+		echo "        --help 			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+exit 0
+

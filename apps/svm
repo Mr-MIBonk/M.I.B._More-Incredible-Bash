@@ -1,0 +1,156 @@
+#!/bin/sh
+
+revision="Fix SVM Error v0.1.5 (2021-04-02 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+SWDL="/net/rcc/mnt/efs-persist/SWDL/Log/"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo $thisname" or reboot is already running..."
+	return 2> /dev/null
+fi
+
+if [ $ME != "RCC" ]; then
+	echo -ne "\nSVM will only work in RCC bash!\n\n"
+	exit 0
+fi
+
+	case $1 in
+
+	-f|-fix) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Fix SVM Error (Note: The process can take some minutes...)\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\n"
+[ -z "$GEM" ] && echo -ne "\033[m"
+
+mount -uw /net/rcc/mnt/efs-persist 2>/dev/null
+
+if [ -f $VERSIONS ]; then
+	echo -ne "extract build version...\n" | $TEE -a $LOG
+	[ -z "$GEM" ] && echo -ne "\n"
+	SVMINFO="$(cat $VERSIONS)"
+	SVMINFO=$(echo -ne "$SVMINFO" | grep -f $thisdir/../config/VERSIONS)
+	SVMINFO=$(echo -ne "$SVMINFO" | $SED 's/|/:/g')
+	HEX=$(echo -ne "$SVMINFO" | grep '0x' | cut -d: -f5  | $SED 's/[^xa-fA-F0-9]//g')
+	for LINES in $HEX
+	do
+		DEC=$(echo $LINES | $SED 's/0x//g')
+		DEC=$(echo $DEC | awk '{print toupper($0)}')
+		DEC=$(echo "obase=10; ibase=16; $DEC" | $BC)
+		DATA=$(echo $LINES)
+		SVMINFO=$(echo -ne "$SVMINFO" | $SED "s/$LINES/$DEC/g")
+	done
+	SVMINFO=$(echo -ne "$SVMINFO" | cut -d: -f1,2,4,5)
+	SVMINFO=$(echo -ne "$SVMINFO" | $SED 's/Bolo/B/g')
+	SVMINFO=$(echo -ne "$SVMINFO" | $SED 's/App/A/g')
+	SVMINFO=$(echo -ne "$SVMINFO" | $SED 's/:/\t/g')
+	echo -ne 01 | $XXD -r -p > $SWDL/SvmInfo.bin
+	echo -ne "$SVMINFO" | $SED 's/\r/\x00\x01/' | $SED -e ':a;N;$!ba;s/\n//g' | $SED 's/.$//' >> $SWDL/SvmInfo.bin
+	echo -ne "SvmInfo - " | $TEE -a $LOG
+	. $thisdir/zlib -c $SWDL/SvmInfo.bin
+	
+	echo -ne "CfgAckRand - " | $TEE -a $LOG
+	. $thisdir/zlib -d $SWDL/CfgAckRand.z
+	 
+	INPUT="$(cat $SWDL/CfgAckRand.bin | $XXD -p | awk '{print toupper($0)}')"
+	XOR="C9D2"
+	XOR=$(echo "ibase=16; $XOR" | $BC)
+	echo -ne "Key: "$INPUT  | $TEE -a $LOG
+	INPUT=$(echo "ibase=16; $INPUT" | $BC)
+	XORSUM=$(( $INPUT ^ $XOR ))
+	XORSUM=$(echo "obase=16; "$XORSUM | $BC)
+	echo $XORSUM | $XXD -r -p - $SWDL/CfgAck.bin
+	rm -rf $SWDL/CfgAckRand.bin
+	echo -ne " - CHKSum: "$XORSUM"\n\n" | $TEE -a $LOG
+	
+	echo -ne "CfgAck - " | $TEE -a $LOG
+	. $thisdir/zlib -c $SWDL/CfgAck.bin
+	
+	/usr/apps/modifyE2P w 3f0 00 00 01 >> $LOG
+	
+	echo -ne "clear SVM done!\n\n" | $TEE -a $LOG
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	trap 2
+	. $thisdir/reboot -t 10
+else
+	echo -ne "clear SVM not possible...\n\n" | $TEE -a $LOG
+fi
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;	
+
+	-r|-read) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+echo -ne "\033[36m"
+echo -ne "Read SVM Byte\n\n" | $TEE -a $LOG
+echo -ne "\033[m"
+
+mount -uw /net/rcc/mnt/efs-persist 2>/dev/null
+
+. $thisdir/zlib -d $SWDL/CfgAck.z
+
+INPUT="$(cat $SWDL/CfgAck.bin | $XXD -p | awk '{print toupper($0)}')"
+echo -ne "SVM Byte: "$INPUT"\n\n"  | $TEE -a $LOG
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+return 2> /dev/null
+
+	};;	
+
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -f, -fix 			fix SVM"
+		echo "        -r, -read 		read SVM"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

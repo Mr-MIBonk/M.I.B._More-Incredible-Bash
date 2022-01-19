@@ -1,0 +1,488 @@
+#!/bin/sh
+
+revision="read out GEM Version v0.1.0 (2021-12-29 by MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS > /dev/null
+	#echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo -ne "Reboot running..."
+	return 2> /dev/null
+fi
+
+if [ -z $MODELID ]; then
+	. $thisdir/../config/LOCALS > /dev/null
+fi
+
+	case $1 in
+
+	-p) {
+
+trap '' 2
+
+echo -ne "Train = "$TRAINVERSION"\n"
+echo -ne "MU = "$MUVERSION"\n"
+echo -ne "Hardware version = "$HWNO"\n"
+echo -ne "Fazit = "$FAZIT"\n"
+echo -ne "Part number = "$PARTNO"\n"
+echo -ne "EEPROM Variant = "$COMPONENT"\n"
+echo -ne "Variant = "$VARIANT"\n"
+echo -ne "VIN car = "$VINCAR"\n"
+echo -ne "VIN MIB = "$VINMIB"\n"
+echo -ne "Car model ID = "$MODELID"\n"
+echo -ne "Car model = "$MODEL"\n"
+#get Gracenote database
+if [[ -e /mnt/gracenotedb/database.fileinfo ]]; then
+	echo -n 'GracenoteDB ='
+	cat /mnt/gracenotedb/database.fileinfo  | grep "Version" | cut -d '=' -f 2
+fi
+#get Navigation database
+#Common Harman
+if [[ -e /mnt/navdb/database/DBInfo.txt ]]; then
+    echo -n 'NavDB = '
+	cat /mnt/navdb/database/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sda0/DBInfo.txt ]]; then
+	echo -n 'NavDB = '
+	cat /fs/sda0/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sdb0/DBInfo.txt ]]; then
+    echo -n 'NavDB = '
+	cat /fs/sdb0/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+fi
+#get Asia Navigation database
+if [[ -e /mnt/navdb/db/DBInfo.txt ]]; then
+	echo -n 'NavDB = '
+	cat /mnt/navdb/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sda0/db/DBInfo.txt  ]]; then
+	echo -n 'NavDB =: '
+	cat /fs/sda0/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sdb0/db/DBInfo.txt  ]]; then
+    echo -n 'NavDB = '
+	cat /fs/sdb0/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+fi
+#get RSDB version
+if [[ -e /mnt/app/eso/bin/apps/radiodata ]]; then
+	echo -n 'Radiodata = '
+	use /mnt/app/eso/bin/apps/radiodata | grep VERSION |cut -d '=' -f2
+fi
+
+if [[ -e /mnt/boardbook/RSDB/Update.txt ]]; then
+	RSDB_NAME=$(basename /mnt/boardbook/RSDB/*.sqlite | sed 's/.sqlite//')
+	RSDB_VERSION=$(cat /mnt/boardbook/RSDB/Update.txt | grep "version.default" | sed 's/version.default=//')
+	echo "Radiodata DB: $RSDB_NAME $RSDB_VERSION"
+fi
+echo -n "Languages supported = "
+cat /mnt/app/eso/hmi/lsd/lang_hmi_builtin.config
+echo
+echo '-----------'
+echo -n "Exceptionlist: "
+cat /net/rcc/dev/shmem/version.txt | grep "ExceptionList|data|0|App|" | cut -d '|' -f 5
+
+projectstring=`cat /etc/project.txt`
+
+#get APP version
+echo -n '\nAPP: '
+head -1 /mnt/app/img_ver.txt | sed "s/^#//"
+#get Branch
+echo -n 'Branch:'
+cat /mnt/app/version_info.txt | grep Branch | cut -d '=' -f 2
+#get Changelist or Label
+CHANGELIST=`cat /mnt/app/version_info.txt | grep "Up to CL" | cut -d '=' -f 2`
+if [ ! -z $CHANGELIST ]; then
+        echo -n 'Changelist:'
+        cat /mnt/app/version_info.txt | grep "Up to CL" | cut -d '=' -f 2
+else
+        echo -n 'Label:'
+        cat /mnt/app/version_info.txt | grep "Label" | cut -d '=' -f 2
+fi
+#get Framework
+echo -n 'Framework (MMX):'
+cat /mnt/app/version_info.txt | grep Framework | cut -d '=' -f 2
+if [[ -e /net/rcc/dev/shmem/esoRCCVersion ]]; then
+	echo -n 'Framework (RCC): '
+	cat /net/rcc/dev/shmem/esoRCCVersion | head -1 | cut -d '=' -f 2
+fi
+echo -n 'GraphicsServices:'
+cat /mnt/app/version_info.txt | grep GraphicsServices | cut -d '=' -f 2
+#get J9 version
+echo -n 'J9:'
+cat /mnt/app/version_info.txt | grep J9 | cut -d '=' -f 2
+#get DSI
+echo -n 'DSI:'
+cat /mnt/app/version_info.txt | grep "DSI =" | cut -d '=' -f 2
+#get Navigation
+if [[ $FIRST_TIER_SUPPLIER == "AISIN" ]]; then
+	echo -n 'Navigation:'
+	cat /mnt/app/navigation/Navigation_version.txt | grep -i 'name =' | cut -d '=' -f 2
+elif [[ $FIRST_TIER_SUPPLIER == "DELPHI" ]] && [ $REGION = "CN" -o $REGION = "JP" -o $REGION = "TW" -o $REGION = "KR" ]; then
+	echo -n 'Navigation:'
+	cat /mnt/app/navigation/Navigation_version.txt | grep -i 'name =' | cut -d '=' -f 2
+else
+	echo -n 'Navigation: '
+	use -i /mnt/app/navigation/navStartup | grep VERSION | cut -d= -f 2
+fi
+
+#get Navigation database
+#Common Harman
+if [[ -e /mnt/navdb/database/DBInfo.txt ]]; then
+    echo -n 'NavDB: '
+	cat /mnt/navdb/database/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sda0/DBInfo.txt ]]; then
+	echo -n 'NavDB: '
+	cat /fs/sda0/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sdb0/DBInfo.txt ]]; then
+    echo -n 'NavDB: '
+	cat /fs/sdb0/DBInfo.txt | grep DevVersion | cut -d= -f 2 | sed "s/\"//g"
+fi
+
+#get Asia Navigation database
+if [[ -e /mnt/navdb/db/DBInfo.txt ]]; then
+	echo -n 'NavDB: '
+	cat /mnt/navdb/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sda0/db/DBInfo.txt  ]]; then
+	echo -n 'NavDB: '
+	cat /fs/sda0/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+elif [[ -e /fs/sdb0/db/DBInfo.txt  ]]; then
+    echo -n 'NavDB: '
+	cat /fs/sdb0/db/DBInfo.txt | grep DBName | cut -d= -f 2 | sed "s/\"//g"
+fi
+
+#get Navigation styles
+if [[ -d /mnt/app/navigation/resources/app ]]; then
+	echo '-----------'
+	echo 'Navigation styles:'
+	NAV_OEM=$(cd /mnt/app/navigation/resources/app; ls -d * | head -1)
+	MAPSTYLES_LIST=$(cd /mnt/app/navigation/resources/app/${NAV_OEM}; ls -d *)
+	for reg in ${MAPSTYLES_LIST}
+	do
+		if [[ -e /mnt/app/navigation/resources/app/${NAV_OEM}/${reg}/version.txt ]]; then
+			vers=$(head -1 /mnt/app/navigation/resources/app/${NAV_OEM}/${reg}/version.txt)
+		else
+			vers=$(head -1 /mnt/app/navigation/resources/app/${NAV_OEM}/${reg}/version-cfg.txt)
+		fi
+		echo $reg = $vers
+	done
+	echo '-----------'
+fi
+
+/scripts/getEggnogDBVersionInfo.sh
+
+#get Truffles database information
+if [[ -e /mnt/navdb/truffles/db/common/version.txt ]]; then
+	echo '-----------'
+	echo 'Truffles: '
+        TRUFFLES_FILE_CONTENT=$(cat /mnt/navdb/truffles/db/common/version.txt | cut -d '=' -f 1 -f 2 | sed "s/\"//g" |  sed "s/ //g" )
+        for line in $TRUFFLES_FILE_CONTENT
+        do
+		echo "Truffles.$line"
+        done
+	echo '-----------'
+#for Scale - checking /fs/sda0 or /fs/sdb0
+elif [[ -e /fs/sdb0/truffles/db/common/version.txt ]];then
+    echo '-----------'
+	echo 'Truffles: '
+        TRUFFLES_FILE_CONTENT=$(cat /fs/sdb0/truffles/db/common/version.txt | cut -d '=' -f 1 -f 2 | sed "s/\"//g" |  sed "s/ //g" )
+        for line in $TRUFFLES_FILE_CONTENT
+        do
+		echo "Truffles.$line"
+        done
+	echo '-----------'
+elif [[ -e /fs/sda0/truffles/db/common/version.txt ]];then
+    echo '-----------'
+	echo 'Truffles: '
+        TRUFFLES_FILE_CONTENT=$(cat /fs/sda0/truffles/db/common/version.txt | cut -d '=' -f 1 -f 2 | sed "s/\"//g" |  sed "s/ //g" )
+        for line in $TRUFFLES_FILE_CONTENT
+        do
+		echo "Truffles.$line"
+        done
+	echo '-----------'
+elif [[ -e /mnt/navdb/truffles/db/version.txt ]]; then
+	echo '-----------'
+	echo 'Truffles: '
+	echo 'Attention! You seem to have an out-dated truffles DB (plain structure). '
+	echo 'Consider following these steps:'
+	echo '1) Update to the latest truffles DB.'
+	echo '2) Delete old database structure (plain structure) in GEM/mmx/truffles.'
+	cat /mnt/navdb/truffles/db/version.txt
+	echo '-----------'
+else
+	echo 'Truffles: No version information available.'
+fi
+
+#get Speech
+echo -n 'Speech: '
+use -i /mnt/app/speech/SpeechLauncher | grep VERSION | cut -d= -f 2
+
+#get Speech Resources
+if [[ -e /mnt/speech/tts/data_EU/version.info ]]; then
+	echo -n 'Speech resources: '
+	cat /mnt/speech/tts/data_EU/version.info | grep svn_tag | cut -d '=' -f 2 | sed "s/\"//g"
+elif [[ -e /mnt/speech/tts/data_ROW/version.info ]]; then
+	echo -n 'Speech resources: '
+	cat /mnt/speech/tts/data_ROW/version.info | grep svn_tag | cut -d '=' -f 2 | sed "s/\"//g"
+elif [[ -e /mnt/speech/tts/data/version.info ]]; then
+	echo -n 'Speech resources: '
+	cat /mnt/speech/tts/data/version.info | grep svn_tag | cut -d '=' -f 2 | sed "s/\"//g"
+fi
+# get Speech VDE Resources
+if [[ -e /mnt/navdb/speech/sr/vde/EU/common.fileinfo ]]; then
+	if grep -qi version /mnt/navdb/speech/sr/vde/EU/common.fileinfo; then
+		echo -n 'Speech VDE resources (EU common):'
+		grep -i version /mnt/navdb/speech/sr/vde/EU/common.fileinfo | cut -d '=' -f 2
+	fi
+fi
+#get SpeechNLU
+if [[ -e /eso/lib/libesoSem.so ]]; then
+	echo -n 'SpeechNLU: '
+	use -i /eso/lib/libesoSem.so | grep ^VERSION | cut -d= -f 2
+fi
+
+#get SSE
+if [[ -e /mnt/app/eso/bin/apps/sseProc ]]; then
+	echo -n 'sseProc: '
+	use -i /mnt/app/eso/bin/apps/sseProc | grep ^VERSION | cut -d= -f 2
+fi
+
+#get HMI
+echo -n 'HMI: '
+if [[ -e /mnt/app/eso/hmi/version.properties ]]; then # this is true for PAG, AU and BY
+   cat /mnt/app/eso/hmi/version.properties | grep HMI_Version | cut -d ':' -f 2
+   echo -n 'HUDSON_BUILD_TAG: '
+   #echo -n "    "
+   cat /mnt/app/eso/hmi/version.properties | grep jenkins | cut -d ':' -f 2
+   # Get TextTool
+   if [ -f /eso/hmi/TTVersion.properties ]; then
+	grep "TextTool" /eso/hmi//TTVersion.properties
+	if grep -q OptionDrawerVersion /eso/hmi//TTVersion.properties; then
+		echo "OptionDrawerVersion: `grep OptionDrawerVersion /eso/hmi//TTVersion.properties | cut -d ' ' -f2`"
+	fi
+   fi
+else # this is true for VW, SE and SK
+   cat /mnt/app/version_info.txt | grep HMI | cut -d '=' -f 2
+   
+fi
+
+#get GCT version
+GCT_VERSION_PATH=`ls -d /mnt/app/speech/hmi/??_?? | head -1`
+if [[ ! -z ${GCT_VERSION_PATH} ]] && [[ -e ${GCT_VERSION_PATH}/version.txt ]]; then
+	if grep -q ^GCT= ${GCT_VERSION_PATH}/version.txt; then
+		echo -n 'GCT version: '
+		grep ^GCT= ${GCT_VERSION_PATH}/version.txt | cut -d '=' -f 2
+	fi
+fi
+#get voice_encoder_app
+echo -n 'VoiceEncoderApp: '
+use -i /mnt/app/eso/bin/apps/voice_encoder_app | grep VERSION | cut -d= -f 2
+#get Gracenote database
+if [[ -e /mnt/gracenotedb/database.fileinfo ]]; then
+	echo -n 'GracenoteDB:'
+	cat /mnt/gracenotedb/database.fileinfo  | grep "Version" | cut -d '=' -f 2
+fi
+#get Gracenote Revision
+if [[ -e /mnt/gracenotedb/database/rev.txt ]]; then
+	echo -n 'Gracenote: '
+	cat /mnt/gracenotedb/database/rev.txt | head -1
+fi
+if [[ $CHIP_VENDOR == "NVIDIA" ]]; then
+	#get Nvidia drop
+	echo -n 'Nvidia:'
+	cat /mnt/app/version_info.txt | grep Nvidia | cut -d '=' -f 2
+	if grep -q MM2 /mnt/app/version_info.txt; then
+		#get MME2 version
+		echo -n 'MME2 version:'
+		cat /mnt/app/version_info.txt | grep "MM2 Version" | cut -d '=' -f 2
+	else
+		#get MME build date
+		echo -n 'MME build date:'
+		cat /mnt/app/version_info.txt | grep "MME Build" | cut -d '=' -f 2
+		#get MME version
+		echo -n 'MME version:'
+		cat /mnt/app/version_info.txt | grep "MME Version" | cut -d '=' -f 2
+	fi
+	#get NMSDK version
+	if [[ -e /armle/usr/sbin/io-media-nvidia-dynamic ]]; then
+		echo -n 'NMSDK: '
+		use -i /armle/usr/sbin/io-media-nvidia-dynamic | grep "NMSDK" | cut -d '=' -f 2
+	fi
+else
+	echo -n 'Cinemo: '
+	if grep -q "Cinemo Version" /mnt/app/version_info.txt; then
+		cat /mnt/app/version_info.txt | grep "Cinemo Version" | cut -d '=' -f 2
+	else
+		echo "No information available"
+	fi
+    echo -n 'Toolchain: '
+    if grep -q "Toolchain" /mnt/app/version_info.txt; then
+        cat /mnt/app/version_info.txt | grep "Toolchain" | cut -d '=' -f 2
+    else
+        echo "No information available"
+    fi
+    echo -n 'PDK: '
+    if grep -q "PDK" /mnt/app/version_info.txt; then
+        cat /mnt/app/version_info.txt | grep "PDK" | cut -d '=' -f 2
+    else
+        echo "No information available"
+    fi
+fi
+#get exFAT-Library
+if [[ -e /lib/dll/fs-exfat.so ]]; then
+        echo -n 'exFAT-Library: '
+        use -i /lib/dll/fs-exfat.so | grep ^DATE | cut -d= -f 2
+fi
+#get Google Earth version
+if [[ -e /mnt/app/gemib/gemib ]]; then
+	echo -n 'Google Earth: '
+	if [ `use -i /mnt/app/gemib/gemib | grep VERSION | grep '"'` ]; then
+		use -i /mnt/app/gemib/gemib | grep VERSION | cut -d '"' -f2
+	else
+		use -i /mnt/app/gemib/gemib | grep VERSION | cut -d '=' -f2
+	fi
+fi
+#get Streetview version
+if [[ -e /mnt/app/streetview/streetview ]]; then
+	echo -n 'Streetview: '
+	use -i /mnt/app/streetview/streetview | grep VERSION |cut -d '=' -f2
+fi
+
+#get RSDB version
+if [[ -e /mnt/app/eso/bin/apps/radiodata ]]; then
+	echo -n 'Radiodata: '
+	use /mnt/app/eso/bin/apps/radiodata | grep VERSION |cut -d '=' -f2
+fi
+
+if [[ -e /mnt/boardbook/RSDB/Update.txt ]]; then
+	RSDB_NAME=$(basename /mnt/boardbook/RSDB/*.sqlite | sed 's/.sqlite//')
+	RSDB_VERSION=$(cat /mnt/boardbook/RSDB/Update.txt | grep "version.default" | sed 's/version.default=//')
+	echo "Radiodata DB: $RSDB_NAME $RSDB_VERSION"
+fi
+
+if [[ -e /sbin/devp-iso-mmx ]]; then
+	echo -n 'devp-iso-mmx: '
+	use -i /sbin/devp-iso-mmx | grep DATE | cut -d '=' -f 2
+fi
+#get SDIS version
+
+if [[ -e /mnt/ota/tmp/sdis/sdis.img.fileinfo ]]; then
+    echo -n 'SDIS: '
+    cat /mnt/ota/tmp/sdis/sdis.img.fileinfo | grep "Version" | cut -d '=' -f 2
+fi
+
+#get wordprediction version
+if [[ -e /mnt/app/wordprediction/awp ]]; then
+	echo -n 'AWP: '
+	echo -n "`use /mnt/app/wordprediction/awp |grep "Awp"|cut -d ':' -f 2`"
+fi
+
+#get Carlife version
+if [[ -e /mnt/app/carlife/carlife ]]; then
+	echo -n '\nCarlife: '
+	use -i /mnt/app/carlife/carlife | grep VERSION |cut -d '=' -f2
+fi
+
+#get IOC version
+if [[ -e /net/rcc/dev/shmem/version.txt ]]; then
+	echo -n '\nIOC: '
+	cat /net/rcc/dev/shmem/version.txt | grep 'IOC|Main|' | grep 'App' | cut -d '|' -f 5
+fi
+#get RCC version info
+if [[ -e /net/rcc/etc/version/RCC-version.txt ]]; then
+	echo '\nRCC version info:'
+	cat /net/rcc/etc/version/RCC-version.txt | grep "version "
+fi
+
+#get RCC label info
+if [[ -e /net/rcc/etc/version/RCC-version.txt ]]; then
+	echo '\nRCC label info:'
+	cat /net/rcc/etc/version/RCC-version.txt | grep "label "
+fi
+
+# If one or more files like /tmp/Version_Info_*.txt exist then print all
+# of them (file name is used as title line with _ replaced by space and
+# .txt at the end removed):
+
+cd /tmp
+LIST=$( eval echo Version_Info_*.txt )
+if [ "$LIST" != 'Version_Info_*.txt' ]
+then
+    for file in Version_Info_*.txt
+    do
+        echo "\n"$( echo $file | sed -e s'/_/ /'g | sed -r -e s'/(.*)\.txt/\1/' )":"
+        cat "$file"
+    done
+fi
+
+echo "\n" 
+
+#get BOM
+echo '\nMMX Board information:'
+echo -n 'BOM: '
+cat /dev/nvsku/bom
+
+#get project
+echo -n '\nProject: '
+cat /dev/nvsku/project
+
+#get sku
+echo -n '\nSKU: '
+cat /dev/nvsku/sku
+
+#get board revision
+echo -n '\nVersion: '
+cat /dev/nvsku/rev
+
+#get serial number
+echo -n '\nserial number: '
+cat /dev/nvsku/serial_num
+
+echo "\n" 
+cat /mnt/app/detailed_changelists_info.txt
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -p			print all GEM Version"
+		echo "        --help			show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+
+	};;
+
+	esac
+
+exit 0

@@ -1,0 +1,391 @@
+#!/bin/sh
+
+revision="backupplus v0.1.5 (2021-12-10 MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+mkdir -p $BACKUPFOLDER/images/
+OUTDIR="$BACKUPFOLDER/images/$MUVERSION"
+
+case $1 in
+
+-adb) {
+
+trap '' 2
+
+	OUTPUT="adb"
+	#addressbookdb
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-app) {
+
+trap '' 2
+
+	OUTPUT="app.img"
+	SEIZE="$(df -h /net/mmx/dev/mnand0t177 | awk '{print $2}')"
+	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		echo "dumping app.img now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cat /dev/mnand0t177 > $OUTDIR-$OUTPUT
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-media) {
+
+trap '' 2
+
+	OUTPUT="media"
+	# music, pictures and videos stored on unit
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"..........\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-gndb) {
+
+trap '' 2
+
+	OUTPUT="gracenotedb"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"....\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-bb) {
+
+trap '' 2
+
+	OUTPUT="boardbook"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-nav) {
+
+trap '' 2
+
+	OUTPUT="navdb"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"..........\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-system) {
+
+trap '' 2
+
+	OUTPUT="system"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+
+-rcc) {
+
+trap '' 2
+
+
+if [ -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
+	RCC=$BACKUPFOLDER/$MUVERSION-RCC_fs0.bin
+	echo -ne "Dump RCC from SD backup\n" | $TEE -i -a $LOG
+else
+	RCC="/net/rcc/dev/fs0"
+	echo -ne "Dump from /net/rcc/dev/fs0\n" | $TEE -i -a $LOG
+fi
+
+	echo "dumping RCC images now"
+	echo "duration: max. 5 minutes"
+	echo "please wait..."
+
+	OUTPUT="ipl-mib2.bin"
+
+	echo -ne $OUTPUT".........." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="0"
+		COUNTBLOCKS="32"
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+	ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="ifs-emergency.ifs"
+	echo -ne $OUTPUT"....." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="32"
+		COUNTBLOCKS="1312"
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+	ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="ifs-root.ifs"
+	echo -ne $OUTPUT".........." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="1344"
+		COUNTBLOCKS="6144"
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+	ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="efs-system.efs"
+	echo -ne $OUTPUT"........" | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="7488"
+		COUNTBLOCKS="8128"
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+	ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="AUDI_MIB_DSP.bin.bgz"
+	echo -ne $OUTPUT".." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="15616"
+		COUNTBLOCKS="768"
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+	ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+	
+-mmx) {
+
+trap '' 2
+
+# TODO: NOT ready --> RCC copy
+#check MHI2Q
+
+	MMX="/net/mmx/dev/fs0"
+
+	OUTPUT="ipl-mib2.bin"
+	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="0"
+		COUNTBLOCKS="32"
+		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="ifs-emergency.ifs"
+	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="32"
+		COUNTBLOCKS="1312"
+		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="ifs-root.ifs"
+	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="1344"
+		COUNTBLOCKS="6144"
+		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="efs-system.efs"
+	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="7488"
+		COUNTBLOCKS="8128"
+		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	OUTPUT="AUDI_MIB_DSP.bin.bgz"
+	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		SKIPBLOCKS="15616"
+		COUNTBLOCKS="768"
+		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -app 		dump app.img"
+		echo "        -rcc 		dump RCC images"
+#		echo "        -mmx 		dump MMX images"
+		echo "        -abd 		dump AddressBookDB"
+		echo "        -gndb 		dump GraceNoteDB"
+		echo "        -bb 		dump boardbook & RadioStationDB"
+		echo "        -media 		dump Media"
+		echo "        -nav 		dump NavDB"
+		echo "        -system 	dump /mnt/system"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+	
+	esac
+
+exit 0
+

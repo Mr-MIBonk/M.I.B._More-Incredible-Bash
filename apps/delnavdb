@@ -1,0 +1,79 @@
+#!/bin/sh
+
+# esd delnavdb v0.1.0 (2021-09-28 by MIB-Wiki)
+
+trap '' 2
+
+export PATH=.:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/lib:/mnt/app/root/lib-target:/eso/lib:/mnt/app/usr/lib:/mnt/app/armle/lib:/mnt/app/armle/lib/dll:/mnt/app/armle/usr/lib
+unset LD_PRELOAD
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-d) {
+
+echo -ne "Formatting Nav DB now...\n\n"
+sleep 1
+if [[ "$TRAINVERSION" = *MHI2Q* ]]; then
+	echo -ne "MHI2Q unit not supported\n" | $TEE -i -a $LOG
+	echo -ne "will stop here - go back\n"
+else
+	umount -f /mnt/navdb
+	echo "y" | mkqnx6fs -T media -b 32768 -i 32768 /dev/mnand0t178.8 2>> $LOG
+	sleep 1
+	mount -t qnx6 /dev/mnand0t178.8 /mnt/navdb 2>> $LOG
+	sleep 1
+	echo -ne "\nAll done!\n"
+	. $thisdir/reboot -t 10
+fi
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -d			delete Nav DB"
+		echo "        --help			show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

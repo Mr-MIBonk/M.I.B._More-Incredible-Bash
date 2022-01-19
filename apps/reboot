@@ -1,0 +1,97 @@
+#!/bin/sh
+
+revision="reboot Unit v0.1.2 (2021-02-25 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/flash.mib ] || [ -f $TMP/backup.mib ] || [ -f $TMP/rccd.mib ] || [ -f $TMP/svm.mib ] || [ -f /$TMP/vim.mib ] || [ -f $TMP/ambient.mib ]; then
+	echo "Some other process is already running... reboot not possible!"
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-t) {
+
+touch $TMP/reboot.mib
+
+REBOOT="reboot"
+if [[ $3 = "fast" ]]; then
+	REBOOT="fastReboot"
+fi
+
+sync; sync; sync
+#trap 2
+
+trap ctrl_c INT
+
+function ctrl_c {
+	rm -rf $TMP/reboot.mib
+	exit 0
+}
+
+[ -z "$GEM" ] && echo -ne "\033[31m"
+echo -ne "Reboot Unit..." | $TEE -a $LOG
+[ -n "$GEM" ] && echo -ne "\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne " press CTRL-C to abort!!!\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\n\033[00;00m"
+[ -z "$GEM" ] && echo -ne "$2 seconds left..."
+[ -n "$GEM" ] && echo -ne "Unit is Rebooting now...\n"
+let COUNTER=$2-1
+	while [ $COUNTER -gt -1 ]; do
+		sleep 1
+		[ -z "$GEM" ] &&echo -ne "$COUNTER..."
+		let COUNTER=COUNTER-1
+	done
+[ -z "$GEM" ] && echo -ne "\n\n"
+[ -z "$GEM" ] && echo -ne "Unit is Rebooting now...\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\n"
+on -f rcc /usr/apps/mib2_ioc_flash $REBOOT 2>>$LOG
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -t <sec> <fast>	reboot Unit"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+exit 0
+

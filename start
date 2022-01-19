@@ -1,0 +1,212 @@
+#!/bin/sh
+# MIB - More Incredible Bash v0.1.3 (2021-04-07 by MIBonk)
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+Version="$(cat $thisdir/VERSION)"
+
+. $thisdir/config/USB
+
+if [ -f /usr/apps/MIBRoot ] || [ -f $thisdir/../devconfig/GLOBALS ]; then
+	ME="RCC"
+	ON=""
+else
+	ME="MMX"
+	ON="on -f rcc "
+. $thisdir/mod/protection/slut.sh
+fi
+
+SW="$(cat /net/rcc/dev/shmem/version.txt 2> /dev/null)"
+
+show_blue(){
+	trap 2
+ 	normal=`echo -e "\033[m"`
+    blue=`echo -e "\033[36m"`
+    yellow=`echo -e "\033[33m"`
+    bgred=`echo -e "\033[41m"`
+    fgred=`echo -e "\033[31m"`
+    echo -ne "${blue}**************************************************************************${normal}"
+	echo -ne "\n${fgred} __  __     ___           ___  ${normal}"
+	echo -ne "\n${fgred}|  \/  |   |_ _|         | _ ) ${normal}"
+	echo -ne "\n${fgred}| |\/| |    | |          | _ \ ${normal}"
+	echo -ne "\n${fgred}|_|  |_|${blue}ore${fgred}|___|${blue}ncredible${fgred}|___/${blue}ash - ${fgred}$Version${normal}\n"
+	echo -ne "\n"
+	echo -ne "NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n"
+	echo -ne "\n${blue}**************************************************************************${normal}\n"
+    echo -ne "${blue}**${yellow} 0 -${blue} Advanced Backup... ${normal}\n"
+    echo -ne "${blue}**${yellow} 1 -${blue} VIM 199 km/h ${normal}\n"
+    echo -ne "${blue}**${yellow} 2 -${blue} VIM 6 km/h (Original) ${normal}\n"
+    echo -ne "${blue}**${yellow} 3 -${blue} IFS-ROOT-Stage2 flash patched image ${normal}\n"
+    echo -ne "${blue}**${yellow} 4 -${blue} IFS-ROOT-Stage2 revert to Backup image ${normal}\n"
+    echo -ne "${blue}**${yellow} 5 -${blue} Copy FEC and EL to Unit ${normal}\n"
+    echo -ne "${blue}**${yellow} 6 -${blue} Developer Menu activation ${normal}\n"
+    echo -ne "${blue}**${yellow} 7 -${blue} CarPlay & Android Auto activation ${normal}\n"	
+	if [[ $SW == *"SKG13"* ]] && [[ $SW == *"1440"* ]]; then
+		echo -ne "${blue}**${yellow} 8 -${blue} Ambient Light Buttons Original ${normal}\n"
+		echo -ne "${blue}**${yellow} 9 -${blue} Ambient Light Buttons patch (first, set to Original) ${normal}\n"
+	fi
+    echo -ne "${blue}**${yellow} F -${blue} Fix SVM error ${normal}\n"
+    echo -ne "${blue}**${yellow} G -${blue} Install M.I.B. in GEM ${normal}\n"
+	echo -ne "${blue}**${yellow} O -${blue} Set OBD Status ${normal}\n"
+    echo -ne "${blue}**${yellow} U -${blue} Mount USB writeable ${normal}\n"
+    echo -ne "${blue}**${yellow} W -${blue} Mountpoints writeable ${normal}\n"
+    echo -ne "${blue}**${yellow} R -${blue} Reboot Unit ${normal}\n"
+    echo -ne "${blue}**${yellow} C -${blue} cleanup Logs ${normal}\n"
+    echo -ne "${blue}**${yellow} S -${blue} show Log (press Q for exit view) ${normal}\n"
+    echo -ne "${blue}**${yellow} H -${blue} Help ${normal}\n"
+    echo -ne "${blue}**${yellow} L -${blue} GPL License ${normal}\n"
+    echo -ne "${blue}**************************************************************************${normal}\n"
+    echo -ne "\n($ME) - Enter Menu option or ${fgred}Q to exit -> ${normal}"
+	read opt
+}
+
+option_picked(){
+    msgcolor=`echo -e "\033[01;31m"` # bold red
+    normal=`echo -e "\033[00;00m"` # normal white
+    message=${@:-"${normal}Error: No message passed"}
+    echo -e "${msgcolor}${message}${normal}\n"
+}
+
+echo -e "\033c"
+
+show_blue
+while [ -z $opt ] || [ $opt != '' ] 
+    do
+    if [ $opt = '' ]; then
+      exit;
+    else
+      case $opt in
+        0) echo -e "\033c";
+            option_picked "Option 0 - Advanced Backup...";
+            trap '' 2
+			$ON$VOLUME/apps/backup -a;
+            show_blue;
+        ;;
+        1) echo -e "\033c";
+            option_picked "Option 1 - VIM 199 km/h";
+            $thisdir/apps/vim -s 0 c7;
+            show_blue;
+        ;;
+        2) echo -e "\033c";
+            option_picked "Option 2 - VIM 6 km/h(Original)";
+            $thisdir/apps/vim -s 0 06;
+            show_blue;
+        ;;
+        3) echo -e "\033c";
+            option_picked "Option 3 - IFS-ROOT-Stage2 flash patched image";
+			$ON$VOLUME/apps/flash -p;
+            show_blue;
+        ;;
+        4) echo -e "\033c";
+            option_picked "Option 4 - IFS-ROOT-Stage2 revert to Backup image";
+			$ON$VOLUME/apps/flash -r;
+            show_blue;
+        ;;
+        5) echo -e "\033c";
+            option_picked "Option 5 - Copy FEC and EL to Unit";
+            $thisdir/apps/fecel -fec;
+            $thisdir/apps/fecel -el;
+            show_blue;
+        ;;
+        6) echo -e "\033c";
+            option_picked "Option 6 - Developer Menu activation";
+            $thisdir/apps/dmenu -a;
+            show_blue;
+        ;;
+		7) echo -e "\033c";
+            option_picked "Option 7 - CarPlay & Android Auto activation";
+            $thisdir/apps/carp -a;
+            show_blue;
+        ;;
+		8) echo -e "\033c";
+			option_picked "Option 8 - Ambient Light Buttons Original";
+			trap '' 2
+			$thisdir/apps/ambient -r;
+			show_blue;
+		;;
+		9) echo -e "\033c";
+			option_picked "Option 9 - Ambient Light Buttons patch";
+			trap '' 2
+			$thisdir/apps/ambient -p 0;
+			show_blue;
+		;;
+        f|F) echo -e "\033c";
+            option_picked "Option F - Fix SVM error";
+            $ON$VOLUME/apps/svm -f;
+            show_blue;
+        ;;
+        g|G) echo -e "\033c";
+            option_picked "Option G - Install M.I.B. in GEM";
+            $thisdir/apps/gem -i;
+            show_blue;
+        ;;
+        o|O) echo -e "\033c";
+            option_picked "Option O - Set OBD Status";
+            $thisdir/apps/obd -t;
+            show_blue;
+		;;
+        u|U) echo -e "\033c";
+            option_picked "Option U - Mount USB writeable";
+            $thisdir/apps/mounts -usb;
+            show_blue;
+        ;;
+        w|W) echo -e "\033c";
+            option_picked "Option W - Mountpoints writeable";
+            $thisdir/apps/mounts -w;
+            show_blue;
+        ;;
+        r|R) echo -e "\033c";
+            option_picked "Option R - Reboot Unit";
+			$thisdir/apps/reboot -t 10;
+            show_blue;
+        ;;
+        c|C) echo -e "\033c";
+            option_picked "Option C - cleanup Logs";
+            $thisdir/apps/cleanup -a;
+            show_blue;
+        ;;
+		s|S) echo -e "\033c";
+            option_picked "Option S - show Log";
+            $thisdir/apps/showlog -s;
+            show_blue;
+        ;;
+        h|H) echo -e "\033c";
+            option_picked "Option H - Help";
+            cat $thisdir/README.txt;
+            show_blue;
+        ;;
+		l|L) echo -e "\033c";
+			option_picked "Option L - GPL License";
+			echo "This program is free software; you can redistribute it and/or"
+			echo "modify it under the terms of the GNU General Public License"
+			echo "as published by the Free Software Foundation; either version 2"
+			echo "of the License, or (at your option) any later version."
+			echo ""
+			echo "This program is distributed in the hope that it will be useful,"
+			echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+			echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+			echo "See the GNU General Public License for more details."
+			echo ""
+			echo "You should have received a copy of the GNU General Public License"
+			echo "along with this program; if not, write to the Free Software Foundation,"
+			echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+			echo ""
+			show_blue;
+        ;;
+        q|Q)exit;
+        ;;
+        \n)exit;
+        ;;
+        *)echo -e "\033c";
+            option_picked "No option selected!";
+            show_blue;
+        ;;
+      esac
+    fi
+done
+
+exit 0

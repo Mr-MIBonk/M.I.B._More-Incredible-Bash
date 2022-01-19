@@ -1,0 +1,133 @@
+#!/bin/sh
+
+revision="ssh damon v0.1.1 (2021-02-22 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-i|-install) {
+
+	if [ -d $VOLUME/Toolbox/ ]; then
+		on -f mmx $VOLUME/Toolbox/scripts/sshd_install.sh
+		echo "sshd is now installed..."
+	else
+		echo "Toolbox folder not there!"
+	fi
+	
+	return 2> /dev/null
+
+	};;
+
+
+	-restart) {
+	
+	if [ -f /mnt/system/etc/pf.mlan0.conf ]; then
+		on -f mmx /mnt/app/armle/sbin/pfctl -F all -f /net/mmx/mnt/system/etc/pf.mlan0.conf
+		echo "Reloaded sshd with wlan rules."
+	fi
+	
+	return 2> /dev/null
+
+	};;
+
+
+	-rw) {
+
+	if [ -f /net/mmx/mnt/app/root/.profile ]; then
+		RW=`grep -i mount /net/mmx/mnt/app/root/.profile`
+		if [ $? != 0 ]; then
+			mount -uw /net/mmx/mnt/app
+			echo "/bin/mount -uw /net/mmx/fs/sda0 2>/dev/null" >> /net/mmx/mnt/app/root/.profile
+			echo "/bin/mount -uw /net/mmx/fs/sda1 2>/dev/null" >> /net/mmx/mnt/app/root/.profile
+			echo "/bin/mount -uw /mnt/app" >> /net/mmx/mnt/app/root/.profile
+			echo "/bin/mount -uw /mnt/system" >> /net/mmx/mnt/app/root/.profile
+			mount -ur /net/mmx/mnt/app
+			echo "root is now writable in ssh ;-)"
+		else
+			echo "writable root in ssh is already there..."
+		fi
+	else
+		echo "sshd is not installed!"
+	fi
+
+	return 2> /dev/null
+
+	};;
+
+
+	-u|-uninstall) {
+
+	mount -uw /net/mmx/mnt/app
+	mount -uw /net/mmx/mnt/system
+
+	rm -rf /net/mmx/mnt/app/eso/hmi/engdefs/scripts/ssh
+	rm -rf /net/mmx/mnt/app/root/scp*
+	rm -rf /net/mmx/mnt/app/root/.profile
+	rm -rf /net/mmx/mnt/app/root/.ssh
+	
+	mv -f /net/mmx/mnt/system/etc/inetd.conf.bu /net/mmx/mnt/system/etc/inetd.conf
+	for PF in /net/mmx/mnt/system/etc/pf*.conf ; do
+		if [ -f ${PF}.bu ]; then
+			mv -f ${PF}.bu ${PF}
+		fi
+	done
+	
+	mount -ur /net/mmx/mnt/app
+	mount -ur /net/mmx/mnt/system
+	echo "sshd now uninstalled!"
+
+	return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -i, -install 		install ssh damon"
+		echo "        -rw		 	mount root writable"
+		echo "        -u, -uninstall 		uninstall ssh damon"
+		echo "        -restart 		restart ssh damon"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+exit 0
+

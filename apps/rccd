@@ -1,0 +1,79 @@
+#!/bin/sh
+
+revision="rcc dump v0.1.3 (2021-10-02 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo $thisname" or reboot is already running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-d) {
+
+trap '' 2
+
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+. $thisdir/offset -log
+
+echo -ne "dump RCC to logs, that takes some seconds........." | $TEE -a $LOG
+[ -n "$GEM" ] && echo -ne "\n"
+cat /net/rcc/dev/fs0 > $thisdir/../backup/logs/$MUVERSION-$FAZIT"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE.rcc 2>> $LOG
+ERROR
+sleep 1
+[ -z "$GEM" ] && echo -ne "\n"
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -d	 		dump RCC"
+		echo "        --help		show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+
+	esac
+
+exit 0
+

@@ -1,0 +1,191 @@
+#!/bin/sh
+
+revision="Button_patch v0.1.2 (2021-02-25 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+ROOT_AMB="/net/mmx/mnt/app/eso/hmi/lsd/Resources/skin0/Data"
+DIR_AMB="GenericCarAdjuster/AmbianceLight"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo $thisname" or reboot is already running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+# TODO: add check based on long coding byte 0,1,2 to confirm O3
+
+	-p|-patch) {
+
+if [ ! -z $2 ] && [ -d $thisdir/../mod/ambient/$2 ]; then
+MAGIC="mod/ambient/$2"
+else
+echo -ne "No patch available for this paramter\n" 2>&1 | $TEE -a $LOG
+exit 0
+fi
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+$thisdir/mounts -w
+echo -ne "MOD_"$2" is now being patched...\n" 2>&1 | $TEE -a $LOG
+MOD=$($SHA $thisdir/../$MAGIC/* | awk '{ print $1}')
+if [ -d $ROOT_AMB ]; then
+for FOUND in $ROOT_AMB/*
+do
+	if [ -d $FOUND ]; then
+		echo -e "\n"$FOUND | awk -F"/" '{print $NF}' 2>&1 | $TEE -a $LOG
+		if [ -d $FOUND/$DIR_AMB/ ]; then
+			COUNT=0
+			while [ ${COUNT} -lt 2 ]
+			do
+				HASH=$($SHA "$FOUND/$DIR_AMB/$COUNT.gca" | awk '{ print $1}')
+				if [ -f $FOUND/$DIR_AMB/$COUNT.gca ]; then
+					if [[ $MOD != *"$HASH"* ]]; then
+						if [ -f $thisdir/../$MAGIC/$HASH.gca ]; then
+							# check if bck is already there....
+							if [ ! -f $FOUND/$DIR_AMB/$COUNT.bck ];then
+							mv $FOUND/$DIR_AMB/$COUNT.gca $FOUND/$DIR_AMB/$COUNT.bck
+							fi
+							cp -rf $thisdir/../$MAGIC/$HASH.gca $FOUND/$DIR_AMB/$COUNT.gca
+							echo "_"$COUNT" patch done :-)" 2>&1 | $TEE -a $LOG
+						else
+							echo "_"$COUNT" checksum failed..." 2>&1 | $TEE -a $LOG
+						fi
+					else
+						echo "_"$COUNT" already patched :-)" 2>&1 | $TEE -a $LOG
+					fi
+				else
+					echo "_"$COUNT" is missing..." 2>&1 | $TEE -a $LOG
+				fi
+			COUNT=$(($COUNT+1))
+			done
+		else
+			echo "_directory is missing..." 2>&1 | $TEE -a $LOG
+		fi
+	fi
+done
+echo -e "\n ---> be happy ;-)\n" 2>&1 | $TEE -a $LOG
+else
+	echo -e "_nothing found!\n" 2>&1 | $TEE -a $LOG
+fi
+
+$thisdir/mounts -r
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+
+	-r|-restore) {
+
+trap '' 2
+[ -n "$GEM" ] && touch $TMP/$thisname.mib
+$thisdir/mounts -w
+echo -ne "now being restored it...\n" 2>&1 | $TEE -a $LOG
+if [ -d $ROOT_AMB ]; then
+for FOUND in $ROOT_AMB/*
+do
+	if [ -d $FOUND ]; then
+		echo -e "\n"$FOUND | awk -F"/" '{print $NF}' 2>&1 | $TEE -a $LOG
+		if [ -d $FOUND/$DIR_AMB ]; then
+			COUNT=0
+			while [ ${COUNT} -lt 2 ]
+			do
+				if [ -f $FOUND/$DIR_AMB/$COUNT.gca ] && [ -f $FOUND/$DIR_AMB/$COUNT.bck ]; then
+					mv $FOUND/$DIR_AMB/$COUNT.bck $FOUND/$DIR_AMB/$COUNT.gca 2> /dev/null
+					echo "_"$COUNT" restore done :)" 2>&1 | $TEE -a $LOG
+				else
+					echo "_"$COUNT" nothing to restore..." 2>&1 | $TEE -a $LOG
+				fi
+			COUNT=$(($COUNT+1))
+			done
+		else
+			echo "_directory is missing..." 2>&1 | $TEE -a $LOG
+		fi
+	fi
+done
+echo -e "\n ---> don't worry ;-)\n" 2>&1 | $TEE -a $LOG
+else
+	echo -e "_nothing found!\n" 2>&1 | $TEE -a $LOG
+fi
+
+$thisdir/mounts -r
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+
+	-b|-backup) {
+
+trap '' 2
+touch $TMP/$thisname.mib
+if [ -d $ROOT_AMB ]; then
+	echo -ne "Backup Skin files..." | $TEE -i -a $LOG
+	mkdir -p $thisdir/../logs/$MUVERSION-$FAZIT/
+	cp -rf $ROOT_AMB/* $thisdir/../logs/$MUVERSION-$FAZIT/ 2>> $LOG
+	ERROR
+	sleep 1
+	echo -ne "\n\n" | $TEE -i -a $LOG
+fi
+
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -p, -patch [Num]	patch the Files"
+		echo "        -r, -restore		restore the files"
+		echo "        -b, -backup		backup the files"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+	};;
+
+	esac
+
+exit 0
+

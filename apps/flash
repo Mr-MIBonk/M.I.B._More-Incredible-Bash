@@ -1,0 +1,182 @@
+#!/bin/sh
+
+revision="flash v0.1.4 (2021-09-28 by MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
+	echo $thisname" or reboot is already running..."
+	return 2> /dev/null
+fi
+
+function IFSstage2 {
+
+if [ -f "$IFS2" ]; then
+	[ -z "$GEM" ] && echo -ne "\033[33m"
+	[ -z "$GEM" ] && echo -ne "\n"
+	echo -ne "Do NOT power down the unit while flashing!\n"
+	echo -ne "Do NOT remove the SD-card/USB stick!\n"
+	[ -z "$GEM" ] && echo -ne "You have 10 seconds before flashing will start...\n"
+	[ -z "$GEM" ] && echo -ne "\033[31m"
+	[ -z "$GEM" ] && echo -ne "\nPress CTRL+C to abort!!!\n\n"
+	[ -z "$GEM" ] && echo -ne "\033[00;00m"
+	[ -z "$GEM" ] && echo -ne "10 seconds left..."
+	COUNTER=9
+	while [  $COUNTER -gt -1 ]; do
+		sleep 1
+		[ -z "$GEM" ] && echo -ne "$COUNTER..."
+		let COUNTER=COUNTER-1
+	done
+	[ -z "$GEM" ] && echo -ne "\033[31m"
+	[ -z "$GEM" ] && echo -ne "\n\n"
+	echo -ne "Flashing will now start from $OFFSETPART2, this take some minutes."
+	[ -z "$GEM" ] && echo -ne "\n"
+	echo -ne "\nDO NOT INTERRUPT!\n"
+	[ -z "$GEM" ] && echo -ne "\033[00;00m"
+	echo -ne "\n" >> $LOG
+	/usr/bin/flashunlock >> $LOG
+	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
+	[ -z "$GEM" ] && echo -ne "\n" >> $LOG
+	trap '' 2
+	if [[ "$OFFSETPART2" = "ba0000" ]]; then
+		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+		/usr/bin/flashit -v -d -a ba0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
+	elif [[ "$OFFSETPART2" = "c20000" ]]; then
+		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+		/usr/bin/flashit -v -d -a c20000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
+	elif [[ "$OFFSETPART2" = "c00000" ]]; then
+		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+		/usr/bin/flashit -v -d -a c00000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
+	else
+		/usr/bin/flashlock | $TEE -i -a $LOG
+		echo -ne "\nFlash offset invalid, flashing aborted!\n\n" | $TEE -i -a $LOG
+		rm -rf $TMP/$thisname.mib 2>/dev/null
+		exit 0
+	fi
+	trap 2
+	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
+	/usr/bin/flashlock | $TEE -i -a $LOG
+	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
+else
+	echo -ne "\nNo Flashfiles there!\n\n" | $TEE -i -a $LOG
+	echo -ne "Please check if unit is already patched.\n"
+	echo -ne "Patch can only be applied to stock Firmware.\n\n"
+	echo -ne "You can go back now...\n"
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	exit 0
+fi
+rm -rf $TMP/$thisname.mib 2>/dev/null
+
+}
+
+
+	case $1 in
+
+	-p|-patch) {
+
+trap '' 2
+	[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+if [ $ME != "RCC" ]; then
+	echo -ne "\nBackup will only work in RCC bash!\n\n"
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	exit 0
+fi
+
+. $thisdir/backup -a
+
+if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ] || [ ! -f $BACKUPFOLDER/FEC/FecContainer.fec ]; then
+	echo -ne "\n" >> $LOG
+	echo -ne "Backup is not complete, do flash update is not save!!!\n\n" | $TEE -i -a $LOG
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	exit 0
+fi
+
+# flash Patch...
+IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
+echo -ne "\n" >> $LOG
+echo -ne "search File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
+
+IFSstage2
+
+. $thisdir/rccd -d
+. $thisdir/fecel -fec
+. $thisdir/fecel -el
+. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+	};;
+
+
+	-r|-restore) {
+
+trap '' 2
+	[ -n "$GEM" ] && touch $TMP/$thisname.mib
+
+if [ $ME != "RCC" ]; then
+	echo -ne "\nBackup will only work in RCC bash!\n\n"
+	rm -rf $TMP/$thisname.mib 2>/dev/null
+	exit 0
+fi
+
+. $thisdir/offset -log
+
+# flash back to Original...
+IFS2=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
+echo -ne "search "$FAZIT" Backup File "$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs\n" | $TEE -i -a $LOG
+
+IFSstage2
+
+. $thisdir/fecel -b
+. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -p, -patch 		flash patch"
+		echo "        -r, -restore 		flash original"
+		echo "        --help			show this help"
+		echo ""
+		echo "Note: Flash will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

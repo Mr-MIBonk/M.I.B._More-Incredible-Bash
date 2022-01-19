@@ -1,0 +1,73 @@
+[common]
+vendor = "ESO"
+variant = "FMU-H-*-*-*"
+variant2 = "FM2-*-*-*-*"
+variant3 = "QC2-*-*-*-*"
+variant4 = "FMQ-*-*-*-*"
+region = "RoW"
+MetafileChecksum = "37259e4758d7c843f316aaaa306cced5211049cf"
+
+[common_Release_1]
+variant = "FMU-H-*-*-*"
+region = "RoW"
+name = "MIB1 navigation database"
+path = "./Mib1"
+
+[common_Release_2]
+variant = "FM2-*-*-*-*"
+variant2 = "QC2-*-*-*-*"
+variant3 = "FMQ-*-*-*-*"
+region = "RoW"
+name = "MIB2 navigation database"
+path = "./Mib2"
+
+[Signature]
+signature1 = "11583e2be1780d5ee04eb62c71e0d2f1"
+signature2 = "dab4162103aaf3a6497f8fd30e97c290"
+signature3 = "ee7d5c8d35bf53c29a8bbc2474c42175"
+signature4 = "ba89fea84694df7b8c3da7de41b82da6"
+signature5 = "cb39043600b6de3fe728adcba7148652"
+signature6 = "b6b7989079d3f2f44bcec54ef59212a2"
+signature7 = "133f9224b6bcc4492e6818b1475a7d83"
+signature8 = "0dde6b0489314cf4924be9e2e91db990"
+
+[common]
+skipSaveTrainName = "true"
+vendor = "MIBonk"
+skipCheckSignatureAndVariant = "true"
+region = "Europe"
+region2 = "RoW"
+region3 = "USA"
+region4 = "Japan"
+region5 = "China"
+region6 = "Taiwan"
+variant = "FM?-*-*-*-*"
+release = "M.I.B. Launcher V1.0"
+skipMetaCRC = "true"
+skipFileCopyCrc = "true"
+skipCheckVariant = "true"
+skipCheckRegion = "true"
+FinalScript = "./Launcher/final/finalScript.sh"
+FinalScriptChecksum = "ba391875e14a8794b683cc02556990fcb555fe08"
+FinalScriptMaxTime = "120"
+FinalScriptName = "Final Script"
+
+[Launcher\final\Dir]
+FileSize = "654"
+CheckSum = "55ac779018318461a4d0a56e8dc5bf9c86238eab"
+
+[Launcher]
+VendorInfo = "MIBonk"
+DeviceDescription = "M.I.B.-Launcher"
+DownloadGroup = "Launcher"
+
+[Launcher\version\0\default\File]
+CheckSumSize = "524288"
+CheckSum = "dd0d39ca3e257d4a71d59c3508afee5b0dc0ebdf"
+FileSize = "29"
+Version = "1"
+Source = "../../MIB"
+Destination = "/HBpersistence/SWDL/Log/service/MIB"
+DisplayName = "M.I.B.-Launcher"
+DeleteDestinationDirBeforeCopy = "false"
+UpdateOnlyExisting = "false"

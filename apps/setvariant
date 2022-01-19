@@ -1,0 +1,192 @@
+#!/bin/sh
+
+# esd setvariant v0.1.0 (2021-12-10 by MIB-Wiki)
+
+export PATH=.:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/lib:/mnt/app/root/lib-target:/eso/lib:/mnt/app/usr/lib:/mnt/app/armle/lib:/mnt/app/armle/lib/dll:/mnt/app/armle/usr/lib
+unset LD_PRELOAD
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+	case $1 in
+
+	-var) {
+
+trap '' 2
+
+echo -ne "Variant_1 will be generated from Variant_2 coding on unit\n"
+echo -ne "Variant Information can be changed in GEM\n\n"
+echo -ne "Result will be written to eeprom\n\n"
+
+#Type
+VARTYPE="$(on -f mmx $PC i:0x286f058c:4)"
+#Telephone 0/1
+#VARTEL="$(on -f mmx $PC i:0x286f058c:5)"
+#Navigation EU
+VARNAV="$(on -f mmx $PC i:0x286f058c:6)"
+#DAB 0/1
+VARDAB="$(on -f mmx $PC i:0x286f058c:7)"
+#sirius 0/1
+VARSIR="$(on -f mmx $PC i:0x286f058c:8)"
+# LTE 0/1
+VARLTE="$(on -f mmx $PC i:0x286f058c:17)"
+# region EU
+VARREG="$(on -f mmx $PC i:0x286f058c:9)"
+#error handler for variant_1
+VARERROR=0
+
+if [ $VARTYPE = 1 ]; then #High
+	VARTYPE="48 "
+elif [ $VARTYPE = 4 ]; then #Premium
+	VARTYPE="50 "
+else
+	echo -ne "Type unknown\n" | $TEE -i -a $LOG
+	VARTYPE=""
+	VARERROR=1
+fi
+
+#if [ $VARTEL = 1 ]; then #ENABLED
+#	VARTEL="54 "
+#elif [ $VARTEL = 0 ]; then #OFF
+#	VARTEL=""
+#else
+#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
+#	VARTEL=""
+#	VARERROR=1
+#fi
+
+if [ $VARNAV = 1 ]; then #ENABLED
+	VARNAV="4e "
+elif [ $VARNAV = 0 ]; then #OFF
+	VARNAV=""
+else
+	echo -ne "Navigation status unknown\n" | $TEE -i -a $LOG
+	VARNAV=""
+	VARERROR=1
+fi
+
+if [ $VARDAB = 1 ]; then #ENABLED
+	VARDAB="44 "
+elif [ $VARDAB = 0 ]; then #OFF
+	VARDAB=""
+else
+	echo -ne "DAB status unknown\n" | $TEE -i -a $LOG
+	VARDAB=""
+	VARERROR=1
+fi
+
+if [ $VARSIR = 1 ]; then #ENABLED
+	VARSIR="53 "
+elif [ $VARSIR = 0 ]; then #OFF
+	VARSIR=""
+else
+	echo -ne "Sirius status unknown\n" | $TEE -i -a $LOG
+	VARSIR=""
+	VARERROR=1
+fi
+
+if [ $VARLTE = 1 ]; then #ENABLED
+	VARLTE="4c "
+elif [ $VARLTE = 0 ]; then #OFF
+	VARLTE=""
+else
+	echo -ne "LTE status unknown\n" | $TEE -i -a $LOG
+	VARLTE=""
+	VARERROR=1
+fi
+
+	case $VARREG in
+	1) VARREG="45 52 " ;; #ER
+	2) VARREG="45 55 " ;; #EU
+	3) VARREG="55 53 " ;; #US
+	4) VARREG="52 57 " ;; #RW
+	5) VARREG="43 4e " ;; #CN
+	6) VARREG="4a 50 " ;; #JP
+	7) VARREG="4B 52 " ;; #KR
+	8) VARREG=""		  #Asia?
+		echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
+		VARERROR=1 ;;
+	9) VARREG="54 57 " ;; #TW
+	*) VARREG=""
+		echo -ne "Region unknown\n" | $TEE -i -a $LOG
+		VARERROR=1 ;;
+		esac
+
+#build variant 1 string
+#TNDL in Variant_2 is LND in Variant_1 - no T and order is different
+EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
+
+#echo $EVAR
+
+if [ $VARERROR = 0 ]; then
+	echo -ne "---- Read original Variant_1 from unit\n" >> $LOG
+	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
+	echo -ne "---- Clean Variant - 13 bytes 00\n" >> $LOG
+	on -f rcc /usr/apps/modifyE2P w ba 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
+	echo -ne "---- Write Variant_1\n" | $TEE -i -a $LOG
+	on -f rcc /usr/apps/modifyE2P w ba $EVAR  | $TEE -i -a $LOG
+	echo -ne "---- Read Variant_1 back for log\n" >> $LOG
+	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
+	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
+	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
+	AVAR=$(echo "$EVAR" | $XXD -r -p)
+	echo -ne "\nNew Variant_1: "$AVAR"\n"	
+	echo -ne "\nReboot unit to apply changes\n"
+else
+	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
+	echo -ne "Check messages above\n"
+	echo -ne "No changes to Variant_1 will be applied\n\n" | $TEE -i -a $LOG
+fi
+
+
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -var			set variant_1"
+		echo "        --help			show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

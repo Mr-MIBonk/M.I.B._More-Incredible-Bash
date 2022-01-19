@@ -1,0 +1,54 @@
+# LOGS settings v0.1.1 (2021-12-29 by MIBonk)
+#
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software Foundation,
+#Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# set logs...
+LOG="$thisdir/../backup/logs/$MUVERSION-$FAZIT.log"
+if [ ! -f $LOG ]; then
+	mkdir -p $thisdir/../backup/logs
+	cat $thisdir/../config/LOGO > $LOG
+	if [ -z $MODELID ]; then
+		. $thisdir/../config/LOCALS > /dev/null
+	fi
+	echo $VERSION >> $LOG
+	echo -ne "______________________________________________________________________\n" >> $LOG
+	echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
+	echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
+	echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
+	echo -ne "Variant: $VARIANT\n" >> $LOG	
+	echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
+	echo -ne "Dataset Version: $DATASETV\n" >> $LOG
+	echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
+	echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
+	if [ ! -f $thisdir/../backup/$BACKUPFOLDER/$MUVERSION.log ]; then
+		mkdir -p $BACKUPFOLDER
+		cp -rf $LOG $BACKUPFOLDER/$MUVERSION.log
+	fi
+    echo -ne "\n ls --> " >> $LOG
+    ls -als $thisdir/.. >> $LOG
+    echo -ne "\n"
+fi
+
+ERROR() {
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+  echo -ne " -> done :-)\n" | $TEE -a $LOG
+else
+  echo -ne " -> failed!\n"| $TEE -a $LOG
+fi
+}
+
+return 2> /dev/null
+

@@ -1,0 +1,29 @@
+# LOCALS v0.1.0 (2021-12-29 by MIB-Wiki)
+#
+#This program is free software; you can redistribute it and/or
+#modify it under the terms of the GNU General Public License
+#as published by the Free Software Foundation; either version 2
+#of the License, or (at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software Foundation,
+#Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+# set locals
+	MODELID=$($PERSR 0 4101 2> /dev/null | cut -b 1-6)
+	MODEL=$(grep -e $MODELID $VOLUME/mod/model_db/MODEL_DB 2> /dev/null | cut -b 8-60)
+	PARTNO="$($PERSR 0 3221291025 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+	COMPONENT="$($PERSR 0 3221291026 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+	VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+	DATASETV="$($PERSR 0 3221291018 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"	
+	VINCAR="$(on -f mmx $PC s:1501:30 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
+	VINMIB="$(on -f mmx $PC s:1501:5 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
+	HWNO="$($PERSR 0 3221291023 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+
+return 2> /dev/null

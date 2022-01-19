@@ -1,0 +1,186 @@
+#!/bin/sh
+
+revision="Skoda Canton Amp v0.1.1 (2021-11-15 by MIBonk & Mib-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+AMP="$(on -f mmx $PC i:0:0x50182CFF)"
+DSPERS="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)"
+DSMIB1="004064f70009f70009f70009000000f70009000000f700090000000003070100001e262e373f474f5764707d8995a6b6c7dbf03331a57f"
+DSMIB2="004073f70009f70009f70009000000f70009000000f70009f700090003070000001e262e373f474f5764707d8995a6b6c7dbf03831c894"
+
+# TODO: add check based on long coding byte 0,1,2 to confirm O3
+
+if [[ "$TRAINVERSION" = *SKG* ]]; then
+VALUE=$1
+else
+VALUE="-stop"
+echo -ne "CANTON not possible, unit is not SKODA!\n" | $TEE -a $LOG
+return 2> /dev/null
+fi
+
+if [ "$AMP" = 2 ]; then
+echo -ne "External sound system coding found!\n" | $TEE -a $LOG
+else
+echo -ne "No external sound system coding found!\n" | $TEE -a $LOG
+fi
+
+	if [ -f $TMP/reboot.mib ]; then
+		echo "Reboot running..."
+		return 2> /dev/null
+	fi
+
+
+	case $VALUE in
+
+	-mib1) {
+
+trap '' 2
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Install CANTON dataset for old MIB1 system\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\033[m"
+
+  if [ "$DSPERS" = "$DSMIB2" ]; then
+	echo -ne "MIB2 CANTON dataset found on unit\n" | $TEE -a $LOG
+	echo -ne "Installing MIB1 CANTON dataset\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221422112 $DSMIB1 2>> $LOG
+	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "DONE\n" | $TEE -a $LOG
+	trap 2
+	. $thisdir/reboot -t 10
+	else
+		echo -ne "No MIB2 CANTON dataset found on unit\n" | $TEE -a $LOG
+		echo -ne "Go BACK\n" | $TEE -a $LOG
+		trap 2
+	fi	
+
+return 2> /dev/null
+
+	};;
+
+	-mib2) {
+
+trap '' 2
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Install CANTON dataset for new MIB2 system\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\033[m"
+
+  if [ "$DSPERS" = "$DSMIB1" ]; then
+	echo -ne "MIB1 CANTON dataset found on unit\n" | $TEE -a $LOG
+	echo -ne "Installing MIB2 CANTON dataset\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221422112 $DSMIB2 2>> $LOG
+	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "DONE\n" | $TEE -a $LOG
+	trap 2
+	. $thisdir/reboot -t 10
+	else
+		echo -ne "No MIB1 CANTON dataset found on unit\n" | $TEE -a $LOG
+		echo -ne "Go BACK\n" | $TEE -a $LOG
+		trap 2
+	fi	
+
+return 2> /dev/null
+
+	};;
+
+	-fwmib1) {
+
+trap '' 2
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Force install CANTON dataset from MIB1\n" | $TEE -a $LOG
+echo -ne "enable external sound system coding\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\033[m"
+on -f mmx $PC b:0:3221422112 $DSMIB1 2>> $LOG
+on -f mmx $PC i:0:0x50182CFF 2 2>> $LOG
+on -f mmx $PC b:0:1 0 2>> $LOG
+echo -ne "DONE\n" | $TEE -a $LOG
+trap 2
+
+. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+	};;
+
+	-fwmib2) {
+
+trap '' 2
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Force install CANTON dataset from MIB2\n" | $TEE -a $LOG
+echo -ne "enable external sound system coding\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\033[m"
+on -f mmx $PC b:0:3221422112 $DSMIB2 2>> $LOG
+on -f mmx $PC i:0:0x50182CFF 2 2>> $LOG
+on -f mmx $PC b:0:1 0 2>> $LOG
+echo -ne "DONE\n" | $TEE -a $LOG
+trap 2
+
+. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+	};;
+
+	-stop) {
+
+trap '' 2
+
+[ -z "$GEM" ] && echo -ne "\033[36m"
+echo -ne "Go BACK\n" | $TEE -a $LOG
+[ -z "$GEM" ] && echo -ne "\033[m"
+
+trap 2
+
+return 2> /dev/null
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -mib1 			Canton DS Mib1"
+		echo "        -mib2 			Canton DS Mib2"
+		echo "        -fwmib1 			force write Canton DS Mib1"
+		echo "        -fwmib2 			force write Canton DS Mib2"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
