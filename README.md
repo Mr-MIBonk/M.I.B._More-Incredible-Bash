@@ -34,7 +34,7 @@
 - No need to change FECContainer.fec with WhatTheFec tool. Original FECs in container will continue to work even without patch on unit.
 - It is recommended to switch to this method and replace existing ExceptionList.txt with original (empty) versions.
 - Just run "Add new Fecs to FecContainer.fec" script in M.I.B -> PATCH.
-### M.I.B in Green Engineering Menu - GEM:
+### M.I.B. in Green Engineering Menu - GEM:
 - Insert the SD card into slot SD1 of your MHI2 unit.
 - Enter Engineering/Red Menu to start SW Update. Select UPDATE, select SD card, select "M.I.B. Launcher V1.0", START update.
 - Installtion of M.I.B. on your Unit will start. The unit will restart three time until update process is finished.
