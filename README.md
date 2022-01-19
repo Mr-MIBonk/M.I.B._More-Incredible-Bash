@@ -2,6 +2,11 @@
 
 ![GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/GEM.png)
 
+NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF!
+
+M.I.B. is distributed under the GNU General Public License v2.0.
+See [LICENSE](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/LICENSE) for more information.
+
 ## NOTE:
 - M.I.B. is running on Harman MHI2(Q) units (MIB 2.x) only.
 - Minimum requirement to run M.I.B. in GEM is GEM version 4.1+.
