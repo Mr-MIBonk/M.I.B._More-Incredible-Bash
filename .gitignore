@@ -1,3 +1,6 @@
 # Ignoring directories
 Toolbox/
 patches/MHI*/
+
+# Ignoring files
+patches/[Ii]nfo.txt
