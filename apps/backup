@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backup v0.3.0 (2021-10-27 by MIBonk & MIB-Wiki)"
+revision="backup v0.3.1 (2022-01-03 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -25,6 +25,19 @@ if [ "$1" = "-b" ]; then
 else
 	AB=""
 fi
+
+# ------------------------
+# run tests
+if [ "$1" = "-a" ]; then
+	if [ -f $thisdir/beta ]; then
+		echo -ne "\n\n---------------- Running some tests ----------------\n"
+		$thisdir/beta > /dev/null
+		echo -ne "\n                   --- DONE ---\n"
+		echo -ne "\n--- Please upload your backup to mibsolution.one ---\n\n"
+		sleep 3
+	fi
+fi
+# ------------------------
 
 B2NAND() {
 

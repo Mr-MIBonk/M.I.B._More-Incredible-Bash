@@ -1,0 +1,43 @@
+#!/bin/sh
+
+revision="test v0.1.0 (2021-12-15  Mib-Wiki)"
+# this script contains some stuff which is currently under testing in M.I.B
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS > /dev/null
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+BETA() {
+
+# place test script below here ------------------------------------------
+
+echo -ne "\n----- Test persistence binaries\n"
+on -f mmx $PC s:30:1966084
+$PERSR 0 3221291024
+echo -ne "----- Test hex2ascii\n"
+H="48656C6C6F20576F726C6421"
+on -f mmx $VOLUME/apps/hex2ascii -convert $H
+echo -ne "XXD: "$(echo $H | $XXD -r -p)"\n"
+echo -ne "----- EEPROM export\n"
+S="3a0"
+L="14"
+A=$(on -f rcc /usr/apps/modifyE2P r $S $L | /net/mmx/fs/sda0/apps/sbin/beta/sed -rn 's/^0x\S+\W+(.*?)$/\1/pg' | /net/mmx/fs/sda0/apps/sbin/beta/sed -r 'H;1h;$!d;x;s/[\x0a\x0d\x20]//g' | /net/mmx/fs/sda0/apps/sbin/beta/xxd -r -p)
+echo -ne $A"\n"
+echo -ne "----- micropython\n"
+/net/mmx/fs/sda0/apps/sbin/beta/micropython -c "print('Hello World!')" #> mpy_test.log
+echo -ne "-------------------------------\n"
+# place test script above here ------------------------------------------
+
+}
+
+BETA | $TEE -i $BACKUPFOLDER/$MUVERSION-test.txt
+
+#exit 0
