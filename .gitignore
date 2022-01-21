@@ -6,4 +6,4 @@ patches/MHI*/
 patches/[Ii]nfo.txt
 backup/logs/*
 backup/MU*
-
+*.bak
