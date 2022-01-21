@@ -203,7 +203,7 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_all.sh"
-	label   "all - app/adb/gndb/bb/system | 15+ min"
+	label   "all - standard backup/app/adb/gndb/bb/system | 15+ min"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_app.sh"
@@ -922,7 +922,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Set region for Navigation and SDS"
+	label 	"1. Select navigation region to activate:"
 	poll    0
 
 script
@@ -932,10 +932,18 @@ script
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_2.sh"
     label   "Enable NAR navigation"
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_4.sh"
+    label   "Enable KR navigation"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
     label   "Enable Australia navigation"
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
+	label   "2. Write Navigation to Variant_1 in eeprom"
 
 keyValue
     value   String sys 0x00000000 0
@@ -1758,7 +1766,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-	label	"for details on availavle screens for your FW"
+	label	"for details on available screens for your FW"
 	poll    0
 
 keyValue

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Fix SVM Error v0.1.5 (2021-04-02 by MIBonk)"
+revision="Fix SVM Error v0.1.6 (2021-04-02 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -10,7 +10,7 @@ export IPL_CONFIG_DIR=/etc/eso/production
 thisname="$(basename $0)"
 thisdir="$(dirname $0)"
 
-SWDL="/net/rcc/mnt/efs-persist/SWDL/Log/"
+SWDL="/net/rcc/mnt/efs-persist/SWDL/Log"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
@@ -130,8 +130,8 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -f, -fix 			fix SVM"
-		echo "        -r, -read 		read SVM"
+		echo "        -f, -fix		fix SVM"
+		echo "        -r, -read		read SVM"
 		echo "        --help			show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"

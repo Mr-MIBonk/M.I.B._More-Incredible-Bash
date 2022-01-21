@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backup v0.3.1 (2022-01-03 by MIBonk & MIB-Wiki)"
+revision="backup v0.3.1 (2021-10-27 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -32,8 +32,8 @@ if [ "$1" = "-a" ]; then
 	if [ -f $thisdir/beta ]; then
 		echo -ne "\n\n---------------- Running some tests ----------------\n"
 		$thisdir/beta > /dev/null
-		echo -ne "\n                   --- DONE ---\n"
-		echo -ne "\n--- Please upload your backup to mibsolution.one ---\n\n"
+		echo -ne "\n                   --- TEST DONE ---\n"
+		echo -ne "\n--- Backup continues ---\n\n"
 		sleep 3
 	fi
 fi
@@ -63,7 +63,7 @@ B2NAND() {
 			echo -ne " -> part 1 failed :-("
 		fi
 	else
-		echo -ne " -> Backup is already there!" | $TEE -i -a $LOG
+		echo -ne " -> Backup part 1 is already there!" | $TEE -i -a $LOG
 	fi
 	if [ ! -f $NAND/$MUVERSION-RCC_fs0.bin ]; then
 		if [[ $SEIZE -gt 150000 ]]; then
@@ -75,7 +75,7 @@ B2NAND() {
 			echo "not enough space on NAND - only "$SEIZE" kbytes left" | $TEE -i -a $LOG
 		fi
 	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+		echo -ne " -> Backup part 2 is already there!\n" | $TEE -i -a $LOG
 	fi
 
 	echo -ne "\nls -als /net/mmx/mnt/boardbook --> " >> $LOG
@@ -146,6 +146,18 @@ if [ -z $AB ]; then
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 fi
+
+#if [ -z $AB ]; then
+#	echo -ne "GEM Menu........." | $TEE -i -a $LOG
+#	if [ ! -d $BACKUPFOLDER/engdefs ]; then
+#		mkdir -p $BACKUPFOLDER/engdefs
+#		cp -r /net/mmx/mnt/app/eso/hmi/engdefs/* $BACKUPFOLDER/engdefs/ 2>> $LOG
+#		ERROR
+#		sleep 1
+#	else 
+#		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+#	fi
+#fi
 
 echo -ne "Version info....." | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/$MUVERSION-version.txt ]; then
@@ -220,6 +232,9 @@ if [ ! -f $BACKUPFOLDER/$MUVERSION-folders.txt ]; then
 	echo -ne "ls -alv /net/mmx/mnt/system/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 	df -h /net/mmx/mnt/system  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 	ls -alv /net/mmx/mnt/system/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	echo -ne "ls -alv /net/mmx/mnt/navdb/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	df -h /net/mmx/mnt/navdb  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
+	ls -alv /net/mmx/mnt/navdb/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 	echo -ne "ls -alv /net/rcc/usr/apps/\n" >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 	df -h /net/rcc/usr/apps  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 	ls -alv /net/rcc/usr/apps/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
@@ -264,6 +279,15 @@ echo -ne "Shadow files....." | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/$MUVERSION-shadow ] || [ ! -f $BACKUPFOLDER/$MUVERSION-shadow_rcc ]; then
 	cp -r /net/rcc/etc/shadow_rcc $BACKUPFOLDER/$MUVERSION-shadow_rcc 2>> $LOG
 	cp -r /net/rcc/etc/shadow $BACKUPFOLDER/$MUVERSION-shadow 2>> $LOG
+	ERROR
+	sleep 1
+else
+	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+fi
+
+echo -ne "lsd.jxe....." | $TEE -i -a $LOG
+if [ ! -f $BACKUPFOLDER/$MUVERSION-lsd.jxe ]; then
+	on -f mmx cp -r /net/mmx/ifs/lsd.jxe $BACKUPFOLDER/$MUVERSION-lsd.jxe 2>> $LOG
 	ERROR
 	sleep 1
 else

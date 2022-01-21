@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd setregeu v0.1.0 (2021-09-17 by MIB-Wiki)
+# esd setregeu v0.1.1 (2021-09-17 by MIB-Wiki)
 
 export PATH=.:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
 export LD_LIBRARY_PATH=/lib:/mnt/app/root/lib-target:/eso/lib:/mnt/app/usr/lib:/mnt/app/armle/lib:/mnt/app/armle/lib/dll:/mnt/app/armle/usr/lib
@@ -173,9 +173,9 @@ mount -uw /net/rcc/mnt/efs-persist
 			#   "Asia" 8
 			#   "Taiwan" 9
 			sleep 1
-		echo -ne "switch variant feature byte type to High\n"
-		on -f mmx $PC i:0x286f058c:4 1
-			sleep 1
+		#echo -ne "switch variant feature byte type to High\n"
+		#on -f mmx $PC i:0x286f058c:4 1
+		#	sleep 1
 		echo -ne "disable variant feature byte sirius\n"
 		on -f mmx $PC i:0x286f058c:8 0
 			sleep 1

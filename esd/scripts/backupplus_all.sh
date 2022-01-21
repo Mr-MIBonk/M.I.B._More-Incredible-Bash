@@ -24,8 +24,9 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-echo "Running multiple backups now: app/adb/gndb/bb/system"
+echo "Running multiple backups now: standard backup/app/adb/gndb/bb/system"
 echo "This will take 15+ min in total"
+on -f rcc /net/mmx/fs/sda0/apps/backup -b
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -adb
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -app
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -gndb
