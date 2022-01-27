@@ -203,7 +203,7 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_all.sh"
-	label   "all - standard backup/app/adb/gndb/bb/system | 15+ min"
+	label   "all - standard backup/app/gndb/bb/system | 15+ min"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_app.sh"
