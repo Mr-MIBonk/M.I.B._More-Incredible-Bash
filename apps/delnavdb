@@ -1,12 +1,11 @@
 #!/bin/sh
 
-# esd delnavdb v0.1.0 (2021-09-28 by MIB-Wiki)
+revision="delnavdb v0.1.1 (2022-01-27 by MIB-Wiki)"
+# use --help for more info
 
-trap '' 2
-
-export PATH=.:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
-export LD_LIBRARY_PATH=/lib:/mnt/app/root/lib-target:/eso/lib:/mnt/app/usr/lib:/mnt/app/armle/lib:/mnt/app/armle/lib/dll:/mnt/app/armle/usr/lib
-unset LD_PRELOAD
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
 
 thisname="$(basename $0)"
 thisdir="$(dirname $0)"
@@ -21,6 +20,8 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
+trap '' 2
+
 	case $1 in
 
 	-d) {
@@ -31,14 +32,16 @@ if [[ "$TRAINVERSION" = *MHI2Q* ]]; then
 	echo -ne "MHI2Q unit not supported\n" | $TEE -i -a $LOG
 	echo -ne "will stop here - go back\n"
 else
-	umount -f /mnt/navdb
-	echo "y" | mkqnx6fs -T media -b 32768 -i 32768 /dev/mnand0t178.8 2>> $LOG
+	on -f mmx umount -f /mnt/navdb
+	on -f mmx echo "y" | mkqnx6fs -T media -b 32768 -i 32768 /dev/mnand0t178.8 2>> $LOG
 	sleep 1
-	mount -t qnx6 /dev/mnand0t178.8 /mnt/navdb 2>> $LOG
+	on -f mmx mount -t qnx6 /dev/mnand0t178.8 /mnt/navdb 2>> $LOG
 	sleep 1
 	echo -ne "\nAll done!\n"
 	. $thisdir/reboot -t 10
 fi
+
+trap 2
 
 return 2> /dev/null
 

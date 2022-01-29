@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.1.5 (2022-01-18 by MIBonk)"
+revision="flash v0.1.6 (2022-01-26 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -58,6 +58,12 @@ if [ -f "$IFS2" ]; then
 	elif [[ "$OFFSETPART2" = "c00000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		/usr/bin/flashit -v -d -a c00000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
+	elif [[ "$OFFSETPART2" = "be0000" ]]; then
+		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+		/usr/bin/flashit -v -d -a be0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
+	elif [[ "$OFFSETPART2" = "bc0000" ]]; then
+		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+		/usr/bin/flashit -v -d -a bc0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $LOG
 	else
 		/usr/bin/flashlock | $TEE -i -a $LOG
 		echo -ne "\nFlash offset invalid, flashing aborted!\n\n" | $TEE -i -a $LOG

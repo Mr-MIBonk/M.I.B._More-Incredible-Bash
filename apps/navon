@@ -26,6 +26,8 @@ else
 VALUE=0
 fi
 
+trap '' 2
+
 	case $1 in
 
 	-a) {
@@ -60,7 +62,9 @@ echo -ne "Navigation Status\n\n" | $TEE -a $LOG ### der Funktion ändern
 [ -z "$GEM" ] && echo -ne "\033[m"
 echo -ne "\nCoding: " | $TEE -a $LOG
 on -f mmx /eso/bin/dumb_persistence_reader 0 4101 | $TEE -a $LOG ### nur die Adresse ändern
-	
+
+trap 2
+
 return 2> /dev/null
 
 	};;	
