@@ -1,4 +1,7 @@
 # Declare files that will always have LF line endings on checkout.
 /metainfo2.txt text eol=crlf
-*.esd text eol=crlf
+/esd/*.esd text eol=crlf
 * text eol=lf
+
+# Track binary files with LFS
+/apps/sbin/* filter=lfs diff=lfs merge=lfs -text
