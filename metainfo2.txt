@@ -62,6 +62,7 @@ DeviceDescription = "M.I.B.-Launcher"
 DownloadGroup = "Launcher"
 
 [Launcher\version\0\default\File]
+checkUpdate = "true"
 CheckSumSize = "524288"
 CheckSum = "dd0d39ca3e257d4a71d59c3508afee5b0dc0ebdf"
 FileSize = "29"
