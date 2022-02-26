@@ -941,6 +941,11 @@ script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
     label   "Enable Australia navigation"
 	
+	keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
+	
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
 	label   "2. Write Navigation to Variant_1 in eeprom"

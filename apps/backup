@@ -284,7 +284,7 @@ else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
 
-echo -ne "lsd.jxe....." | $TEE -i -a $LOG
+echo -ne "lsd.jxe.........." | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/$MUVERSION-lsd.jxe ]; then
 	on -f mmx cp -r /net/mmx/ifs/lsd.jxe $BACKUPFOLDER/$MUVERSION-lsd.jxe 2>> $LOG
 	ERROR
