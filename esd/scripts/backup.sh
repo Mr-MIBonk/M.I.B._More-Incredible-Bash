@@ -24,7 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/backup -b
+on -f rcc /net/mmx/fs/sda0/apps/backup -a
 sleep 3
 
 echo "There is no patch for your train version available?"
