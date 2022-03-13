@@ -910,10 +910,17 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. --> NAVIGATION
+# Main -> M.I.B. -> NAVIGATION
 #
 ###########################################################################################
 screen navigation =>M.I.B.<=
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Activate NAVIGATION
+#
+###########################################################################################
+screen nav_activation navigation
 
 keyValue
     value   String sys 0x00000000 0
@@ -949,6 +956,41 @@ script
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
 	label   "2. Write Navigation to Variant_1 in eeprom"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> NAVIGATION -> NavActiveIgnore
+#
+###########################################################################################
+screen NavActiveIgnore navigation
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"This will enable dual navigation"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"CarPlay/AndroidAuto will work in parallel with build in car navigation"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/NavActiveIgnore_on.sh"
+	label   "Enable dual navigation"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/NavActiveIgnore_off.sh"
+	label   "Remove dual navigation"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Unit will reboot after patch is installed"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -1674,10 +1716,86 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> Skin 
+# Main -> M.I.B. -> Multimedia System -> Languages 
 #
 ###########################################################################################
-screen skin_select multimeda_system
+screen Languages multimeda_system
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Upload language dataset to unit"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+	label	"Maximum available languages in FW will be enabled"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+	label	"each FW version/region comes with their own set of included languages"
+	poll    0
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_eu.sh"
+	label    "EU"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_nar.sh"
+	label    "NAR"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_ar.sh"
+	label   "Arabic"
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_jp.sh"
+	label   "Japan"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_tw.sh"
+	label   "Taiwan"
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_kr.sh"
+	label   "Korean"
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_cn.sh"
+	label   "Chinese"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+	label   "Reboot unit"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Skin & Screen
+#
+###########################################################################################
+screen skin_screen multimeda_system
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Skin & Screen -> Skin
+#
+###########################################################################################
+screen skin_select skin_screen
 
 keyValue
     value   String sys 0x00000000 0
@@ -1749,10 +1867,10 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> Screenings 
+# Main -> M.I.B. -> Multimedia System -> Skin & Screen -> Screenings 
 #
 ###########################################################################################
-screen screen_select multimeda_system
+screen screen_select skin_screen
 
 keyValue
     value   String sys 0x00000000 0
@@ -2266,6 +2384,48 @@ script #/apps/ambient -p
 script #/apps/ambient -r 0
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ambient_restore.sh"
 	label   "restore original ambient buttons"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Porsche
+#
+###########################################################################################
+screen Porsche multimeda_system
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Functions within are only usable on Porsche units"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Porsche -> POG24
+#
+###########################################################################################
+screen POG24 Porsche
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"This will enable fullscreen support for CarPlay and AndroidAuto on POG24 only"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog24_fson.sh"
+	label   "Enable fullscreen CarPlay on POG24"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog24_fsoff.sh"
+	label   "Remove fullscreen CarPlay on POG24"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Unit will reboot after patch is installed"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
