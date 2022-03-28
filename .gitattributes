@@ -2,7 +2,6 @@
 /metainfo2.txt text eol=crlf
 /esd/*.esd text eol=crlf
 *.sh text eol=lf
-# * text eol=lf
 
 # Track binary files with LFS
 /apps/sbin/* filter=lfs diff=lfs merge=lfs -text
