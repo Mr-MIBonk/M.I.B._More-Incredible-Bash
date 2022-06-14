@@ -17,7 +17,6 @@ if [ -f /usr/apps/MIBRoot ] || [ -f $thisdir/../devconfig/GLOBALS ]; then
 else
 	ME="MMX"
 	ON="on -f rcc "
-. $thisdir/mod/protection/slut.sh
 fi
 
 SW="$(cat /net/rcc/dev/shmem/version.txt 2> /dev/null)"

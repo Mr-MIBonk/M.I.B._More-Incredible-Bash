@@ -1,0 +1,167 @@
+#!/bin/sh
+
+revision="addimage v0.1.0 (2022-05-09 MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+IMAGE="/net/mmx/mnt/app/eso/hmi/lsd/images/30/"
+AA="3000087.png"
+BB="3000042.png"
+checksum_AA="fe015c909f6d0ffd44052c9b47db4ee2ffef03b3"
+checksum_BB="73a1e3e7f19a490a10e4d0f0c119a2b58b0ad686"
+
+case $1 in
+
+-pog11on) {
+
+trap '' 2
+
+	echo -ne "Enable AndroidAuto and Boardbook button image support on POG11\n"
+	sleep 2
+	if [[ "$TRAINVERSION" = *POG11* ]]; then
+		checksum_unit="$(/net/rcc/usr/bin/sha1sum $IMAGE$AA | awk '{print $1}')"
+		if [ $checksum_AA = $checksum_unit ]; then
+			mount -uw /net/mmx/mnt/app
+			mv $IMAGE$AA $IMAGE"bck_"$AA 2>> $LOG
+			mv $IMAGE$BB $IMAGE"bck_"$BB 2>> $LOG
+			cp -r $VOLUME/mod/images/POG11/$AA $IMAGE$AA 2>> $LOG
+			cp -r $VOLUME/mod/images/POG11/$BB $IMAGE$BB 2>> $LOG
+			mount -ur /net/mmx/mnt/app
+			echo -ne "Installation finished :)\n" | $TEE -a $LOG
+			. $thisdir/reboot -t 10
+		else
+			echo -ne "File checksum does not match. No patch applied\n" | $TEE -a $LOG
+			if [ -f $IMAGE"bck_"$AA ]; then
+				echo -ne "Button images are already installed\n" | $TEE -a $LOG
+			else
+				echo -ne "Share M.I.B log with M.I.B developers\n"
+				echo -ne "File checksum: "$checksum_unit"\n" 2>> $LOG
+				sleep 3
+			fi
+		fi
+	else
+		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-pog11onnr) {
+
+trap '' 2
+
+	echo -ne "Enable AndroidAuto and Boardbook button image support on POG11\n"
+	sleep 2
+	if [[ "$TRAINVERSION" = *POG11* ]]; then
+		checksum_unit="$(/net/rcc/usr/bin/sha1sum $IMAGE$AA | awk '{print $1}')"
+		if [ $checksum_AA = $checksum_unit ]; then
+			mount -uw /net/mmx/mnt/app
+			mv $IMAGE$AA $IMAGE"bck_"$AA 2>> $LOG
+			mv $IMAGE$BB $IMAGE"bck_"$BB 2>> $LOG
+			cp -r $VOLUME/mod/images/POG11/$AA $IMAGE$AA 2>> $LOG
+			cp -r $VOLUME/mod/images/POG11/$BB $IMAGE$BB 2>> $LOG
+			mount -ur /net/mmx/mnt/app
+			echo -ne "Installation finished :)\n" | $TEE -a $LOG
+		else
+			echo -ne "File checksum does not match. No patch applied\n" | $TEE -a $LOG
+			if [ -f $IMAGE"bck_"$AA ]; then
+				echo -ne "Button images are already installed\n" | $TEE -a $LOG
+			else
+				echo -ne "Share M.I.B log with M.I.B developers\n"
+				echo -ne "File checksum: "$checksum_unit"\n" 2>> $LOG
+				sleep 3
+			fi
+		fi
+	else
+		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-pog11off) {
+
+trap '' 2
+
+	echo -ne "Remove AndroidAuto and Boardbook button image support on POG11\n"
+	if [[ "$TRAINVERSION" = *POG11* ]]; then
+		if [ -f $IMAGE"bck_"$AA ]; then
+			mount -uw /net/mmx/mnt/app
+			rm -rf $IMAGE$AA 2>> $LOG
+			rm -rf $IMAGE$BB 2>> $LOG
+			mv $IMAGE"bck_"$AA $IMAGE$AA 2>> $LOG
+			mv $IMAGE"bck_"$BB $IMAGE$BB 2>> $LOG
+			mount -ur /net/mmx/mnt/app
+			echo -ne "Removal finished\n" | $TEE -a $LOG
+			. $thisdir/reboot -t 10
+		else
+				echo -ne "File not found - AndroidAuto and Boardbook button images are not installed\n" | $TEE -a $LOG
+		fi
+	else
+		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -pog11on 		install AndroidAuto and Boardbook button images"
+		echo "        -pog11onnr 		install AndroidAuto and Boardbook button images - no reboot"
+		echo "        -pog11off 		remove AndroidAuto and Boardbook button image"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+	
+	esac
+
+exit 0
+

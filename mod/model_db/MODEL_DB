@@ -2,6 +2,7 @@
 011576|Audi e-tron (GEN) 
 012306|Audi Q3 (F3B)
 012456|Audi SQ5 (8W5)
+012406|Audi Q5 (8W5)
 012704|Audi R8 (4S0)
 013536|Audi Q8 (4MN) 
 013304|Audi TT (8S0)
@@ -12,6 +13,7 @@
 015601|Audi A8L (4N8)
 017200|Audi A1 (GBA)
 017206|Audi Q2 (81A)
+017256|Audi SQ2 Quattro (81A)
 017276|Audi Q2 Etron (81A)
 017301|Audi A3 (8V1)
 017303|Audi A3 RS3 (8VA)
@@ -28,6 +30,7 @@
 018502|Audi A6 (4A5)
 018503|Audi A7 (4KA)
 019402|Audi A4 (8W0)
+019403|Audi A5 (8W5)
 021106|Audi RSQ3
 021306|VW Tiguan (5N2) 
 021401|VW Passat (A33) 
@@ -61,6 +64,7 @@
 036202|Skoda Fabia Combi (NJ5) 
 037302|Skoda Octavia Combi (5E5) 
 037301|Skoda Octavia Limousine (5E3) 
+037312|Skoda Octavia Combi Facelift (565) 
 037342|Skoda Octavia Combi Scout (5E5) 
 037351|Skoda Octavia Limousine vRS (5E3) 
 037352|Skoda Octavia Combi vRS (5E5) 
@@ -85,6 +89,7 @@
 047382|Seat Leon ST FR (5F8) 
 053796|Bentley Bentayga (36A)
 053706|Bentley Bentayga (36A)
+053604|Bentley Continental GT V8 (3SA)
 061807|VW Amarok (S6B) 
 063307|VW Caddy (SAJ) 
 064500|VW Crafter (SYB) 
@@ -96,10 +101,12 @@
 072603|Porsche Panamera 971
 074404|Porsche Cayman
 074405|Porsche 718 Boxster
+074415|Porsche 718 Boxster Spyder
 074406|Porsche Macan
 074425|Porsche 718 Boxster
 074454|Porsche Cayman GT4
 077604|Porsche 911 Carerra Coupe
 077614|Porsche 911 Carerra 4 Coupe
 077634|Porsche 911 Turbo Coupe
+
 

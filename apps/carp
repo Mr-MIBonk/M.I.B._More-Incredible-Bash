@@ -28,6 +28,10 @@ fi
 echo -ne "CarPlay and Android Auto activated now\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[m"
+if [[ "$TRAINVERSION" = *CN* ]]; then
+	echo -ne "BAIDU CarLife activated now\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221356628:7.6 1 2>> $LOG
+fi
 on -f mmx $PC b:0:3221356628:7.7 1 2>> $LOG
 on -f mmx $PC b:0:3221356628:8.0 1 2>> $LOG
 on -f mmx $PC b:0:3221356628:8.5 1 2>> $LOG
@@ -46,6 +50,10 @@ return 2> /dev/null
 echo -ne "CarPlay and Android Auto activated now\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[m"
+if [[ "$TRAINVERSION" = *CN* ]]; then
+	echo -ne "BAIDU CarLife activated now\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221356628:7.6 1 2>> $LOG
+fi
 on -f mmx $PC b:0:3221356628:7.7 1 2>> $LOG
 on -f mmx $PC b:0:3221356628:8.0 1 2>> $LOG
 on -f mmx $PC b:0:3221356628:8.5 1 2>> $LOG

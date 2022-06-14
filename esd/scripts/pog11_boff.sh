@@ -1,6 +1,11 @@
 #!/bin/sh
 
-# esd navon_4.sh v0.1.0 (2021-03-05 by @MIB-Wiki)
+# esd pog11_bon.sh v0.1.1 (2022-05-09 by Mib-Wiki)
+
+if [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
+	echo "Some process is already running in background, don't interrupt!"
+	exit 0
+fi
 
 trap '' 2
 
@@ -11,6 +16,7 @@ unset LD_PRELOAD
 export GEM=1
 echo -ne "M.I.B. - More Incredible Bash "
 cat /net/mmx/fs/sda0/VERSION
+echo "NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF"
 echo ""
 echo "NOTE: NEVER interrupt the process with -Back- button or removing SD Card!!!"
 echo "CAUTION: Ensure that a external power is connected to the car on during any"
@@ -18,12 +24,9 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-# Navigation Country to KR = 4
-/net/mmx/fs/sda0/apps/navon -a 4
+on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11off
+sleep 3
 
-echo ""
-echo "All done! now you can go back..."
-
-trap '' 2
+trap 2
 
 exit 0

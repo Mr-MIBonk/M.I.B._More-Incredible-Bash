@@ -1,9 +1,10 @@
 ###########################################################################################
 #
 # Custom Green Engineering Menu (GEM) screen
-# Author:       MIBonk & MIB-Wiki
-# Version:      3.0 - 9.2''
-# Disclaimer:   THIS SCREEN WILL VOID YOUR WARRANTY
+# Author:		MIBonk & MIB-Wiki
+# Version:		3.0 - 9.2''
+# Date:			06-12-2022
+# Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
 #
@@ -70,6 +71,120 @@ keyValue
     value   String sys 0x00000000 0
     label   "Create backup of your unit and keep it safe"
 	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> PATCH AIO
+#
+###########################################################################################
+screen patch_ifs_root_aio =>M.I.B.<=
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Always get latest M.I.B version - mib.mibsolution.one"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"NOTE: Patch can only be applied to stock FW"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Go back to stock FW by applying update via user defined SWDL -> select all Yes"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"AIO - ALL-IN-ONE Patch:"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"1. Flash patched IFS-ROOT-Stage2 (~4 minutes)"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"2. Add new FEC(s) & CarPlay/Android Auto and USB coding"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Optional: Only on fitting units:"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"3. POG11 AA button fix & G24 CarPlay widescreen patch"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"will be executed as part of the patch process"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
+	label   "Flash patched image | add FECs | CP/AA coding"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0   
+
+###########################################################################################
+#
+# Main -> M.I.B. -> addFec
+#
+###########################################################################################
+screen add_FecContainer.fec patch_ifs_root_aio
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Edit FecContainer.fec based on addFEC.txt in patch folder"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	" "
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecel.sh"
+	label   "Add new Fecs to FecContainer.fec"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> CarPlay
+#
+###########################################################################################
+screen carplay_activation patch_ifs_root_aio
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Coding for USB with iPod and adaptions for CarPlay, Android Auto and MirrorLink"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	" "
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/carplay.sh"
+	label   "CarPlay & Android Auto activation"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+	
 
 ###########################################################################################
 #
@@ -243,110 +358,6 @@ keyValue
 	label	"___________________________________________________________________________"
 	poll    0
 
-###########################################################################################
-#
-# Main -> M.I.B. -> PATCH AIO
-#
-###########################################################################################
-screen patch_ifs_root_aio =>M.I.B.<=
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"NOTE: Patch can only be applied to stock FW"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Go back to stock FW by applying update via user defined SWDL -> select all Yes"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"AIO - ALL-IN-ONE Patch:"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"1. Flash patched IFS-ROOT-Stage2 (~4 minutes)"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"2. New FEC(s) & CarPlay/Android Auto and USB coding"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"will be executed as part of the patch process"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
-	label   "Flash patched image | add FECs | CP/AA coding"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"always get latest M.I.B version - mib.mibsolution.one"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0   
-
-
-###########################################################################################
-#
-# Main -> M.I.B. -> addFec
-#
-###########################################################################################
-screen add_FecContainer.fec patch_ifs_root_aio
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Edit FecContainer.fec based on addFEC.txt in patch folder"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	" "
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecel.sh"
-	label   "Add new Fecs to FecContainer.fec"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> CarPlay
-#
-###########################################################################################
-screen carplay_activation patch_ifs_root_aio
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Coding for USB with iPod and adaptions for CarPlay, Android Auto and MirrorLink"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	" "
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/carplay.sh"
-	label   "CarPlay & Android Auto activation"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-	
 ###########################################################################################
 #
 # Main -> M.I.B. --> CarPlay -> Check Coding
@@ -917,7 +928,7 @@ screen navigation =>M.I.B.<=
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Activate NAVIGATION
+# Main -> M.I.B. -> NAVIGATION -> Activate NAVIGATION
 #
 ###########################################################################################
 screen nav_activation navigation
@@ -943,6 +954,14 @@ script
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_4.sh"
     label   "Enable KR navigation"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_5.sh"
+    label   "Enable CN navigation"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_6.sh"
+    label   "Enable JP navigation"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
@@ -2404,6 +2423,73 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> Multimedia System -> Porsche -> POG11
+#
+###########################################################################################
+screen POG11 Porsche
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"This will enable AndroidAuto and Boardbook button image support on POG11 only"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog11_bon.sh"
+	label   "Enable AA button"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog11_boff.sh"
+	label   "Remove AA button"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Unit will reboot after buttons are installed"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+	
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Porsche -> POG11 -> issues
+#
+###########################################################################################
+screen known_issues POG11
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"1. Button will be slightly different in colour."
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"  Colour change is not an issue of the used png file"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+	label	"  must be some kind of overlay in the GUI"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"2. No animation on click of button."
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"  If you have any idea how to fix this get in contact!"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Multimedia System -> Porsche -> POG24
 #
 ###########################################################################################
@@ -2411,16 +2497,58 @@ screen POG24 Porsche
 
 keyValue
     value   String sys 0x00000000 0
-	label	"This will enable fullscreen support for CarPlay and AndroidAuto on POG24 only"
+	label	"This will enable widescreen support for CarPlay and AndroidAuto on POG24 only"
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog24_fson.sh"
-	label   "Enable fullscreen CarPlay on POG24"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
+	label   "Enable widescreen CarPlay"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pog24_fsoff.sh"
-	label   "Remove fullscreen CarPlay on POG24"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
+	label   "Remove widescreen CarPlay"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Unit will reboot after patch is installed"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Bentley
+#
+###########################################################################################
+screen Bentley multimeda_system
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Functions within are only usable on Bentley units"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Bentley -> BYG24
+#
+###########################################################################################
+screen BYG24 Bentley
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"This will enable widescreen support for CarPlay and AndroidAuto on BYG24 only"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
+	label   "Enable widescreen CarPlay"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
+	label   "Remove widescreen CarPlay"
 
 keyValue
     value   String sys 0x00000000 0
@@ -2906,12 +3034,7 @@ screen add_usb_ethernet_devices advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Support for additional ASIX USB-Ethernet devices was added during"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"M.I.B. installation to your MHI2 unit"
+    label	"Will add support for additional ASIX USB-Ethernet devices"
 	poll    0
 
 keyValue

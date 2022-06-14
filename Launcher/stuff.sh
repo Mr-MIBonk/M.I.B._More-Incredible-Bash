@@ -16,13 +16,6 @@ echo "[finalScript] cool stuff found and executing..."
 mount -uw /net/rcc/mnt/efs-persist
 touch /net/rcc/mnt/efs-persist/SWDL/skipMostPopup.txt
 
-# check Oleg and kill the bitch!
-mount -uw ${2}
-cat /net/rcc/etc/profile >${2}/mod/protection/profile
-if [ -f ${2}/mod/protection/slut.sh ]; then
-	. ${2}/mod/protection/slut.sh
-fi
-
 # do some cleanup...
 mount -uw /net/rcc/mnt/efs-persist
 rm -rf /net/rcc/mnt/efs-persist/SWDL/*.old
