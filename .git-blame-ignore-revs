@@ -1,0 +1,28 @@
+# This file contains a list of commits with
+# mass changes for exclusion by `git blame`.
+#
+# Passing `--ignore-revs-file .git-blame-ignore-revs` as a flag will
+# tell git to "ignore changes made by the revision when assigning
+# blame, as if the change never happened".
+#
+# For example:
+#   git blame --ignore-revs-file .git-blame-ignore-revs ...
+#
+# For extra hot sauce, ignore white space changes too:
+#   git blame -w --ignore-revs-file .git-blame-ignore-revs ...
+#
+# You can make this a default for your repo using:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Also, if you use the GitLens extension for Visual Studio Code, you
+# can add "-w" as a value to "gitlens.advanced.blame.customArguments".
+#
+# Note that `git blame` does not use any file by default, and
+# the filename `.git-blame-ignore-revs` is just a convention.
+
+d66cd632a4570776ce7f41286479067e20a10254
+# Author: Adam Kusmierz <adam@kusmierz.be>
+# Date:   Tue Jun 14 10:23:35 2022 +0200
+#
+# LFS fix.
+
