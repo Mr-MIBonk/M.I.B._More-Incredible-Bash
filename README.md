@@ -6,6 +6,8 @@
 
 M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/LICENSE) for more information.
 
+Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even more details about M.I.B and your MHI2 unit.
+
 ## NOTE:
 - M.I.B. is running on Harman MHI2(Q) units (MIB 2.x) only.
 - Minimum requirement to run M.I.B. in GEM is GEM version 4.1+.
