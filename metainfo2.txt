@@ -72,4 +72,3 @@ Destination = "/HBpersistence/SWDL/Log/service/MIB"
 DisplayName = "M.I.B.-Launcher"
 DeleteDestinationDirBeforeCopy = "false"
 UpdateOnlyExisting = "false"
-
