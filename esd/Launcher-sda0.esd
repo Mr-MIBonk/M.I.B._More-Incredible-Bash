@@ -1532,14 +1532,14 @@ keyValue
 # Main -> M.I.B. -> Multimedia System
 #
 ###########################################################################################
-screen multimeda_system =>M.I.B.<=
+screen multimedia_system =>M.I.B.<=
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> Multimedia System -> Radio
 #
 ###########################################################################################
-screen radio multimeda_system
+screen radio multimedia_system
 
 ###########################################################################################
 #
@@ -1738,7 +1738,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Languages 
 #
 ###########################################################################################
-screen Languages multimeda_system
+screen Languages multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -1807,7 +1807,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Skin & Screen
 #
 ###########################################################################################
-screen skin_screen multimeda_system
+screen skin_screen multimedia_system
 
 ###########################################################################################
 #
@@ -2103,7 +2103,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> AUDI
 #
 ###########################################################################################
-screen AUDI multimeda_system
+screen AUDI multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2282,7 +2282,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> SKODA
 #
 ###########################################################################################
-screen SKODA multimeda_system
+screen SKODA multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2414,7 +2414,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Porsche
 #
 ###########################################################################################
-screen Porsche multimeda_system
+screen Porsche multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2523,7 +2523,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Bentley
 #
 ###########################################################################################
-screen Bentley multimeda_system
+screen Bentley multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2565,7 +2565,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Voice Control
 #
 ###########################################################################################
-screen voice_control multimeda_system
+screen voice_control multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2600,7 +2600,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Bluetooth Settings
 #
 ###########################################################################################
-screen bluetooth_settings multimeda_system
+screen bluetooth_settings multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2660,7 +2660,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> Media Import Ripping Settings
 #
 ###########################################################################################
-screen media_import_ripping multimeda_system
+screen media_import_ripping multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2700,7 +2700,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> DVD/Blueray Region Coding
 #
 ###########################################################################################
-screen dvd_blueray_region_coding multimeda_system
+screen dvd_blueray_region_coding multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
@@ -2761,7 +2761,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> DAB Settings
 #
 ###########################################################################################
-screen DAB_settings multimeda_system
+screen DAB_settings multimedia_system
 
 choice
     value	per 17 0x0011006D
@@ -2815,7 +2815,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> DABLinkList
 #
 ###########################################################################################
-screen DABLinkList multimeda_system
+screen DABLinkList multimedia_system
 choice
     value	per 17 0x0011011B #DABTUNER_UPDATE_LINKLIST
     label   "Enable updates"
@@ -2858,7 +2858,7 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> DABServiceList
 #
 ###########################################################################################
-screen DABServiceList multimeda_system
+screen DABServiceList multimedia_system
 
 table
     content  	per 17 0x0011008C
