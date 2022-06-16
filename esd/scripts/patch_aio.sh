@@ -24,12 +24,9 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-#Global
-SED="$VOLUME/apps/sbin/sed" # /net/mmx/mnt/app/armle/usr/bin
-PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/
-TRAINVERSION="$(on -f mmx /net/mmx/mnt/app/eso/bin/apps/pc s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+TRAINVERSION="$(on -f mmx /net/mmx/fs/sda0/apps/sbin/pc s:30:1966084 2> /dev/null | /net/mmx/fs/sda0/apps/sbin/sed 's/[^a-zA-Z0-9_-]//g')"
 
-echo -ne "Train found: "$TRAINVERSION
+#echo -ne "Train found: "$TRAINVERSION"\n\n"
 sleep 3
 on -f rcc /net/mmx/fs/sda0/apps/carp -b
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
