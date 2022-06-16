@@ -2,7 +2,9 @@
 /metainfo2.txt text eol=crlf
 /esd/*.esd text eol=crlf
 *.sh text eol=lf
+*.lua text eol=lf
 /apps/* text eol=lf
+/mod/model_db/* text eol=lf
 
 # Track binary files
 /apps/sbin/* -text -diff
@@ -11,3 +13,4 @@
 *.png -text -diff
 */mod/gem/* -text -diff
 *.jar -text -diff
+*.gca -text -diff
