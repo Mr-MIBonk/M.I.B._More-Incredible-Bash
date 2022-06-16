@@ -27,11 +27,10 @@ echo ""
 #Global
 SED="$VOLUME/apps/sbin/sed" # /net/mmx/mnt/app/armle/usr/bin
 PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/
-TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+TRAINVERSION="$(on -f mmx /net/mmx/mnt/app/eso/bin/apps/pc s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 
-echo -ne "Train found: "$TRAINVERSION"/n/n"
+echo -ne "Train found: "$TRAINVERSION
 sleep 3
-on -f rcc /net/mmx/fs/sda0/apps/backup -a
 on -f rcc /net/mmx/fs/sda0/apps/carp -b
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
 	on -f rcc /net/mmx/fs/sda0/apps/javag24 -onnr
@@ -39,7 +38,7 @@ fi
 if [[ "$TRAINVERSION" = *POG11* ]]; then
 	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11onnr
 fi
-on -f rcc /net/mmx/fs/sda0/apps/flash -po
+on -f rcc /net/mmx/fs/sda0/apps/flash -p
 sleep 3
 
 trap 2

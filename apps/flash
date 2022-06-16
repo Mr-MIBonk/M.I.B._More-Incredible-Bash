@@ -125,39 +125,6 @@ return 2> /dev/null
 
 	};;
 
-	-po|-patchonly) {
-
-trap '' 2
-	[ -n "$GEM" ] && touch $TMP/$thisname.mib
-
-if [ $ME != "RCC" ]; then
-	echo -ne "\nBackup will only work in RCC bash!\n\n"
-	rm -rf $TMP/$thisname.mib 2>/dev/null
-	exit 0
-fi
-
-if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
-	echo -ne "\n" >> $LOG
-	echo -ne "Backup is not complete, do flash update is not save!!!\n\n" | $TEE -i -a $LOG
-	rm -rf $TMP/$thisname.mib 2>/dev/null
-	exit 0
-fi
-
-# flash Patch...
-IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
-echo -ne "\n" >> $LOG
-echo -ne "search File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
-
-IFSstage2
-
-. $thisdir/rccd -d
-. $thisdir/fecel -fec
-. $thisdir/fecel -el
-. $thisdir/reboot -t 10
-
-return 2> /dev/null
-
-	};;
 
 	-r|-restore) {
 
@@ -194,7 +161,6 @@ return 2> /dev/null
 		echo ""
 		echo "Options:"
 		echo "        -p, -patch 		flash patch"
-		echo "        -po, -patchonly 		flash patch"
 		echo "        -r, -restore 		flash original"
 		echo "        --help			show this help"
 		echo ""
