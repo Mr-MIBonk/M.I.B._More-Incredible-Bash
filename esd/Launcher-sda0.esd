@@ -2453,14 +2453,14 @@ keyValue
 	
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> Porsche -> POG11 -> issues
+# Main -> M.I.B. -> Multimedia System -> Porsche -> POG11 -> limitations
 #
 ###########################################################################################
-screen known_issues POG11
+screen known_limitations POG11
 
 keyValue
     value   String sys 0x00000000 0
-	label	"1. Button will be slightly different in colour."
+	label	"1. Button will be slightly different in colour depending on FW."
 	poll    0
 
 keyValue
