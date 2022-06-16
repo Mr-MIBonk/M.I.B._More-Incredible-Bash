@@ -28,14 +28,14 @@ fi
 
 # ------------------------
 # run tests
-if [ "$1" = "-a" ]; then
-	if [ -f $thisdir/beta ]; then
-		echo -ne "\n---------------- Running some tests ----------------\n"
-		$thisdir/beta > /dev/null
-		echo -ne "----------------- Backup continues -----------------\n"
-		sleep 2
-	fi
-fi
+#if [ "$1" = "-a" ]; then
+#	if [ -f $thisdir/beta ]; then
+#		echo -ne "\n---------------- Running some tests ----------------\n"
+#		$thisdir/beta > /dev/null
+#		echo -ne "----------------- Backup continues -----------------\n"
+#		sleep 2
+#	fi
+#fi
 # ------------------------
 
 B2NAND() {
