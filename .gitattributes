@@ -2,12 +2,12 @@
 /metainfo2.txt text eol=crlf
 /esd/*.esd text eol=crlf
 *.sh text eol=lf
+/apps/* text eol=lf
 
-# Track binary files with LFS
-/apps/sbin/* -text
-/apps/sbin/beta/* -text
-*.pdf -text
-*.png -text
-*/mod/gem/* -text
-*.exe -text
-*.jar -text
+# Track binary files
+/apps/sbin/* -text -diff
+/apps/sbin/beta/* -text -diff
+*.pdf -text -diff
+*.png -text -diff
+*/mod/gem/* -text -diff
+*.jar -text -diff
