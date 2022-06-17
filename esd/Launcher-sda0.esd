@@ -2502,11 +2502,11 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
-	label   "Enable widescreen CarPlay"
+	label   "Enable widescreen"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
-	label   "Remove widescreen CarPlay"
+	label   "Remove widescreen"
 
 keyValue
     value   String sys 0x00000000 0
@@ -2544,11 +2544,11 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
-	label   "Enable widescreen CarPlay"
+	label   "Enable widescreen"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
-	label   "Remove widescreen CarPlay"
+	label   "Remove widescreen"
 
 keyValue
     value   String sys 0x00000000 0
