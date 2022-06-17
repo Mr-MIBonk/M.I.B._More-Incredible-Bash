@@ -118,7 +118,8 @@ CreateFec ()
 	fi
 	VIN=$(echo -ne $VIN | $XXD -u -p -s 0 -l 17)
 	VCRNVIN=$VCRN$VIN
-	read -r FEC < $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
+	$SED 's/\r//g' $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt > /tmp/addFecs.txt
+	read -r FEC < /tmp/addFecs.txt
 	BuildFec
 	$XXD -u -p -c 99999 $TMP/AddedFecs.tmp > $TMP/Fec.tmp
 	echo -n "01000000" >> $TMP/FecContainer.tmp
