@@ -35,7 +35,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - addfec.txt can be edited with any ASCII editor (Notepad++). DO NOT change EOL. Only not yet existing FECs will be added to container during the process.
 - Do NOT change FECContainer.fec with WhatTheFec tool, it will break file signature. M.I.B method will keep original FECs intact.
 
-### ExceptionList BUG
+### [ExceptionList BUG[(https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/ExceptionList-BUG)
 - If your unit was patched with M.I.B before April 2021 run "Add new Fecs to FecContainer.fec" script in M.I.B -> PATCH.
 - This will switch over to FecContainer.fec based patch and avoid EL BUG - unit will get stuck during boot.
  
