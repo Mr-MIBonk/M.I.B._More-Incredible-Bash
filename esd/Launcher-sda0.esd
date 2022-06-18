@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			06-17-2022
+# Date:			06-18-2022
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -99,6 +99,32 @@ keyValue
 	label 	"AIO - ALL-IN-ONE Patch:"
 	poll    0
 
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
+	label   "Flash patched image | add FECs | CP/AA coding | and more"
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"For details on AIO functions -> aio_patch_details"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0   
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Patch Details
+#
+###########################################################################################
+screen aio_patch_details patch_ifs_root_aio
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"AIO - ALL-IN-ONE Patch executes:"
+	poll    0
+	
 keyValue
     value   String sys 0x00000000 0
 	label	"1. Flash patched IFS-ROOT-Stage2 (~4 minutes)"
@@ -116,22 +142,18 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-	label	"3. POG11 AA button fix & G24 CarPlay widescreen patch"
+	label	"3. POG11 AA button fix & G24 CarPlay/AA widescreen patch"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"will be executed as part of the patch process"
+	label	"4. POG24/BYG24 CarPlay/AndroidAuto widescreen patch"
 	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
-	label   "Flash patched image | add FECs | CP/AA coding"
 
 keyValue
     value   String sys 0x00000000 0
 	label	"___________________________________________________________________________"
-	poll    0   
+	poll    0  
 
 ###########################################################################################
 #
@@ -139,6 +161,11 @@ keyValue
 #
 ###########################################################################################
 screen add_FecContainer.fec patch_ifs_root_aio
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Info: Part of AIO Patch function"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -165,6 +192,11 @@ keyValue
 #
 ###########################################################################################
 screen carplay_activation patch_ifs_root_aio
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Info: Part of AIO Patch function"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
