@@ -1,5 +1,3 @@
-<meta name="google-site-verification" content="2UsCEazIw0hlFXHrGL-UZ-p7Z01N2Jwx63ZbevjoFQU" />
-
 # M.I.B. - More Incredible Bash
 
 ![GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/GEM.png)
