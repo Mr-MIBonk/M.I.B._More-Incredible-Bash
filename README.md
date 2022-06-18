@@ -14,7 +14,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - Most older FW version will receive an udated GEM during M.I.B install.
 
 - Make sure, that you always run latest M.I.B version --> https://mib.mibsolution.one & https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash
-- For additional Information check https://mibwiki.one
+- For additional Information check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki & https://mibwiki.one
 
 ## CAUTION:
 - Ensure that a external power is connected to the car during any flash or programming process!
@@ -22,7 +22,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - Power failure during flasing/programming will brick your unit.
 - All you do and use at your own risk!
 
-## Prepare SD card:
+## [Prepare SD card](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#i---prepare-mib-sd-card):
 - Extract all files of the M.I.B. to the root directory of a clean SD-Card (FAT32 formatted is requirement)
 - Make sure that your SD card is not write protected.
 - Patched IFS-stage2 images have to be placed on the SD card in the folder /patches
@@ -33,7 +33,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 ### FEC Generator:
 - M.I.B is generating custom FecContainer.fec files based on existing FecContainer.fec and addfec.txt in patch folder.
 - addfec.txt can be edited with any ASCII editor (Notepad++). DO NOT change EOL. Only not yet existing FECs will be added to container during the process.
-- No need to change FECContainer.fec with WhatTheFec tool. Original FECs in container will continue to work even without patch on unit.
+- Do NOT change FECContainer.fec with WhatTheFec tool, it will break file signature. M.I.B method will keep original FECS intact.
 
 ### ExceptionList BUG
 - If your unit was patched with M.I.B before April 2021 run "Add new Fecs to FecContainer.fec" script in M.I.B -> PATCH.
