@@ -1,3 +1,4 @@
+google-site-verification: google1daead4d40aa9cc9.html
 # M.I.B. - More Incredible Bash
 
 ![GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/GEM.png)
@@ -85,5 +86,3 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 https://mibsolution.one
 
 user and pass: guest
-
-google-site-verification: google1daead4d40aa9cc9.html
