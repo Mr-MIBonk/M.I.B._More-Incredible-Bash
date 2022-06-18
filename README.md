@@ -33,7 +33,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 ### FEC Generator:
 - M.I.B is generating custom FecContainer.fec files based on existing FecContainer.fec and addfec.txt in patch folder.
 - addfec.txt can be edited with any ASCII editor (Notepad++). DO NOT change EOL. Only not yet existing FECs will be added to container during the process.
-- Do NOT change FECContainer.fec with WhatTheFec tool, it will break file signature. M.I.B method will keep original FECS intact.
+- Do NOT change FECContainer.fec with WhatTheFec tool, it will break file signature. M.I.B method will keep original FECs intact.
 
 ### ExceptionList BUG
 - If your unit was patched with M.I.B before April 2021 run "Add new Fecs to FecContainer.fec" script in M.I.B -> PATCH.
