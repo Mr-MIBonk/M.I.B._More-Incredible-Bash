@@ -6,7 +6,7 @@
 
 M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/LICENSE) for more information.
 
-Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even more details about M.I.B and your MHI2 unit.
+**Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even more details about M.I.B and your MHI2 unit.**
 
 ## NOTE:
 - M.I.B. is running on Harman MHI2(Q) units (MIB 2.x) only.
@@ -22,6 +22,13 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - Power failure during flasing/programming will brick your unit.
 - All you do and use at your own risk!
 
+## M.I.B Functions:
+- [Go here for a full overview of all GEM functions](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/M.I.B-MENU-STRUCTURE)
+- [Patch ifs-root](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#3-do-stuff-smirk)
+- [SVM fix](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/M.I.B-functions#svm-fix)
+- [POG11 AndroidAuto button fix](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Porsche-POG11-AndroidAuto-button-fix)
+- [POG24 & BYG24 AndroidAuto & CarPlay Widescreen Patch](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/POG24-&-BYG24---AndroidAuto-&-CarPlay-Widescreen-Patch)
+
 ## [Prepare SD card](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#i---prepare-mib-sd-card):
 - Extract all files of the M.I.B. to the root directory of a clean SD-Card (FAT32 formatted is requirement)
 - Make sure that your SD card is not write protected.
@@ -35,11 +42,11 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - addfec.txt can be edited with any ASCII editor (Notepad++). DO NOT change EOL. Only not yet existing FECs will be added to container during the process.
 - Do NOT change FECContainer.fec with WhatTheFec tool, it will break file signature. M.I.B method will keep original FECs intact.
 
-### [ExceptionList BUG[(https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/ExceptionList-BUG)
+### [ExceptionList BUG](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/ExceptionList-BUG)
 - If your unit was patched with M.I.B before April 2021 run "Add new Fecs to FecContainer.fec" script in M.I.B -> PATCH.
 - This will switch over to FecContainer.fec based patch and avoid EL BUG - unit will get stuck during boot.
  
-### M.I.B. in Green Engineering Menu - GEM:
+### [M.I.B. in Green Engineering Menu - GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#iii---enter-green-engineering-menu-gem-to-run-mib):
 - After M.I.B SD card is prepared
 - Insert the SD card into slot SD1 of your MHI2 unit.
 - Enter Engineering/Red Menu to start SW Update. Select UPDATE, select SD card, select "M.I.B. Launcher V1.0", START update.
@@ -52,13 +59,13 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 ### NOTE: SD card has to be placed in unit (SD1) to enable M.I.B. in GEM. --> no SD no M.I.B.
 - GEM screen layout is fitted to 9.2'' screens - should work OK on 8'', but will have text cutted on smaller than 8''
 
-### Update to new M.I.B. version:
+### [Update to new M.I.B. version](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Update-&-Uninstall-M.I.B):
 - No need to reinstall M.I.B if you want to use a new version.
 - Just create a fresh SD with latest M.I.B. version and insert into unit.
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 
-## Old way, D-Link Method: Connect to MHI2 and start M.I.B.:
+## [Old way, D-Link Method: Connect to MHI2 and start M.I.B.](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/About-M.I.B#mib-classic---putty-interface-not-maintained):
 - This method is still available in M.I.B, but no longer fully supported.
 - Basic functions are still available - Full functionallity is only given via GEM
 -  D-Link - e.g. DUB-E100 HW rev. D1 - USB-Ethernet adapter is required to connect to your MHI2 unit.
