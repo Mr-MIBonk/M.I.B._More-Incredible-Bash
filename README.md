@@ -68,7 +68,7 @@ Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even mor
 - Insert the SD card into slot SD1 of your MHI2 unit and login to the RCC shell:
 #### Mount SD card in slot SD1
 - mount -uw /net/mmx/fs/sda0/
-#### start M.I.B by typing
+#### Start M.I.B by typing
 - /net/mmx/fs/sda0/start
 
 - Default screen seize of Putty/Kitty is often too small to display the M.I.B. menu in full.
