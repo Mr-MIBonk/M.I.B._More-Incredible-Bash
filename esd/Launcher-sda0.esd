@@ -1641,20 +1641,25 @@ bitselect
 	range   9.0 9.3
 	label   "Band Settings FM Tuner"
 	entry	"none" 0
-	entry	"EU" 1
+	entry	"EU/RDW" 1
 	entry	"NAR" 2
 	entry	"Japan" 3
 	entry	"Korea" 4
+	entry	"China" 5
+	entry	"Brasilien" 6
+	entry	"Korea 2" 7
+	entry	"Japan 2" 8
 
 bitselect
     value   per 0 4101
 	range   9.4 9.7
 	label   "Band Settings AM Tuner"
 	entry	"none" 0
-	entry	"EU" 1
+	entry	"EU/RDW" 1
 	entry	"NAR" 2
 	entry	"Japan" 3
 	entry	"Korea" 4
+	entry	"Australia" 5
 
 bitselect
     value   per 0 4101
