@@ -37,6 +37,9 @@ M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](h
 - You only have to copy the folder(s) you need for your car(s) - e.g. /patches/MHI2_ER_SKGxx_Pxxxx_MUxxxx_PATCH  
 - They are already prepared in the right way, so that the tool can use them right away
 
+There is also a video guide for Audi available now:<br />
+[![image](http://img.youtube.com/vi/eAQgzYlnSrA/0.jpg)](https://www.youtube.com/watch?v=eAQgzYlnSrA&t=110s)
+
 ### FEC Generator:
 - M.I.B is generating custom FecContainer.fec files based on existing FecContainer.fec and addfec.txt in patch folder.
 - addfec.txt can be edited with any ASCII editor (Notepad++). DO NOT change EOL. Only not yet existing FECs will be added to container during the process.
