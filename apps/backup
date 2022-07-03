@@ -111,7 +111,7 @@ echo -ne "Note: "
 if [ -z $AB ]; then
 	echo -ne "Advanced-"
 fi
-echo -ne "Backup will require a few minutes to complete!\n"
+echo -ne "Backup will require ~5 minutes to complete!\n"
 echo -ne "Wait until All done message on screen!\n"
 sleep 4
 [ -z "$GEM" ] && echo -ne "\n"
