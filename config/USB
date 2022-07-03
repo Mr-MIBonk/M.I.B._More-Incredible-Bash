@@ -29,9 +29,4 @@ else
 	VOLUME="."
 fi
 
-if [ -f $VOLUME/start ]; then
-	return 2> /dev/null
-else
-	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on USB Device!\n\n"
-	exit 0
-fi
+return 2> /dev/null
