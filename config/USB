@@ -29,9 +29,9 @@ else
 	VOLUME="."
 fi
 
-if [ -f $VOLUME/start ]; then
+if [ -f $VOLUME/metainfo2.txt ] && [ -f $VOLUME/esd/Launcher-sda0.esd ]; then
 	return 2> /dev/null
 else
-	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on USB Device!\n\n"
+	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on M.I.B device!\n\n"
 	exit 0
 fi
