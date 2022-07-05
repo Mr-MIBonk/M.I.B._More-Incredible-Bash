@@ -19,7 +19,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-/net/mmx/fs/sda0/apps/amp -mib1
+on -f rcc /net/mmx/fs/sda0/apps/amp -mib1
 sleep 3
 
 echo ""
