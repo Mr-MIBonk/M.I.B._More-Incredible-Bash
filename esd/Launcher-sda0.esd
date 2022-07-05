@@ -2694,6 +2694,46 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> Multimedia System -> AUX in
+#
+###########################################################################################
+screen aux_in multimedia_system
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"enable AUX in"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"                                                                          EDIT"
+	poll    0
+
+choice    
+    value 	per 0 0x50182010
+    label 	"BT available"
+    poll    1000
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+	label   "Reboot unit"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Multimedia System -> Media Import Ripping Settings
 #
 ###########################################################################################
