@@ -27,8 +27,10 @@ case $1 in
 trap '' 2
 
 #Remove Swdlautorun.txt from SD to avoid update loop
-mv -f $VOLUME/Swdlautorun.txt $VOLUME/_Swdlautorun.txt 2>> $LOG
-echo "-- Swdlautorun.txt disabled" | $TEE -a $LOG
+if [ -f $VOLUME/Swdlautorun.txt ]; then
+	mv -f $VOLUME/Swdlautorun.txt $VOLUME/_Swdlautorun.txt 2>> $LOG
+	echo "-- Swdlautorun.txt disabled" | $TEE -a $LOG
+fi
 
 # prevent MOST popup...
 mount -uw /net/rcc/mnt/efs-persist
