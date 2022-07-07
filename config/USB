@@ -35,3 +35,10 @@ else
 	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on M.I.B device!\n\n"
 	exit 0
 fi
+
+if [ -f $VOLUME/Swdlautorun.txt ]; then
+	echo "Swdlautorun.txt - autorun found in root dir. Script will be stopped"
+	echo "Delete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again."
+	exit 0
+fi
+
