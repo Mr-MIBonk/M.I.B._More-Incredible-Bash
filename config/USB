@@ -29,16 +29,16 @@ else
 	VOLUME="."
 fi
 
+if [ -f $VOLUME/Swdlautorun.txt ]; then
+	echo "Swdlautorun.txt - autorun found in root dir. Script will be stopped"
+	echo "Delete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again."
+	exit 0
+fi
+
 if [ -f $VOLUME/metainfo2.txt ] && [ -f $VOLUME/esd/Launcher-sda0.esd ]; then
 	return 2> /dev/null
 else
 	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on M.I.B device!\n\n"
-	exit 0
-fi
-
-if [ -f $VOLUME/Swdlautorun.txt ]; then
-	echo "Swdlautorun.txt - autorun found in root dir. Script will be stopped"
-	echo "Delete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again."
 	exit 0
 fi
 
