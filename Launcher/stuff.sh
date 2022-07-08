@@ -10,6 +10,6 @@ echo "[stuffScript] Cool stuff found and executing..."
 
 export GEM=1
 
-/net/mmx/fs/sda0/apps/launcher -all
+${2}/apps/launcher -all
 
 echo "[stuffScript] Cool stuff DONE"
