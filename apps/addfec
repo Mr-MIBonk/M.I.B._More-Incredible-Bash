@@ -20,6 +20,14 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
+
+if [ -f $VOLUME/common/tools/addFecs.txt ];then
+	echo -ne "AIO detected\n" | $TEE -a $LOG
+	addFec=$VOLUME/common/tools/addFecs.txt
+else
+	addFec=$thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
+fi
+
 #-----------------------------------------------------------------------------
 
 ParseFecs ()
@@ -152,7 +160,7 @@ BuildFecContainer ()
 {
 touch $TMP/AddedFecs.tmp
 	ParseFecs
-	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
+	if [ -f $addFec ];then
 		while read FEC; do
 			FECCOUNT=$(echo $((0x$FECCOUNTHEX)))
 			grep -iq $FEC $TMP/installedFecs.tmp
@@ -162,7 +170,7 @@ touch $TMP/AddedFecs.tmp
 			if [[ $FecIsHex -eq 0 ]] && [[ ${#FEC} -eq 8 ]] && [[ $FecNotPresent -eq 1 ]] && [[ $FECCOUNT -le 254 ]]; then
 				BuildFec
 			fi
-		done < $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
+		done < $addFec
 		if [ -f $TMP/AddedFecs.tmp ];then
 			echo -n $FECCOUNTHEX"000000" | $XXD -r -p > $TMP/FecContainer.fec
 			cat $TMP/AddedFecs.tmp >> $TMP/FecContainer.fec
