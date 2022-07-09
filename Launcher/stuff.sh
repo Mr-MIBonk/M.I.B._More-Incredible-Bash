@@ -11,12 +11,9 @@ echo "[stuffScript] Cool stuff found and executing..."
 export GEM=1
 export SWDLAUTORUN=1 # allows Swdlautorun.txt in root of SD during SWDL process
 
-<<<<<<< Updated upstream
-=======
 echo "Runnung basic backup --------------------"
 ${2}/apps/backup -b
 echo "Runnung AIO script ----------------------"
->>>>>>> Stashed changes
 ${2}/apps/launcher -all
 
 echo "[stuffScript] Cool stuff DONE"
