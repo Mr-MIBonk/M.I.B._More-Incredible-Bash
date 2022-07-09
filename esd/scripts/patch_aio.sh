@@ -26,14 +26,13 @@ echo ""
 
 TRAINVERSION="$(on -f mmx /net/mmx/fs/sda0/apps/sbin/pc s:30:1966084 2> /dev/null | /net/mmx/fs/sda0/apps/sbin/sed 's/[^a-zA-Z0-9_-]//g')"
 
-#echo -ne "Train found: "$TRAINVERSION"\n\n"
 sleep 3
 on -f rcc /net/mmx/fs/sda0/apps/carp -b
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
-	on -f rcc /net/mmx/fs/sda0/apps/javag24 -onnr
+	on -f rcc /net/mmx/fs/sda0/apps/javag24 -on -noboot
 fi
 if [[ "$TRAINVERSION" = *POG11* ]]; then
-	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11onnr
+	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11on -noboot
 fi
 on -f rcc /net/mmx/fs/sda0/apps/flash -p
 sleep 3
