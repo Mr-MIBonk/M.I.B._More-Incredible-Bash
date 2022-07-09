@@ -1,4 +1,4 @@
-# USB check v0.1.0 (2020-11-16 by MIBonk)
+# USB check v0.1.2 (2022-07-08 by MIBonk & MIB-Wiki)
 
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -38,7 +38,14 @@ fi
 if [ -f $VOLUME/metainfo2.txt ] && [ -f $VOLUME/esd/Launcher-sda0.esd ]; then
 	return 2> /dev/null
 else
-	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on M.I.B device!\n\n"
+	[ -z "$GEM" ] && echo -ne "Please put Files into ROOT Directory on M.I.B device! Exit M.I.B\n" && sleep 4
 	exit 0
 fi
 
+<<<<<<< Updated upstream
+=======
+if [ -f $VOLUME/Swdlautorun.txt ]; then
+	[ -z "$SWDLAUTORUN" ] && echo "Swdlautorun.txt - autorun found in SD root\nScript will be stopped\nDelete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again." && sleep 4 && exit 0
+fi
+
+>>>>>>> Stashed changes
