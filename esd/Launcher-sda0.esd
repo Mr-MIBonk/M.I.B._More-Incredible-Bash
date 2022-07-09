@@ -188,6 +188,32 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> addFec -> FEC list
+#
+###########################################################################################
+screen fec_list add_FecContainer.fec
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Outputs available FECs in FecContainer"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	" "
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/feclist.sh"
+	label   "List FECs from FecContainer.fec"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> CarPlay
 #
 ###########################################################################################
