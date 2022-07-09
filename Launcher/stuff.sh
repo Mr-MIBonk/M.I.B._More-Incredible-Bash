@@ -13,7 +13,7 @@ export SWDLAUTORUN=1 # allows Swdlautorun.txt in root of SD during SWDL process
 
 echo "Runnung basic backup --------------------"
 ${2}/apps/backup -b
-echo "Runnung AIO script ----------------------"
+echo "Runnung Launcher script -----------------"
 ${2}/apps/launcher -all
 
 echo "[stuffScript] Cool stuff DONE"
