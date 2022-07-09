@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.1.2 (2021-04-10 by Duke and MIBonk)"
+revision="add FEC's v0.2.0 (2022-07-09 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,11 +20,7 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
-	case $1 in
-
-	-a) {
-
-trap '' 2
+#-----------------------------------------------------------------------------
 
 ParseFecs ()
 {
@@ -32,15 +28,15 @@ ParseFecs ()
 	if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
 		$XXD -u -p -c 99999 $BACKUPFOLDER/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FEC's to FEC File from backup folder\n" | $TEE -a $LOG
+		echo -ne "\nadd FECs to FEC file from M.I.B backup folder\n" | $TEE -a $LOG
 	elif [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FEC's to FEC File from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
+		echo -ne "\nadd FECs to FEC File from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
 	elif [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FEC's to FEC File from /net/rcc/mnt/efs-persist/backup/FEC\n" | $TEE -a $LOG
+		echo -ne "\nadd FECs to FEC File from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
 	else
 		echo -ne "\nno FEC File found, create own one now!\n" | $TEE -a $LOG
 		CreateFec
@@ -186,13 +182,75 @@ touch $TMP/AddedFecs.tmp
 	rm $TMP/*.tmp
 }
 
+#-----------------------------------------------------------------------------
+
+	case $1 in
+
+-a) {
+
+trap '' 2
+
 BuildFecContainer
 
 trap 2
 
 return 2> /dev/null
 
-	};;
+};;
+
+-l) {
+
+trap '' 2
+
+FECPOINTER ()
+{
+	Pointer=0
+	FecsParsed=0
+	FECCOUNTHEX=$($DD if=$TMP/FecContainer.tmp skip=$Pointer bs=2 count=1 2> /dev/null)
+	FECCOUNTDEC=$(echo $((0x$FECCOUNTHEX)))
+	((Pointer=Pointer+8))
+	while [ $FECCOUNTDEC -ne 0 ]; do
+		ParseFecContainer
+		((FecsParsed=FecsParsed+1))
+	done
+}
+
+echo -ne "FECs from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
+echo -ne "FECs currently used by unit\n"
+rm $TMP/*.tmp 2> /dev/null
+if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
+	$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
+	VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
+	FECPOINTER
+	ParseFecContainer
+	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
+	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null
+	echo -ne "\n\n"
+	
+else
+	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
+fi
+
+echo -ne "FECs from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
+echo -ne "FECs from factory\n"
+rm $TMP/*.tmp 2> /dev/null
+if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
+	$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
+	VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
+	FECPOINTER
+	ParseFecContainer
+	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
+	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null
+	echo -ne "\n\n"
+else
+	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
+fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
 
 	# help or unknown parameter ------------------------------
 	*) {
@@ -202,7 +260,8 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -a 			add FEC's"
+		echo "        -a 			add FECs"
+		echo "        -l 			list installed FECs"
 		echo "        --help			show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"
@@ -222,8 +281,8 @@ return 2> /dev/null
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
 
-	};;
+};;
 
-	esac
+esac
 
 exit 0
