@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.2.0 (2022-07-09 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.2.1 (2022-07-10 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -224,7 +224,7 @@ FECPOINTER ()
 }
 
 echo -ne "FECs from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
-echo -ne "FECs currently used by unit\n"
+echo -ne "FECs currently used by unit\n" | $TEE -a $LOG
 rm $TMP/*.tmp 2> /dev/null
 if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 	$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
@@ -232,15 +232,15 @@ if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 	FECPOINTER
 	ParseFecContainer
 	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
-	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null
-	echo -ne "\n\n"
+	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
+	echo -ne "\n\n" | $TEE -a $LOG
 	
 else
 	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
 fi
 
 echo -ne "FECs from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
-echo -ne "FECs from factory\n"
+echo -ne "FECs from factory\n" | $TEE -a $LOG
 rm $TMP/*.tmp 2> /dev/null
 if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 	$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
@@ -248,8 +248,8 @@ if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 	FECPOINTER
 	ParseFecContainer
 	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
-	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null
-	echo -ne "\n\n"
+	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
+	echo -ne "\n\n" | $TEE -a $LOG
 else
 	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
 fi
