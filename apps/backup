@@ -59,9 +59,9 @@ if [ ! -d $NAND ]; then
 		on -f mmx cp -r $BACKUPFOLDER/FEC/ $NAND/FEC/ 2>> $LOG
 		on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-version.txt $NAND/ 2>> $LOG
 		on -f mmx cp -r $VOLUME/VERSION $NAND/M.I.B-version.txt 2>> $LOG
-		echo -ne " -> part 1 done"
+		echo -ne " -> part 1 done" | $TEE -i -a $LOG
 	else
-		echo -ne " -> part 1 failed :-("
+		echo -ne " -> part 1 failed :-(" | $TEE -i -a $LOG
 	fi
 else
 	echo -ne " -> Backup part 1 is already there!" | $TEE -i -a $LOG
