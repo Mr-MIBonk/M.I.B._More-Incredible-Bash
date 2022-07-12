@@ -71,7 +71,9 @@ if [ -z $AB ]; then
 	if [ ! -f $NAND/$MUVERSION-RCC_fs0.bin ]; then
 		if [[ $SEIZE -gt 150000 ]]; then
 			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin $NAND/ 2>> $LOG
-			on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin $NAND/ 2>> $LOG
+			if [[ "$TRAINVERSION" != *MHI2Q* ]]; then
+				on -f mmx cp -r $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin $NAND/ 2>> $LOG
+			fi
 			echo " -> part 2 done :-)"
 		else
 			echo " -> part 2 failed :-("
