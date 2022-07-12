@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Navigation activation v0.1.1 (2021-03-05 by MIBonk)"
+revision="Navigation activation v0.1.1 (2022-07-12 by Mibonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -18,6 +18,12 @@ fi
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
+fi
+
+if [ "$3" = "-noboot" ]; then
+	noboot=$3
+else
+	noboot=""
 fi
 
 if [ ! -z $2 ]; then
@@ -48,7 +54,7 @@ on -f mmx $PC i:0:0x50186004 1 2>> $LOG
 on -f mmx $PC i:0x286f058c:6 1 2>> $LOG
 on -f mmx $PC b:0:1 0 2>> $LOG
 
-. $thisdir/reboot -t 10
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 return 2> /dev/null
 
@@ -75,12 +81,18 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION1] <VALUE> [-noboot]"
 		echo ""
-		echo "Options:"
+		echo "Option 1:"
 		echo "        -a 			activated <VALUE>"
 		echo "        -s 			status"
 		echo "        --help		show this help"
+		echo ""
+		echo "Option 2:"
+		echo "Specify navigation region. EU=1; NAR=2; ..."
+		echo ""
+		echo "Option 3:"
+		echo "        -noboot	no reboot triggered by script"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
