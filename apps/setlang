@@ -86,7 +86,7 @@ return 2> /dev/null
 
 	};;
 
--nar) {
+-ar) {
 
 trap '' 2
 
@@ -115,7 +115,7 @@ return 2> /dev/null
 
 };;
 
--ar) {
+-nar) {
 
 trap '' 2
 
