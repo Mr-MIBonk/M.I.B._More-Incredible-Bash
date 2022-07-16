@@ -72,8 +72,13 @@ $thisdir/mounts -w
 		[ -n "$GEM" ] && echo -ne "\n"
 		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
 		ERROR
+	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
+		echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		ERROR
 	elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
-		echo -ne "copy FEC file from  backup "$FAZIT"..." | $TEE -a $LOG
+		echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
 		[ -n "$GEM" ] && echo -ne "\n"
 		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
 		ERROR
