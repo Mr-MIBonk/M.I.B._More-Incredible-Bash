@@ -28,8 +28,19 @@ trap '' 2
 
 #Remove Swdlautorun.txt from SD to avoid update loop
 if [ -f $VOLUME/Swdlautorun.txt ]; then
+	if [ -f $VOLUME/_Swdlautorun.txt ]; then
+		rm -f $VOLUME/_Swdlautorun.txt
+		echo "-- _Swdlautorun.txt removed" | $TEE -a $LOG
+	fi
 	mv -f $VOLUME/Swdlautorun.txt $VOLUME/_Swdlautorun.txt 2>> $LOG
 	echo "-- Swdlautorun.txt disabled" | $TEE -a $LOG
+else
+	if [ -f $VOLUME/_Swdlautorun.txt ]; then
+		echo "-- _Swdlautorun.txt found" | $TEE -a $LOG
+		echo "-- autostart already disabled" | $TEE -a $LOG
+	else
+		echo "-- Swdlautorun.txt & _Swdlautorun.txt not found" | $TEE -a $LOG
+	fi
 fi
 
 # prevent MOST popup...
