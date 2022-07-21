@@ -2,7 +2,7 @@
 
 ![GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/GEM.png)
 
-# All bastards who stolen and selling this should be fucked 🖕
+# All bastards who stolen and selling this should be fucked🖕
 ## NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF!
 
 M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/LICENSE) for more information.
