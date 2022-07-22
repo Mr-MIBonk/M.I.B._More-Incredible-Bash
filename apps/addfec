@@ -20,13 +20,16 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
-
 if [ -f $VOLUME/common/tools/addFecs.txt ];then
 	echo -ne "AIO detected\n" | $TEE -a $LOG
 	addFec=$VOLUME/common/tools/addFecs.txt
 else
 	addFec=$thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
 fi
+
+#remove CR EOL from addFecs.txt
+$SED 's/\r//g' $addFec > $TMP/addFecs.txt
+addFec=$TMP/addFecs.txt
 
 #-----------------------------------------------------------------------------
 
@@ -72,10 +75,8 @@ ParseFecContainer ()
 {
 	if [[ $($DD if=$TMP/FecContainer.tmp skip=$Pointer bs=2 count=2 2> /dev/null) = "1102" ]]; then
 		ParseSingleFec
-		#echo -ne "SingleFec detected\n" | $TEE -a $LOG
 	elif [[ $($DD if=$TMP/FecContainer.tmp skip=$Pointer bs=2 count=2 2> /dev/null) = "1107" ]]; then
 		ParseMultiFec
-		#echo -ne "MultiFec detected\n" | $TEE -a $LOG
 	else
 		FECCOUNTDEC=0
 		FECCOUNTHEX=$(echo "ibase=10;obase=16;$FecsParsed" | $BC)
@@ -125,8 +126,7 @@ CreateFec ()
 	fi
 	VIN=$(echo -ne $VIN | $XXD -u -p -s 0 -l 17)
 	VCRNVIN=$VCRN$VIN
-	$SED 's/\r//g' $addFec > /tmp/addFecs.txt
-	read -r FEC < /tmp/addFecs.txt
+	read -r FEC < $addFec
 	BuildFec
 	$XXD -u -p -c 99999 $TMP/AddedFecs.tmp > $TMP/Fec.tmp
 	echo -n "01000000" >> $TMP/FecContainer.tmp
@@ -177,12 +177,18 @@ touch $TMP/AddedFecs.tmp
 		if [ -f $TMP/AddedFecs.tmp ];then
 			echo -n $FECCOUNTHEX"000000" | $XXD -r -p > $TMP/FecContainer.fec
 			cat $TMP/AddedFecs.tmp >> $TMP/FecContainer.fec
-			$DD if=$TMP/FecContainer.tmp skip=4 bs=2 2> /dev/null | $XXD -r -p >> $TMP/FecContainer.fec 2>> $LOG
+			$DD if=$TMP/FecContainer.tmp skip=4 bs=2 2> /dev/null | $XXD -r -p >> $TMP/FecContainer.fec
 			if [ -d $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH" ];then
-				cp -rf $TMP/FecContainer.fec $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec 2>> $LOG
+				cp -rf $TMP/FecContainer.fec $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec
 				echo -ne "FEC File build done!\n\n" | $TEE -a $LOG
 			else
-				echo -ne "no patch folder there, FEC File build is done in /tmp...\n\n" | $TEE -a $LOG
+				echo -ne "no patch folder there, FEC File build is done in /tmp...\n" | $TEE -a $LOG
+				if [ -f $VOLUME/common/tools/addFecs.txt ];then
+					echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
+					[ -n "$GEM" ] && echo -ne "\n"
+					cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+				fi
+				ERROR
 			fi
 		else
 			echo -ne "FEC File can not build, addFecs.txt is corrupt!\n\n" | $TEE -a $LOG
