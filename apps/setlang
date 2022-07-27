@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setlang v0.1.0 (2022-03-12 MIB-Wiki)"
+revision="setlang v0.2.0 (2022-07-27 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
