@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="restore v0.1.1 (2021-12-29 by MIBonk & MIB-Wiki)"
+revision="restore v0.1.5 (2022-07-31 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -36,11 +36,12 @@ trap '' 2
 		echo -ne "storage1.raw found\n"
 		cp -r $BACKUPFOLDER/$MUVERSION-storage1.raw /net/rcc/mnt/efs-persist/storage1.raw 2>> $LOG
 		ERROR
-	elif [ -f $BACKUPFOLDER/$MUVERSION-storage2.raw ]; then
-		echo -ne "storage2.raw found\n"
-		cp -r $BACKUPFOLDER/$MUVERSION-storage2.raw /net/rcc/mnt/efs-persist/storage2.raw 2>> $LOG
-		ERROR
-		sleep 1
+		if [ -f $BACKUPFOLDER/$MUVERSION-storage2.raw ]; then
+			echo -ne "storage2.raw found\n"
+			cp -r $BACKUPFOLDER/$MUVERSION-storage2.raw /net/rcc/mnt/efs-persist/storage2.raw 2>> $LOG
+			ERROR
+			sleep 1
+		fi
 	else
 		echo -ne " -> storage1.raw is missing\n" | $TEE -i -a $LOG
 	fi
