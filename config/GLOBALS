@@ -1,4 +1,4 @@
-# GLOBALS v0.2.0 (2021-10-25 by MIBonk)
+# GLOBALS v0.2.1 (2022-08-21 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@ TEE="$VOLUME/apps/sbin/tee" # /net/mmx/usr/bin
 BC="$VOLUME/apps/sbin/bc" # /net/mmx/mnt/app/armle/usr/bin
 SED="$VOLUME/apps/sbin/sed" # /net/mmx/mnt/app/armle/usr/bin
 DD="$VOLUME/apps/sbin/dd" # /net/mmx/bin
+CUT="$VOLUME/apps/sbin/cut" # /net/mmx/usr/bin
 PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 VERSIONS="/net/rcc/dev/shmem/version.txt"
