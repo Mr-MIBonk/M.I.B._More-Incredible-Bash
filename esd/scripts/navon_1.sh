@@ -20,6 +20,7 @@ echo ""
 
 # Navigation Country to EU = 1
 /net/mmx/fs/sda0/apps/navon -a 1
+/net/mmx/fs/sda0/apps/setvariant -var
 
 echo ""
 echo "All done! now you can go back..."
