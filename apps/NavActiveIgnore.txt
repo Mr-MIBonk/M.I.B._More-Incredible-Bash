@@ -1,0 +1,131 @@
+#!/bin/sh
+
+revision="NavActiveIgnore v0.1.1 (2022-08-26 MIB-Wiki)"
+# Thanks to andrewleech for making this possible! https://github.com/jilleb/mib2-toolbox/pull/189
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+APP="/net/mmx/mnt/app/eso/hmi/lsd/jars/"
+JAR="NavActiveIgnore.jar"
+LSD=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh
+BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
+
+case $1 in
+
+-on) {
+
+trap '' 2
+
+	echo -ne "Enabled NavActiveIgnore\n" | $TEE -a $LOG
+	if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+		echo -ne "Please note, that this patch will only work on latest FW versions.\n"
+		echo -ne "Update FW before applying the patch.\n"
+		sleep 5
+		if [ -f $APP$JAR ]; then
+			echo -ne "$JAR already present on unit. Will be replaced\n" | $TEE -a $LOG
+		fi
+		mount -uw /net/mmx/mnt/app
+		cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh
+		cp -r $VOLUME/mod/java/$JAR $APP$JAR 2>> $LOG
+			if ! grep -q "Find and append jar files" ${LSD}; then
+				if [ ! -e $BU ]; then
+					echo "Backup lsd.sh" | $TEE -a $LOG
+					cp -v $LSD $BU 2>> $LOG
+				fi
+			echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
+			$SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
+		else
+			echo "lsd.sh is already patched" | $TEE -a $LOG
+		fi
+		. $thisdir/reboot -t 10
+		else
+			echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+			echo -ne "Audi/Porsche/Bentley are currently not supported by this patch.\n"
+		fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-off) {
+
+trap '' 2
+
+	echo -ne "Remove NavActiveIgnore\n" | $TEE -a $LOG
+	if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+		mount -uw /net/mmx/mnt/app
+		if [ -f $APP$JAR ]; then
+			mount -uw /net/mmx/mnt/app
+			rm -rf $APP$JAR 2>> $LOG 2>> $LOG
+			echo "NavActiveIgnore.jar removed" | $TEE -a $LOG
+		else
+				echo -ne "File not found - navignore patch is not installed\n" | $TEE -a $LOG
+		fi
+		if [ -e $BU ]; then
+			mv -f $BU $LSD 2>> $LOG
+			echo "lsd.sh restored from backup" | $TEE -a $LOG
+		fi
+		. $thisdir/reboot -t 10
+	else
+		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION]"
+		echo ""
+		echo "Options:"
+		echo "        -on 		enable navignore"
+		echo "        -off 		remove navignore"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+	
+	esac
+
+exit 0
+
