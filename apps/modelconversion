@@ -1,0 +1,292 @@
+#!/bin/sh
+
+revision="modelconversion v0.1.0 (2022-08-07 MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+DB=$VOLUME/mod/unit_db/unit_db
+E2P="on -f rcc /usr/apps/modifyE2P"
+
+ParseUnitDB ()
+{
+
+if [ ! -z $1 ]; then
+	LINE=$(grep -e $1 $DB 2> /dev/null)
+	if [ ${#1} = 4 ]; then
+		if [ ! -z $LINE ]; then
+			echo -ne "Match found in DB\n" | $TEE -i -a $LOG
+		else
+			echo -ne "MU$1 not found in DB\n" | $TEE -i -a $LOG
+			exit 0
+		fi
+	else
+		echo -ne "MU has to have 4 digits input.\n" | $TEE -i -a $LOG
+		exit 0
+	fi
+else
+	echo -ne "No input parameter.\nMU has to be 4 digits.\n" | $TEE -i -a $LOG
+	exit 0
+fi
+
+end=18
+
+#  1=MU
+#  2=Train
+#  3=Region ASCII
+#  4=Train_Brand
+#  5=PN_model
+#  6=INDEX
+#  7=Unit Type
+#  8=Unit class
+#  9=Region
+# 10=Brand
+# 11=Platform
+# 12=Model ID
+# 13=byte_17
+# 14=byte_18
+# 15=ifs_header_checksum
+# 16=ifs_SHA1
+# 17=ifs_address
+# 18=SHA1_patch
+
+for n in $(echo "for (i = 1; i <= $end; i++) i" | bc); do
+	UNITDB[$n]=$(echo -ne $LINE | $CUT -f $n -d ";") 2>> $LOG
+done
+}
+
+ParseMetainfo ()
+{
+# graps train and MU from metainfo2.txt 
+MetaTrain=$(grep -E 'release..MHI2' $VOLUME/_metainfo2.txt 2> /dev/null | $CUT -f 2 -d "=" | $SED -rn -e 's/ //g' -e 's/"//pg') 2>> $LOG
+MetaMU=$(grep -e MUVersion $VOLUME/_metainfo2.txt 2> /dev/null | $CUT -f 2 -d "=" | $SED -rn -e 's/ //g' -e 's/"//pg' | $CUT -c 1-4) 2>> $LOG
+}
+
+ascii2hex () # add ascii string to function call
+{
+echo -ne $(echo -ne $1 | $XXD -p -i 2> /dev/null | $SED -rn -e 's/,//g' -e 's/0x//pg')
+}
+
+convertregion ()
+{
+if [[ "$UnitTrain" = *$TargetRegion* ]]; then #check region fit e.g. ER
+	echo -ne "Region $TargetRegion fits to unit\n" | $TEE -i -a $LOG
+else
+	echo -ne "Region conversion $UnitRegion->$TargetRegion detected\n" | $TEE -i -a $LOG
+	echo -ne "Fixing region relatet coding now (navigation, language & variant)\n" | $TEE -i -a $LOG
+	sleep 2
+	#on -f mmx $PC i:0:0x286f058c:9 ${UNITDB[9]}
+	#on -f mmx $PC b:0:1 0 #save to persistence
+	#. $thisdir/navon ${UNITDB[9]}
+	TRAINVERSION=$TargetTrain
+	#. $thisdir/setlang -eu && Langdone=1
+	#TODO change region in variant
+fi
+}
+
+convertbrand ()
+{
+if [[ "$UnitTrain" = *$TargetBrand* ]]; then #check train brand e.g. VWG13
+	echo -ne "Model $TargetBrand fits to unit\n" | $TEE -i -a $LOG
+else
+	echo -ne "Model conversion $UnitModel->$TargetBrand detected\n" | $TEE -i -a $LOG
+	echo -ne "We will fix some basic coding now for long coding bytes 1-3, 17&18\nPlease be aware, that more coding might be needed to change to get unit runnig properly\n" | $TEE -i -a $LOG
+	sleep 2
+	#Change skin and screening
+	#on -f mmx $PC i:0:0x501844FF ${UNITDB[13]} #LC byte17 2>> $LOG
+	#on -f mmx $PC i:0:0x501848FF ${UNITDB[14]} #LC byte18 2>> $LOG
+	#write model_ID to long coding
+	LC=$($PERSR 0 4101 2> /dev/null | $CUT -c 7-50) 2>> $LOG
+	LCnew=${UNITDB[12]}$LC #Car Model ID
+	#on -f mmx $PC b:0:4101 $LCnew 2>> $LOG
+	#on -f mmx $PC i:0:0x286f058c:10 ${UNITDB[10]} #Brand 2>> $LOG
+	#on -f mmx $PC b:0:1 0 #save to persistence 2>> $LOG
+	echo "Skin and screening are changed\n"
+fi
+}
+
+convertpn ()
+{
+if [[ $TargetPN = $UnitPN ]] && [[ $TargetRegion = $UnitRegion ]]; then #check for update within same train e.g. VWG13
+	echo -ne "Unit and target PN matches - no need to convert\n" | $TEE -i -a $LOG
+	echo -ne "$UnitPN = $TargetPN\n"
+	exit 0
+else
+	echo -ne "PN mismatch found\nConverting Unit now\n" | $TEE -i -a $LOG
+fi
+
+	echo -ne "PN conversion started\n" | $TEE -i -a $LOG
+	#Train
+	Train=$(echo -ne ${UNITDB[2]} | $CUT -c 6-24) #Train
+	HEX=$(ascii2hex $Train)
+	#$E2P w 3B2 00 00 00 00 00 00 00 2>> $LOG
+	#$E2P w 3A5 $HEX 2>> $LOG
+	echo -ne "Train changed MHI2_$Train\n"
+	#MU
+	HEX=$(ascii2hex ${UNITDB[1]}) #MU
+	#$E2P w 3B9 $HEX 2>> $LOG
+	echo -ne "MU${UNITDB[1]} applied\n"
+	#PN
+	HEX=$(ascii2hex ${UNITDB[5]}) #PN
+	#$E2P w 8B $HEX 20 2>> $LOG
+	#$E2P w 80 $HEX 20 2>> $LOG
+	#PN Index
+	HEX=$(ascii2hex ${UNITDB[6]}) #Index
+	#$E2P w 89 $HEX 2>> $LOG
+	echo -ne "PN changed ${UNITDB[5]}${UnitPN#??????}${UNITDB[6]}\n"
+}
+
+convertunit ()
+{
+TargetMU=${UNITDB[1]}
+TargetTrain=${UNITDB[2]}
+TargetRegion=${UNITDB[3]}
+TargetBrand=${UNITDB[4]}
+TargetPN=${UNITDB[5]}
+
+#UnitPN=$($E2P r $S $L | $SED -rn 's/^0x\S+\W+(.*?)$/\1/pg' | $SED -r 'H;1h;$!d;x;s/[\x0a\x0d\x20]//g' | $XXD -r -p)
+UnitPN=$($E2P r 80 9 | grep 0x80) 2>> $LOG
+UnitPN=$(echo -ne ${UnitPN#0x80 *} | $XXD -r -p 2> /dev/null | $CUT -b 1-6) 2>> $LOG
+UnitRegion=$(echo -ne $TRAINVERSION | $CUT -f 2 -d "_") 2>> $LOG
+UnitBrand=$(echo -ne $TRAINVERSION | $CUT -f 3 -d "_") 2>> $LOG
+UnitMU=${MUVERSION#??}
+UnitTrain=$TRAINVERSION
+#UnitType$(on -f mmx $PC i:0:0x286f058c:3)
+#UnitClass=$(on -f mmx $PC i:0:0x286f058c:4)
+#UnitPlatform=$(on -f mmx $PC i:0:0x286f058c:11)
+
+echo -ne "\n---------------------------------------------------------\n" | $TEE -i -a $LOG
+echo -ne "|       |         Unit          |         Target        |\n" | $TEE -i -a $LOG
+echo -ne "|TRAIN  | $UnitTrain   | $TargetTrain   |\n" | $TEE -i -a $LOG
+echo -ne "|Region | $UnitRegion                    | $TargetRegion                    |\n" | $TEE -i -a $LOG
+echo -ne "|MU     | $UnitMU                  | $TargetMU                  |\n" | $TEE -i -a $LOG
+echo -ne "|PN     | $UnitPN                | $TargetPN                |\n" | $TEE -i -a $LOG
+echo -ne "---------------------------------------------------------\n\n" | $TEE -i -a $LOG
+
+sleep 3
+
+if [[ "$UnitTrain" = *$TargetBrand* ]]; then #check e.g. VWG13
+	echo -ne "Conversion within same train $TargetBrand\nNo conversion required\n" | $TEE -i -a $LOG
+	exit 0
+elif [[ "$UnitTrain" = *${TargetBrand%???}* ]]; then #check e.g. VW
+	echo -ne "Conversion within same brand and model \nSome changes are required\n" | $TEE -i -a $LOG
+	convertregion
+	convertpn
+	SETVAR=1
+else
+	convertregion
+	convertpn
+	convertbrand
+	#on -f mmx $PC i:0:0x286f058c:3 ${UNITDB[7]} 2>> $LOG #Unit Type
+	#on -f mmx $PC i:0:0x286f058c:4 ${UNITDB[8]} 2>> $LOG #Unit Class
+	#on -f mmx $PC i:0:0x286f058c:11 ${UNITDB[11]} 2>> $LOG #Platform
+	#on -f mmx $PC b:0:1 0 2>> $LOG #save to persistence
+	SETVAR=1
+	SETIDENT=1
+fi
+
+[ $SETVAR = 1 ] && echo test #. $thisdir/setvariant -var
+[ $SETIDENT = 1 ] && echo test #. $thisdir/setvariant -identblock
+
+}
+
+case $1 in
+
+-changepn) {
+# TODO: read variant configuration from unit and select fitting PN block 
+
+trap '' 2
+
+ParseUnitDB "$2"
+convertunit
+
+echo -ne "DONE\n\n" | $TEE -i -a $LOG
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-checkpn) {
+
+trap '' 2
+
+ParseMetainfo
+ParseUnitDB "$MetaMU"
+convertunit
+
+echo -ne "DONE\n" | $TEE -i -a $LOG
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-unitdb) {
+
+trap '' 2
+
+set -a
+
+ParseUnitDB "$2"
+
+echo ${UNITDB[1]}
+
+echo -ne "DONE\n" | $TEE -i -a $LOG
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION] [INPUT]"
+		echo ""
+		echo "Options:"
+		echo "        -checkpn 		checks metainfo2.txt MU and uses it as conversion base"
+		echo "        -changepn 		provide conversion target MU as additional parameter"
+		echo "        -unitdb 		exports UNITDB variable"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+	
+	esac
+
+exit 0
+
