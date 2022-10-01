@@ -86,7 +86,6 @@ rm -rf $TMP/$thisname.mib 2>/dev/null
 
 }
 
-
 	case $1 in
 
 	-p|-patch) {
@@ -104,17 +103,70 @@ fi
 
 if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 	echo -ne "\n" >> $LOG
-	echo -ne "Backup is not complete, do flash update is not save!!!\n\n" | $TEE -i -a $LOG
+	echo -ne "Backup is not complete, flashing patch is not save!\nRun backup and try to flash again\n" | $TEE -i -a $LOG
 	rm -rf $TMP/$thisname.mib 2>/dev/null
 	exit 0
 fi
 
 # flash Patch...
-IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
-echo -ne "\n" >> $LOG
-echo -ne "search File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
 
-IFSstage2
+IFS2_old=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
+IFS2_new=$VOLUME"/patches/ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
+IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2
+
+if [ -f $IFS2_old ]; then
+	echo -ne "Legacy patch folder structure detected\nPatch file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/ will be used\n" | $TEE -i -a $LOG
+	echo -ne "search file "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
+	IFS2=$IFS2_old
+elif [ -f $IFS2_new ]; then
+	echo -ne "Patch file ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs found\n" | $TEE -i -a $LOG
+	. $thisdir/modelconversion -unitdb ${MUVERSION#??}
+	# TODO: handle MU not in database. Some if logic to check error output from modelversion script - which has to be added to it and suggest usage of ADVANCED live patch function
+	checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS_new | awk '{print $1}')" 2>> $LOG
+	if [ $checksum_patch = ${UNITDB[18]} ];then
+		echo -ne "File checksum matched with unit DB\n" | $TEE -i -a $LOG
+		echo -ne "IFS file will be used\n" | $TEE -i -a $LOG
+		IFS2=$IFS2_new
+	else
+		echo -ne "Checksum does not match information in database\nNo flash will be conducted" | $TEE -i -a $LOG
+		echo -ne "\nYou can use the ADVANCED live patch function in GEM on your own risk\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
+		sleep 3
+		exit 0
+	fi
+	#TODO check if "new" patch is already present on SD card and only check SHA1 before patching
+else
+	if [ -f $IFS2_backup ]; then
+		echo -ne "ifs-root-stage2 backup found in backup folder\nNew patch file will be generated on unit now\nThis will take about 2 minutes\n" | $TEE -i -a $LOG
+		$thisdir/mibpy -m ifs -v patch --pattern patch_2.3 $IFS2_backup".ifs" | $TEE -i -a $LOG
+		mv -r $IFS2_backup"_patched.ifs" $IFS2_new 2>> $LOG
+		if [ -f $IFS2_new ]; then
+			echo -ne "search File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
+			echo -ne "Found in folder $VOLUME/patches/" | $TEE -i -a $LOG
+			echo ${MUVERSION#??} #debug output
+			. $thisdir/modelconversion -unitdb ${MUVERSION#??}
+			# TODO: handle MU not in database. Some if logic to check error output from modelversion script - which has to be added to it and suggest usage of ADVANCED live patch function
+			checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS_new | awk '{print $1}')" 2>> $LOG
+			if [ $checksum_patch = ${UNITDB[18]} ];then
+				echo -ne "File checksum matched with unit DB\n" | $TEE -i -a $LOG
+				echo -ne "IFS file will be used\n" | $TEE -i -a $LOG
+				IFS2=$IFS2_new
+			else
+				echo -ne "Checksum does not match information in database\nNo flash will be conducted" | $TEE -i -a $LOG
+				echo -ne "\nYou can use the ADVANCED live patch function in GEM on your own risk\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
+				sleep 3
+				exit 0
+			fi
+		else
+			echo -ne "File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" not found.\nSomething is wrong!" | $TEE -i -a $LOG
+			exit 0
+		fi
+	else
+		echo -ne "ifs-root-stage2 backup not found.\nNo patched ifs-root-stage2\nSomething went wrong\nRun backup again" | $TEE -i -a $LOG
+		exit 0
+	fi
+fi
+
+IFSstage2 
 
 . $thisdir/rccd -d
 . $thisdir/fecel -fec
