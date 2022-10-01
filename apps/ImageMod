@@ -1,0 +1,132 @@
+#!/bin/sh
+
+revision="ImageMod v0.1.0 (2022-10-03 MIBonk)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo "Backup or reboot is already running..."
+	return 2> /dev/null
+fi
+
+IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
+
+case $1 in
+
+-m) {
+
+trap '' 2
+
+	if [[ "$TRAINVERSION" = *SKG13* ]]; then
+		UnitVersion="SKG13"
+		echo -e "\nInstall image MOD on "$UnitVersion"\n"
+		mount -uw /net/mmx/mnt/app
+		for FOUND in $IMGDIR/*
+		do
+			if [ -d $FOUND ]; then
+				SKIN=$(echo $FOUND | awk -F"/" '{print $NF}')
+				echo -e $SKIN
+				COUNT=0
+				while [ ${COUNT} -lt 1 ]
+				do
+					if [ ! -f $FOUND/images.bck ];then
+						mv $FOUND/images.mcf $FOUND/images.bck 2>&1 | $TEE -a $LOG
+						echo -e "do backup..." 2>&1 | $TEE -a $LOG
+					else
+						echo -e "Image backup already exists!" 2>&1 | $TEE -a $LOG
+					fi
+				COUNT=$(($COUNT+1))
+				done
+			cp -r $VOLUME/mod/images/$UnitVersion/$SKIN/images.mcf $FOUND 2>> $LOG
+			echo -e "Install MOD...\n" 2>&1 | $TEE -a $LOG
+			fi
+		done
+		mount -ur /net/mmx/mnt/app
+		echo -e "\n ---> image mod done, be happy ;-)\n" 2>&1 | $TEE -a $LOG
+		. $thisdir/reboot -t 10
+	else
+		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-b) {
+
+trap '' 2
+
+	echo -ne "Remove image MOD\n"
+	mount -uw /net/mmx/mnt/app
+	for FOUND in $IMGDIR/*
+		do
+			if [ -d $FOUND ]; then
+				SKIN=$(echo $FOUND | awk -F"/" '{print $NF}')
+				echo -e $SKIN
+				COUNT=0
+				while [ ${COUNT} -lt 1 ]
+				do
+					if [ -f $FOUND/images.bck ];then
+					mv -f $FOUND/images.bck $FOUND/images.mcf 2>&1 | $TEE -a $LOG
+						echo -e "do restore..." 2>&1 | $TEE -a $LOG
+					else
+						echo -e "Image backup not exists!" 2>&1 | $TEE -a $LOG
+					fi
+				COUNT=$(($COUNT+1))
+				done
+			fi
+		done
+	echo -e "\n ---> image restore done...\n" 2>&1 | $TEE -a $LOG
+	. $thisdir/reboot -t 10
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
+# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname
+		echo ""
+		echo "        -m 		install MOD images"
+		echo "        -b 		undo MOD, back to original"
+		echo "        --help		show this help"
+		echo ""		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+		
+	};;
+	
+	esac
+
+exit 0
+
