@@ -32,29 +32,17 @@ trap '' 2
 		UnitVersion="SKG13"
 		echo -e "\nInstall image MOD on "$UnitVersion"\n"
 		mount -uw /net/mmx/mnt/app
-		for FOUND in $IMGDIR/*
-		do
-			if [ -d $FOUND ]; then
-				SKIN=$(echo $FOUND | awk -F"/" '{print $NF}')
-				echo -e $SKIN
-				COUNT=0
-				while [ ${COUNT} -lt 1 ]
-				do
-					if [ ! -f $FOUND/images.bck ];then
-						mv $FOUND/images.mcf $FOUND/images.bck 2>&1 | $TEE -a $LOG
-						echo -e "do backup..." 2>&1 | $TEE -a $LOG
-					else
-						echo -e "Image backup already exists!" 2>&1 | $TEE -a $LOG
-					fi
-				COUNT=$(($COUNT+1))
-				done
-			cp -r $VOLUME/mod/images/$UnitVersion/$SKIN/images.mcf $FOUND 2>> $LOG
-			echo -e "Install MOD...\n" 2>&1 | $TEE -a $LOG
-			fi
-		done
-		mount -ur /net/mmx/mnt/app
-		echo -e "\n ---> image mod done, be happy ;-)\n" 2>&1 | $TEE -a $LOG
-		. $thisdir/reboot -t 10
+		if [ ! -f $IMGDIR/skin0/images.bck ];then
+			mv $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
+			echo -e "do backup from skin0..." 2>&1 | $TEE -a $LOG
+		else
+			echo -e "Image backup already exists!" 2>&1 | $TEE -a $LOG
+		fi
+		cp -r $VOLUME/mod/images/$UnitVersion/* $IMGDIR 2>> $LOG
+		echo -e "Install MOD...\n" 2>&1 | $TEE -a $LOG
+	mount -ur /net/mmx/mnt/app
+	echo -e "\n ---> image mod done, be happy ;-)\n" 2>&1 | $TEE -a $LOG
+	. $thisdir/reboot -t 10
 	else
 		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
 	fi
@@ -71,26 +59,13 @@ trap '' 2
 
 	echo -ne "Remove image MOD\n"
 	mount -uw /net/mmx/mnt/app
-	for FOUND in $IMGDIR/*
-		do
-			if [ -d $FOUND ]; then
-				SKIN=$(echo $FOUND | awk -F"/" '{print $NF}')
-				echo -e $SKIN
-				COUNT=0
-				while [ ${COUNT} -lt 1 ]
-				do
-					if [ -f $FOUND/images.bck ];then
-					mv -f $FOUND/images.bck $FOUND/images.mcf 2>&1 | $TEE -a $LOG
-						echo -e "do restore..." 2>&1 | $TEE -a $LOG
-					else
-						echo -e "Image backup not exists!" 2>&1 | $TEE -a $LOG
-					fi
-				COUNT=$(($COUNT+1))
-				done
-			fi
-		done
-	echo -e "\n ---> image restore done...\n" 2>&1 | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	if [ -f $IMGDIR/skin0/images.bck ];then
+		mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>&1 | $TEE -a $LOG
+		echo -e "do restore..." 2>&1 | $TEE -a $LOG
+		. $thisdir/reboot -t 10
+	else
+		echo -e "Image backup not exists!" 2>&1 | $TEE -a $LOG
+	fi
 
 trap 2
 

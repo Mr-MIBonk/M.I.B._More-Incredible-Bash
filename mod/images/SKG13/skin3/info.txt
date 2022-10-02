@@ -1,0 +1,30 @@
+#Fri, 01 Feb 2019 15:54:58 +0100
+#SkinEditor: DEVELOPMENT/H29.319.93 (smurfette)
+#Fri Feb 01 15:53:20 CET 2019
+layout.direction=LEFT_TO_RIGHT
+SkinShortVersion=SKODA_C92__PS_version_3-39VP7K4
+DefaultMenuMode=Grid
+SkinBuildHmiSoftwareVersion=BH29.319.93-201902011404
+Layout.CarLife.Canvas_Dimension.height=640
+SdsLanguageHash=H29.319.93
+Layout.AndroidAuto.Canvas_Dimension.width=1280
+skin.modname=Skoda_MOS_GP_Skin_C
+Layout.CarLife.Canvas_Dimension.width=1280
+skin.name=SKODA_C92__PS_version_3
+Layout.AndroidAuto.Canvas_Dimension.height=640
+SkinSkinFileVersion=SKODA_C92__PS_version_3_42
+SpfName=Skoda_High_Skin_C_92_H.spf
+SupportedLanguages=en_DE,de_DE,en_GB,fr_FR,it_IT,es_ES,cs_CZ,nl_NL,pt_PT,ru_RU,sv_SE,tr_TR,pl_PL,no_NO,en_US,pt_BR,es_MX,ja_JP,ko_KR,fr_CA,zh_CN,zh_TW,zh_HK,zh_MO,da_DK,el_GR,hr_HR,hu_HU,fi_FI,bs_BA,ro_RO,sk_SK,sl_SI,sr_RS,bg_BG,lv_LV,et_EE,lt_LT,uk_UA,en_SA
+Layout.Mirrorlink.Canvas_Dimension.width=1174
+SkinVersion=BH29.319.93-201902011404-MSH29.319.29.3-29.49BF4/H29.49.2_Skinner-SKODA_C92__PS_version_3_42
+Layout.Carplay.Canvas.Offset.x=8
+Layout.Mirrorlink.Canvas_Dimension.height=640
+SkinBrand=3
+Layout.Carplay.Canvas_Dimension.height=640
+TranslationDate=SKTexty_88.21.4d_High_Gen2_F40
+UserSwitchableMenuMode=true
+skin.displayname=M.I.B._MOD_Skoda_High
+Layout.Carplay.Canvas_Dimension.width=1264
+internal.skin.name=Skin_C_92_H
+SkinSkinModelVersion=MSH29.319.29.3
+SkinSEVersion=29.49BF4/H29.49.2_Skinner
