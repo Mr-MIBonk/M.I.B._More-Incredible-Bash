@@ -3526,7 +3526,7 @@ BIOSCtrl
     entry   "NAR" 3
     entry   "ROW" 4 
     entry   "China" 5
-    entry   "Japan" 6   
+    entry   "Japan" 6
     entry   "Korea" 7
     entry   "Asia" 8
     entry   "Taiwan" 9

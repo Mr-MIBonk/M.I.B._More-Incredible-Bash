@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="rcc dump v0.1.4 (2022-10-06 by MIBonk)"
+revision="hex2ascii v0.1.0 (2021-12-14 Mib-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -11,37 +11,28 @@ thisname="$(basename $0)"
 thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
-	. $thisdir/../config/GLOBALS
+	. $thisdir/../config/GLOBALS > /dev/null
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
-fi
-
-if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
-	echo $thisname" or reboot is already running..."
-	return 2> /dev/null
 fi
 
 	case $1 in
 
-	-d) {
+	-convert) {
 
-trap '' 2
+		STRING=$2
 
-[ -n "$GEM" ] && touch $TMP/$thisname.mib
+		  I=0
+		  while [ $I -lt ${#STRING} ];
+		  do
+			echo -ne "0x"$(echo $STRING | cut -b "$(($I+1))"-"$(($I+2))") | awk '{printf "%c", $1}' 2>> $LOG
+			let I=$I+2
+		  done
+		  
+		  echo -ne "\n"
 
-. $thisdir/offset -log
+		trap 2
 
-echo -ne "dump RCC to logs after applying patched ifs-root-stage2\nThis will take about a minute........." | $TEE -a $LOG
-[ -n "$GEM" ] && echo -ne "\n"
-cat /net/rcc/dev/fs0 > $thisdir/../backup/logs/$MUVERSION-$FAZIT"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE.rcc 2>> $LOG
-ERROR
-sleep 1
-[ -z "$GEM" ] && echo -ne "\n"
-
-rm -rf $TMP/$thisname.mib 2>/dev/null
-
-trap 2
-
-return 2> /dev/null
+		return 2> /dev/null
 
 	};;
 
@@ -50,11 +41,11 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] [HEX string]"
 		echo ""
 		echo "Options:"
-		echo "        -d	 		dump RCC"
-		echo "        --help		show this help"
+		echo "        -convert 			converts given hex string to ascii"
+		echo "        --help			show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
@@ -70,10 +61,9 @@ return 2> /dev/null
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-		
+
 	};;
 
 	esac
 
 exit 0
-

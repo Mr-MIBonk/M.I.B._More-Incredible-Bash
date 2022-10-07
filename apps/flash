@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.1.6 (2022-01-26 by MIBonk)"
+revision="flash v0.2.0 (2022-10-06 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -93,8 +93,8 @@ rm -rf $TMP/$thisname.mib 2>/dev/null
 trap '' 2
 	[ -n "$GEM" ] && touch $TMP/$thisname.mib
 
-if [ $ME != "RCC" ]; then
-	echo -ne "\nBackup will only work in RCC bash!\n\n"
+if [ $ME != "MMX" ]; then
+	echo -ne "\nLive patch will only work in MMX bash!\n\n"
 	rm -rf $TMP/$thisname.mib 2>/dev/null
 	exit 0
 fi
@@ -108,65 +108,95 @@ if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSI
 	exit 0
 fi
 
-# flash Patch...
+#MUVERSION="MU1234" #debug test
+
+# read Unit DB
+. $thisdir/modelconversion -unitdb ${MUVERSION#??}
+
+echo -ne $STAGE2SIZE"\n" #debug output
+echo -ne ${UNITDB[15]}"\n" #debug output
+echo -ne ${UNITDB[18]}"\n" #debug output
+echo -ne ${UNITDB[19]}"\n" #debug output
+
+STAGE2SIZE=${UNITDB[15]} #debug test
+
+if [ $MUNF = 0 ] && [ $STAGE2SIZE = ${UNITDB[15]} ]; then 
+	echo -ne "Stock ifs-root-stage2 found on unit\n" | $TEE -i -a $LOG
+elif [ $MUNF = 0 ] && [ $STAGE2SIZE = ${UNITDB[18]} ]; then 
+	echo -ne "Your unit is already patched with latest M.I.B patch version\nNo need to flash again\nWe will stop here\n" | $TEE -i -a $LOG
+	sleep 3
+	exit 0
+elif [ $MUNF = 0 ]; then
+	echo -ne "Your unit has an unknown ifs-root-stage2 patch\nRevert unit back to stock ifs-root-stage2 before continue patching\nWe will stop here\n" | $TEE -i -a $LOG
+	echo -ne "You can use the ADVANCED live patch function in GEM on your OWN RISK!\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
+	sleep 3
+	exit 0
+fi
 
 IFS2_old=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
 IFS2_new=$VOLUME"/patches/ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
-IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2
+IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
 
-if [ -f $IFS2_old ]; then
+if [ -f $IFS2_old ]; then # Checking for "old" pre-made patch files and use them if available
 	echo -ne "Legacy patch folder structure detected\nPatch file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/ will be used\n" | $TEE -i -a $LOG
 	echo -ne "search file "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
 	IFS2=$IFS2_old
-elif [ -f $IFS2_new ]; then
+elif [ $MUNF = 0 ] && [ -f $IFS2_new ]; then # live-patch like file found on SD card and will be used for patchung. Still, checksum will be checked against DB
 	echo -ne "Patch file ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs found\n" | $TEE -i -a $LOG
-	. $thisdir/modelconversion -unitdb ${MUVERSION#??}
-	# TODO: handle MU not in database. Some if logic to check error output from modelversion script - which has to be added to it and suggest usage of ADVANCED live patch function
-	checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS_new | awk '{print $1}')" 2>> $LOG
-	if [ $checksum_patch = ${UNITDB[18]} ];then
-		echo -ne "File checksum matched with unit DB\n" | $TEE -i -a $LOG
+	checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS2_new | awk '{print $1}')" 2>> $LOG
+	echo -ne $checksum_patch"\n" #debug output
+	echo -ne ${UNITDB[19]}"\n" #debug output
+	if [[ $checksum_patch = ${UNITDB[19]} ]];then
+		echo -ne "File checksum matched with Unit DB\n" | $TEE -i -a $LOG
 		echo -ne "IFS file will be used\n" | $TEE -i -a $LOG
 		IFS2=$IFS2_new
 	else
-		echo -ne "Checksum does not match information in database\nNo flash will be conducted" | $TEE -i -a $LOG
-		echo -ne "\nYou can use the ADVANCED live patch function in GEM on your own risk\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
+		echo -ne "Checksum does not match information in Unit DB\n--------------------------\nNo flash will be conducted\n--------------------------\n\n" | $TEE -i -a $LOG
+		echo -ne "IFS will be deleted from $VOLUME/patches/\n" | $TEE -i -a $LOG
+		rm -f $IFS2_new
+		echo -ne "You can use the ADVANCED live patch function in GEM on your OWN RISK!\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
 		sleep 3
 		exit 0
 	fi
-	#TODO check if "new" patch is already present on SD card and only check SHA1 before patching
 else
-	if [ -f $IFS2_backup ]; then
+	if [ $MUNF = 0 ] && [ -f $IFS2_backup ]; then # live-patch will be generated from ifs-root-stage2 backup. Both input file checksum and resulting patched file will be checked against DB
 		echo -ne "ifs-root-stage2 backup found in backup folder\nNew patch file will be generated on unit now\nThis will take about 2 minutes\n" | $TEE -i -a $LOG
-		$thisdir/mibpy -m ifs -v patch --pattern patch_2.3 $IFS2_backup".ifs" | $TEE -i -a $LOG
-		mv -r $IFS2_backup"_patched.ifs" $IFS2_new 2>> $LOG
-		if [ -f $IFS2_new ]; then
-			echo -ne "search File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
-			echo -ne "Found in folder $VOLUME/patches/" | $TEE -i -a $LOG
-			echo ${MUVERSION#??} #debug output
-			. $thisdir/modelconversion -unitdb ${MUVERSION#??}
-			# TODO: handle MU not in database. Some if logic to check error output from modelversion script - which has to be added to it and suggest usage of ADVANCED live patch function
-			checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS_new | awk '{print $1}')" 2>> $LOG
-			if [ $checksum_patch = ${UNITDB[18]} ];then
-				echo -ne "File checksum matched with unit DB\n" | $TEE -i -a $LOG
-				echo -ne "IFS file will be used\n" | $TEE -i -a $LOG
+		$VOLUME/apps/sbin/patcher -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $IFS2_backup | $TEE -i -a $LOG #patch command
+		echo ${IFS2_backup%????}_patched.ifs
+		mv ${IFS2_backup%????}_patched.ifs $IFS2_new 2>> $LOG
+		if [ -f $IFS2_new ]; then #Optional: transfer to function and use here and above
+			echo -ne "Search File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"\n" | $TEE -i -a $LOG
+			echo -ne "Found in folder $VOLUME/patches/\n" | $TEE -i -a $LOG
+			echo -ne ${MUVERSION#??}"\n" #debug output
+			checksum_patch="$(/net/rcc/usr/bin/sha1sum $IFS2_new | awk '{print $1}')" 2>> $LOG
+			echo -ne $checksum_patch"\n" #debug output
+			echo -ne ${UNITDB[19]}"\n" #debug output
+			if [[ $checksum_patch = ${UNITDB[19]} ]];then
+				echo -ne "File checksum matches with Unit DB\n" | $TEE -i -a $LOG
+				echo -ne "Patched IFS  will be used\n" | $TEE -i -a $LOG
 				IFS2=$IFS2_new
 			else
-				echo -ne "Checksum does not match information in database\nNo flash will be conducted" | $TEE -i -a $LOG
-				echo -ne "\nYou can use the ADVANCED live patch function in GEM on your own risk\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
+				echo -ne "Checksum does not match information in database\n--------------------------\nNo flash will be conducted\n--------------------------\n\n" | $TEE -i -a $LOG
+				echo -ne "Patched IFS will be deleted from $VOLUME/patches/\n" | $TEE -i -a $LOG
+				rm -f $IFS2_new
+				echo -ne "You can use the ADVANCED live patch function in GEM on your OWN RISK!\nBetter get in contact with M.I.B team and share your log file and backup\n" | $TEE -i -a $LOG
 				sleep 3
 				exit 0
 			fi
 		else
-			echo -ne "File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" not found.\nSomething is wrong!" | $TEE -i -a $LOG
+			echo -ne "File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" not found.\nSomething is wrong!\n" | $TEE -i -a $LOG
 			exit 0
 		fi
 	else
-		echo -ne "ifs-root-stage2 backup not found.\nNo patched ifs-root-stage2\nSomething went wrong\nRun backup again" | $TEE -i -a $LOG
+		[ $MUNF = 0 ] && echo -ne "ifs-root-stage2 backup not found\nNo patched ifs-root-stage2 found\nSomething went wrong\nRun flash once more" | $TEE -i -a $LOG
+		[ $MUNF = 1 ] && echo -ne "--------------------------\nNo flash will be conducted\n--------------------------\n\nYou can use the ADVANCED live patch function in GEM on your OWN RISK!\nBetter get in contact with M.I.B team and share your log file and backup to add support for your MU version\n" | $TEE -i -a $LOG
+		sleep 5
 		exit 0
 	fi
 fi
 
-IFSstage2 
+echo "Flash starting" #debug output
+#IFSstage2
 
 . $thisdir/rccd -d
 . $thisdir/fecel -fec
@@ -195,6 +225,7 @@ fi
 IFS2=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
 echo -ne "search "$FAZIT" Backup File "$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs\n" | $TEE -i -a $LOG
 
+echo "Flash debug" #debug output
 IFSstage2
 
 . $thisdir/fecel -b

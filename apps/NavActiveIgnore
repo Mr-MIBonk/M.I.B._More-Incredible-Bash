@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="NavActiveIgnore v0.1.0 (2022-03-13 MIB-Wiki)"
+revision="NavActiveIgnore v0.1.1 (2022-08-26 MIB-Wiki)"
 # Thanks to andrewleech for making this possible! https://github.com/jilleb/mib2-toolbox/pull/189
 # use --help for more info
 
@@ -23,29 +23,41 @@ fi
 
 APP="/net/mmx/mnt/app/eso/hmi/lsd/jars/"
 JAR="NavActiveIgnore.jar"
+LSD=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh
+BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
 
 case $1 in
-
 
 -on) {
 
 trap '' 2
 
-	echo -ne "Enabled NavActiveIgnore\n"
-	if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+	echo -ne "Enabled NavActiveIgnore\n" | $TEE -a $LOG
+	if [[ "$TRAINVERSION" = MHI2_ER_VWG11_K3342* ]] || [[ "$TRAINVERSION" = MHI2_ER_VWG13_K4525* ]] || [[ "$TRAINVERSION" = MHI2_ER_SKG13_P4526* ]] || [[ "$TRAINVERSION" = MHI2_ER_SKG11_K3343* ]] || [[ "$TRAINVERSION" = MHI2_ER_SEG11_P4709* ]]; then
 		echo -ne "Please note, that this patch will only work on latest FW versions.\n"
-		echo -ne "Update FW before applying the patch.\n" 
+		echo -ne "Update FW before applying the patch.\n"
 		sleep 5
 		if [ -f $APP$JAR ]; then
-			echo -ne "File already present on unit. Will be replaced\n" | $TEE -a $LO
+			echo -ne "$JAR already present on unit. Will be replaced\n" | $TEE -a $LOG
 		fi
 		mount -uw /net/mmx/mnt/app
 		cp -r $VOLUME/mod/java/$JAR $APP$JAR 2>> $LOG
+		# Thanks to https://github.com/jilleb/mib2-toolbox/blob/master/Toolbox/scripts/install_nav_active_ignore.sh
+		if ! grep -q NavActiveIgnore.jar ${LSD}; then
+			if [ ! -e $BU ]; then
+				echo "Backup lsd.sh" | $TEE -a $LOG
+				cp -v $LSD $BU 2>> $LOG
+			fi
+			echo "Patching lsd.sh to run NavActiveIgnore.jar" | $TEE -a $LOG
+			$SED -ir 's,^$J9,BOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
+		else
+			echo "lsd.sh is already patched" | $TEE -a $LOG
+		fi
 		mount -ur /net/mmx/mnt/app
 		. $thisdir/reboot -t 10
 	else
 		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
-		echo -ne "Audi/Porsche/Bentley are currently not supported by this patch.\n" 
+		echo -ne "Audi/Porsche/Bentley are currently not supported by this patch.\n"
 	fi
 
 trap 2
@@ -58,16 +70,21 @@ return 2> /dev/null
 
 trap '' 2
 
-	echo -ne "Remove NavActiveIgnore\n"
-	if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+	echo -ne "Remove NavActiveIgnore\n" | $TEE -a $LOG
+	if [[ "$TRAINVERSION" = MHI2_ER_VWG11_K3342* ]] || [[ "$TRAINVERSION" = MHI2_ER_VWG13_K4525* ]] || [[ "$TRAINVERSION" = MHI2_ER_SKG13_P4526* ]] || [[ "$TRAINVERSION" = MHI2_ER_SKG11_K3343* ]] || [[ "$TRAINVERSION" = MHI2_ER_SEG11_P4709* ]]; then
+		mount -uw /net/mmx/mnt/app
 		if [ -f $APP$JAR ]; then
 			mount -uw /net/mmx/mnt/app
-			rm -rf $APP$JAR 2>> $LOG
-			mount -ur /net/mmx/mnt/app
-			. $thisdir/reboot -t 10
+			rm -rf $APP$JAR 2>> $LOG 2>> $LOG
+			echo "NavActiveIgnore.jar removed" | $TEE -a $LOG
 		else
-				echo -ne "File not found - fullscreen patch is not installed\n" | $TEE -a $LOG
+			echo -ne "File not found - navignore patch is not installed\n" | $TEE -a $LOG
 		fi
+		if [ -e $BU ]; then
+			mv -f $BU $LSD 2>> $LOG
+			echo "lsd.sh restored from backup" | $TEE -a $LOG
+		fi
+		. $thisdir/reboot -t 10
 	else
 		echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
 	fi
@@ -86,8 +103,8 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -on 		enable CP/AA fullscreen support"
-		echo "        -off 		remove CP/AA fullscreen support"
+		echo "        -on 		enable navignore"
+		echo "        -off 		remove navignore"
 		echo "        --help		show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"

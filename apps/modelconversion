@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="modelconversion v0.1.0 (2022-08-07 MIB-Wiki)"
+revision="modelconversion v0.1.5 (2022-10-07 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -26,25 +26,32 @@ E2P="on -f rcc /usr/apps/modifyE2P"
 ParseUnitDB ()
 {
 
+MUNF=0
+
 if [ ! -z $1 ]; then
 	LINE=$(grep -e $1 $DB 2> /dev/null)
 	if [ ${#1} = 4 ]; then
 		if [ ! -z $LINE ]; then
-			echo -ne "Match found in DB\n" | $TEE -i -a $LOG
+			echo -ne "---------------------------------\n"
+			echo -ne "Match found in Unit DB for MU$1\n" | $TEE -i -a $LOG
+			echo -ne "---------------------------------\n\n"
 		else
-			echo -ne "MU$1 not found in DB\n" | $TEE -i -a $LOG
-			exit 0
+			echo -ne "-----------------------------\n"
+			echo -ne "MU$1 not listed in database\n" | $TEE -i -a $LOG
+			echo -ne "-----------------------------\n\n"
+			MUNF=1 #MU not found
+			sleep 3
 		fi
 	else
-		echo -ne "MU has to have 4 digits input.\n" | $TEE -i -a $LOG
+		echo -ne "MU has to have a 4 digits input.\n" | $TEE -i -a $LOG
 		exit 0
 	fi
 else
-	echo -ne "No input parameter.\nMU has to be 4 digits.\n" | $TEE -i -a $LOG
+	echo -ne "No input parameter.\nMU has to be a 4 digits number.\n" | $TEE -i -a $LOG
 	exit 0
 fi
 
-end=18
+end=19
 
 #  1=MU
 #  2=Train
@@ -62,12 +69,16 @@ end=18
 # 14=byte_18
 # 15=ifs_header_checksum
 # 16=ifs_SHA1
-# 17=ifs_address
-# 18=SHA1_patch
+# 17=RCC_address
+# 18=ifs_header_checksum_patch
+# 19=SHA1_patch
 
-for n in $(echo "for (i = 1; i <= $end; i++) i" | bc); do
+[ $MUNF = 0 ] && for n in $(echo "for (i = 1; i <= $end; i++) i" | bc); do
 	UNITDB[$n]=$(echo -ne $LINE | $CUT -f $n -d ";") 2>> $LOG
 done
+
+[ $MUNF = 0 ] && echo -ne "Unit DB parsing finished\n" | $TEE -i -a $LOG
+
 }
 
 ParseMetainfo ()
@@ -243,13 +254,9 @@ return 2> /dev/null
 
 trap '' 2
 
-set -a
-
 ParseUnitDB "$2"
 
 echo ${UNITDB[1]}
-
-echo -ne "DONE\n" | $TEE -i -a $LOG
 
 trap 2
 

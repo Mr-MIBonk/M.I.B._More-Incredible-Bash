@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd patch.sh v0.1.0 (2021-02-22 by MIBonk)
+# esd patch.sh v0.1.1 (2021-10-07 by MIBonk & MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,7 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/flash -p
+/net/mmx/fs/sda0/apps/flash -p
 
 trap 2
 

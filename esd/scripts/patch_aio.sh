@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd patch_aio.sh v0.2.0 (2022-06-12 by MIB-Wiki)
+# esd patch_aio.sh v0.2.1 (2022-10-07 by MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -34,7 +34,7 @@ fi
 if [[ "$TRAINVERSION" = *POG11* ]]; then
 	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11on -noboot
 fi
-on -f rcc /net/mmx/fs/sda0/apps/flash -p
+/net/mmx/fs/sda0/apps/flash -p
 sleep 3
 
 trap 2

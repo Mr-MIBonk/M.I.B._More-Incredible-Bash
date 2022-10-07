@@ -1,4 +1,4 @@
-# GLOBALS v0.2.1 (2022-08-21 by MIBonk & MIB-Wiki)
+# GLOBALS v0.2.2 (2022-10-07 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 
 # global bin's
 SHA="/net/rcc/usr/bin/sha1sum"
-FLASHLOCK="on -f rcc /usr/bin/flashlock"
+FLASHLOCK="on -f rcc /net/rcc/usr/bin/flashlock"
 VERSIONS="/net/rcc/dev/shmem/version.txt"
 XXD="$VOLUME/apps/sbin/xxd" # not on any unit
 GZIP="$VOLUME/apps/sbin/gzip" # /net/mmx/mnt/app/armle/bin

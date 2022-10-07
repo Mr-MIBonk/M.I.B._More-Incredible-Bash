@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd navon_1.sh v0.1.0 (2021-03-05 by @MIB-Wiki)
+# esd navon_1.sh v0.1.1 (2022-09-09 by @MIB-Wiki)
 
 trap '' 2
 
@@ -19,7 +19,7 @@ echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
 # Navigation Country to EU = 1
-/net/mmx/fs/sda0/apps/navon -a 1
+/net/mmx/fs/sda0/apps/navon -a 1 -noboot
 /net/mmx/fs/sda0/apps/setvariant -var
 
 echo ""

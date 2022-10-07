@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="rcc dump v0.1.4 (2022-10-06 by MIBonk)"
+revision="rdiff v0.1.0 (2022-07-12 by @MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -15,46 +15,56 @@ if [ -z $LOG ]; then
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
 
-if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
-	echo $thisname" or reboot is already running..."
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
 	return 2> /dev/null
+fi
+
+if [ "$3" = "-noboot" ]; then
+	noboot=$3
+else
+	noboot=""
+fi
+
+if [ ! -z $2 ]; then
+VALUE=$2
+else
+VALUE=0
 fi
 
 	case $1 in
 
-	-d) {
+	-a) {
 
-trap '' 2
+# rdiff signature ifs-root-part2.ifs test.sig
 
-[ -n "$GEM" ] && touch $TMP/$thisname.mib
+# rdiff delta test.sig MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs deltafile
 
-. $thisdir/offset -log
+# rdiff patch ifs-root-part2.ifs deltafile new.ifs
 
-echo -ne "dump RCC to logs after applying patched ifs-root-stage2\nThis will take about a minute........." | $TEE -a $LOG
-[ -n "$GEM" ] && echo -ne "\n"
-cat /net/rcc/dev/fs0 > $thisdir/../backup/logs/$MUVERSION-$FAZIT"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE.rcc 2>> $LOG
-ERROR
-sleep 1
-[ -z "$GEM" ] && echo -ne "\n"
-
-rm -rf $TMP/$thisname.mib 2>/dev/null
-
-trap 2
-
+	
 return 2> /dev/null
 
-	};;
+	};;	
+	
 
 	# help or unknown parameter ------------------------------
 	*) {
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION1] <VALUE>[-noboot]"
 		echo ""
-		echo "Options:"
-		echo "        -d	 		dump RCC"
-		echo "        --help		show this help"
+		echo "Options 1:"
+		echo "        -a 			activated <VALUE>"
+		echo "        -s 			status"
+		echo "        --help			show this help"
+		echo ""
+		echo "Option 2:"
+		echo "ON=1; OFF=0"
+		echo ""
+		echo "Option 3:"
+		echo "        -noboot	no reboot triggered by script"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
@@ -70,10 +80,9 @@ return 2> /dev/null
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-		
+
 	};;
 
 	esac
 
 exit 0
-
