@@ -376,11 +376,23 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_all.sh"
-	label   "all - standard backup/app/gndb/bb/system | 15+ min"
+	label   "all - standard backup/app/gndb/bb/system/speech | 25+ min"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_app.sh"
 	label   "app.img | 10-20 min"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_appf.sh"
+	label   "app.img to folder structure | 10-20 min"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_speech.sh"
+	label   "speech.img | 10-15 min"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_system.sh"
+	label   "system folders | 10-15 min"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_gndb.sh"
@@ -3526,7 +3538,7 @@ BIOSCtrl
     entry   "NAR" 3
     entry   "ROW" 4 
     entry   "China" 5
-    entry   "Japan" 6   
+    entry   "Japan" 6
     entry   "Korea" 7
     entry   "Asia" 8
     entry   "Taiwan" 9

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backupplus v0.1.5 (2021-12-10 MIB-Wiki)"
+revision="backupplus v0.1.6 (2022-11-16 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -25,6 +25,59 @@ OUTDIR="$BACKUPFOLDER/images/$MUVERSION"
 
 case $1 in
 
+-speech) {
+
+trap '' 2
+
+	OUTPUT="speech.img"
+	SEIZE="$(df -h /net/mmx/dev/mnand0t178.1 | awk '{print $2}')"
+	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		echo "dumping speech.img now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx umount -f /net/mmx/mnt/speech/ 2>> $LOG
+		on -f mmx cat /net/mmx/dev/mnand0t178.1 > $OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx mount -t qnx6 /net/mmx/dev/mnand0t178.1 /net/mmx/mnt/speech/ 2>> $LOG
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-special) {
+
+trap '' 2
+
+	OUTPUT="special"
+	#export of special folders
+		echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT"/" ]; then
+		echo "dumping /net/rcc/mnt/efs-system/ now"
+		on -f mmx cp -cr /net/rcc/mnt/efs-system/* $OUTDIR-system/rcc/mnt/efs-system/ 2>> $LOG
+		echo "dumping /net/rcc/mnt/efs-persist/ now"
+		on -f mmx cp -cr /net/rcc/mnt/efs-persist/* $OUTDIR-system/rcc/mnt/efs-persist/ 2>> $LOG
+		echo "dumping /net/mmx/mnt/persist/ now"
+		on -f mmx cp -cr /net/mmx/mnt/persist/* $OUTDIR-system/mmx/mnt/persist/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/dev/nvsku/serial_num $OUTDIR-system/ 2>> $LOG
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
 -adb) {
 
 trap '' 2
@@ -33,13 +86,13 @@ trap '' 2
 	#addressbookdb
 	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT ]; then
+	if [ ! -d $OUTDIR-$OUTPUT"/" ]; then
 		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -64,7 +117,32 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cat /dev/mnand0t177 > $OUTDIR-$OUTPUT
+		on -f mmx cat /dev/mnand0t177 > $OUTDIR-$OUTPUT 2>> $LOG
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-appf) { #app.img dump on file/directory base
+
+trap '' 2
+
+	OUTPUT="appimg"
+	SEIZE="$(df -h /net/mmx/dev/mnand0t177 | awk '{print $2}')"
+	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
+	if [ ! -f $OUTDIR-$OUTPUT ]; then
+		echo "copying app.img content now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/app/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -90,7 +168,7 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -115,7 +193,7 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -140,7 +218,7 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -165,7 +243,7 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -181,16 +259,16 @@ return 2> /dev/null
 
 trap '' 2
 
-	OUTPUT="system"
-	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	OUTPUT="/net/mmx/mnt/system/"
+	SEIZE="$(df -h /net/mmx/mnt/system/ | awk '{print $3}')"
 	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
 	if [ ! -d $OUTDIR-$OUTPUT ]; then
-		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "dumping "$OUTPUT" now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/
+		on -f mmx cp -cr /net/mmx/mnt/system/* $OUTDIR-system/mmx/mnt/system/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG

@@ -25,12 +25,14 @@ echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
 echo "Running multiple backups now: standard backup/app/gndb/bb/system"
-echo "This will take 15+ min in total"
+echo "This will take 25+ min in total"
 on -f rcc /net/mmx/fs/sda0/apps/backup -a
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -app
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -gndb
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -bb
 on -f rcc /net/mmx/fs/sda0/apps/backupplus -system
+on -f rcc /net/mmx/fs/sda0/apps/backupplus -special
+on -f rcc /net/mmx/fs/sda0/apps/backupplus -speech
 sleep 3
 
 echo ""
