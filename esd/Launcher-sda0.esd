@@ -2441,51 +2441,6 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> SKODA -> Install Ambientlight MOD
-#
-###########################################################################################
-screen O3_ambient_light SKODA
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"ONLY working for SKODA Octavia 3 cars with ambient light"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"ONLY if you extended your ambient lights - check for details:"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	""
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"https://www.glaskugelservice.de/codierung/ambientbeleuchtung"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	""
-	poll    0
-
-script #/apps/ambient -p
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ambient_patch.sh"
-	label   "add additional ambient light buttons"
-
-script #/apps/ambient -r
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ambient_restore.sh"
-	label   "restore original ambient buttons"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
 # Main -> M.I.B. -> Multimedia System -> SKODA -> Install Image MOD
 #
 ###########################################################################################
@@ -2659,6 +2614,51 @@ keyValue
     value   String sys 0x00000000 0
 	label	"Unit will reboot after patch is installed"
 	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Install Ambientlight MOD
+#
+###########################################################################################
+screen O3_ambient_light SKODA
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"ONLY working for cars with ambient light mod"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"ONLY if you extended your ambient lights - check for details:"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"https://www.glaskugelservice.de/codierung/ambientbeleuchtung"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
+
+script #/apps/ambient -p
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ambient_patch.sh"
+	label   "add additional ambient light buttons"
+
+script #/apps/ambient -r
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ambient_restore.sh"
+	label   "restore original ambient buttons"
 
 keyValue
     value   String sys 0x00000000 0

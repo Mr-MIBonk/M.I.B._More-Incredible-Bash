@@ -25,8 +25,6 @@ fi
 
 	case $1 in
 
-# TODO: add check based on long coding byte 0,1,2 to confirm O3
-
 	-p|-patch) {
 
 if [ ! -z $2 ] && [ -d $thisdir/../mod/ambient/$2 ]; then

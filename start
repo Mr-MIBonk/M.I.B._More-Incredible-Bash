@@ -1,5 +1,5 @@
 #!/bin/sh
-# MIB - More Incredible Bash v0.1.3 (2022-06-17 by MIBonk)
+# MIB - More Incredible Bash v0.1.4 (2022-12-16 by MIBonk)
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
 export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
@@ -18,8 +18,6 @@ else
 	ME="MMX"
 	ON="on -f rcc "
 fi
-
-SW="$(cat /net/rcc/dev/shmem/version.txt 2> /dev/null)"
 
 show_blue(){
 	trap 2
@@ -44,10 +42,8 @@ show_blue(){
     echo -ne "${blue}**${yellow} 5 -${blue} Copy FEC and EL to Unit ${normal}\n"
     echo -ne "${blue}**${yellow} 6 -${blue} Developer Menu activation ${normal}\n"
     echo -ne "${blue}**${yellow} 7 -${blue} CarPlay & Android Auto activation ${normal}\n"	
-	if [[ $SW == *"SKG13"* ]] && [[ $SW == *"1440"* ]]; then
-		echo -ne "${blue}**${yellow} 8 -${blue} Ambient Light Buttons Original ${normal}\n"
-		echo -ne "${blue}**${yellow} 9 -${blue} Ambient Light Buttons patch (first, set to Original) ${normal}\n"
-	fi
+    echo -ne "${blue}**${yellow} 8 -${blue} Ambient Light Buttons Original ${normal}\n"
+    echo -ne "${blue}**${yellow} 9 -${blue} Ambient Light Buttons patch (first, set to Original) ${normal}\n"
     echo -ne "${blue}**${yellow} F -${blue} Fix SVM error ${normal}\n"
     echo -ne "${blue}**${yellow} G -${blue} Install M.I.B. in GEM ${normal}\n"
 	echo -ne "${blue}**${yellow} O -${blue} Set OBD Status ${normal}\n"
