@@ -2622,10 +2622,10 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> Install Ambientlight MOD
+# Main -> M.I.B. -> Multimedia System -> Ambient light MOD
 #
 ###########################################################################################
-screen O3_ambient_light SKODA
+screen ambient_light multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
