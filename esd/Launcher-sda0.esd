@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			06-18-2022
+# Date:			01-16-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -2557,16 +2557,20 @@ screen POG24 Porsche
 
 keyValue
     value   String sys 0x00000000 0
-	label	"This will enable widescreen support for CarPlay and AndroidAuto on POG24 only"
+	label	"This will enable fullscreen/widescreen support for CarPlay and AndroidAuto on POG24"
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
-	label   "Enable widescreen"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_fson.sh"
+	label   "Enable Fullscreen patch"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
-	label   "Remove widescreen"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
+	label   "Enable Widescreen patch"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_off.sh"
+	label   "Remove G24 patch"
 
 keyValue
     value   String sys 0x00000000 0
@@ -2599,16 +2603,20 @@ screen BYG24 Bentley
 
 keyValue
     value   String sys 0x00000000 0
-	label	"This will enable widescreen support for CarPlay and AndroidAuto on BYG24 only"
+	label	"This will enable fullscreen/widescreen support for CarPlay and AndroidAuto on BYG24"
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
-	label   "Enable widescreen"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_fson.sh"
+	label   "Enable Fullscreen patch"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wsoff.sh"
-	label   "Remove widescreen"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_wson.sh"
+	label   "Enable Widescreen patch"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/g24_off.sh"
+	label   "Remove G24 patch"
 
 keyValue
     value   String sys 0x00000000 0

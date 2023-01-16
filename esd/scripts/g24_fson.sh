@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd NavActiveIgnore_off.sh v0.1.1 (2023-01-16 by Mib-Wiki)
+# esd g24_fson.sh v0.1.3 (2023-01-16 by Mib-Wiki)
 
 if [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,7 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/installjava -navignoreon
+on -f rcc /net/mmx/fs/sda0/apps/installjava -g24full
 sleep 3
 
 trap 2
