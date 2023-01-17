@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd (system) backupplus v0.1.2 (2023-01-17 by MIB-Wiki)
+# esd (system) backupplus v0.1.0 (2023-01-17 by MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,8 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/backupplus -system
-
+on -f rcc /net/mmx/fs/sda0/apps/backupplus -RSDB
 sleep 3
 
 echo "You want to support the project?"

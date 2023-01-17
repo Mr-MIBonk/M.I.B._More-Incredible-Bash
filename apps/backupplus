@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backupplus v0.1.6 (2022-11-16 MIB-Wiki)"
+revision="backupplus v0.2.0 (2023-01-17 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,27 +20,21 @@ if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; th
 	return 2> /dev/null
 fi
 
-mkdir -p $BACKUPFOLDER/images/
-OUTDIR="$BACKUPFOLDER/images/$MUVERSION"
+OUTDIRA="$BACKUPFOLDER/advanced/$MUVERSION"
+OUTDIR="$BACKUPFOLDER/advanced/$MUVERSION-FW-images"
 
 case $1 in
 
--speech) {
+-fileinfo) {
 
 trap '' 2
 
-	OUTPUT="speech.img"
-	SEIZE="$(df -h /net/mmx/dev/mnand0t178.1 | awk '{print $2}')"
-	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		echo "dumping speech.img now"
-		echo "duration: ~5min/GB"
-		echo $SEIZE"B data"
-		echo "please wait..."
-		echo "there will be no additional output until you see - All done - again"
-		on -f mmx umount -f /net/mmx/mnt/speech/ 2>> $LOG
-		on -f mmx cat /net/mmx/dev/mnand0t178.1 > $OUTDIR-$OUTPUT 2>> $LOG
-		on -f mmx mount -t qnx6 /net/mmx/dev/mnand0t178.1 /net/mmx/mnt/speech/ 2>> $LOG
+	OUTPUT="fileinfo"
+	#fileinfo
+	echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIRA-fileinfo ]; then
+		echo "Searching and storing *.fileinfo files now"
+		on -f mmx find /mnt -name *.fileinfo -exec cp -c {} $OUTDIRA-fileinfo/ \; 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -59,14 +53,14 @@ trap '' 2
 	OUTPUT="special"
 	#export of special folders
 		echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT"/" ]; then
+	if [ ! -d $OUTDIRA-$OUTPUT"/" ]; then
 		echo "dumping /net/rcc/mnt/efs-system/ now"
-		on -f mmx cp -cr /net/rcc/mnt/efs-system/* $OUTDIR-system/rcc/mnt/efs-system/ 2>> $LOG
+		on -f mmx cp -cr /net/rcc/mnt/efs-system/* $OUTDIRA-$OUTPUT/rcc/mnt/efs-system/ 2>> $LOG
 		echo "dumping /net/rcc/mnt/efs-persist/ now"
-		on -f mmx cp -cr /net/rcc/mnt/efs-persist/* $OUTDIR-system/rcc/mnt/efs-persist/ 2>> $LOG
+		on -f mmx cp -cr /net/rcc/mnt/efs-persist/* $OUTDIRA-$OUTPUT/rcc/mnt/efs-persist/ 2>> $LOG
 		echo "dumping /net/mmx/mnt/persist/ now"
-		on -f mmx cp -cr /net/mmx/mnt/persist/* $OUTDIR-system/mmx/mnt/persist/ 2>> $LOG
-		on -f mmx cp -cr /net/mmx/dev/nvsku/serial_num $OUTDIR-system/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/persist/* $OUTDIRA-$OUTPUT/mmx/mnt/persist/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/dev/nvsku/serial_num $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -86,13 +80,13 @@ trap '' 2
 	#addressbookdb
 	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"............\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT"/" ]; then
+	if [ ! -d $OUTDIRA-$OUTPUT ]; then
 		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -111,13 +105,14 @@ trap '' 2
 	OUTPUT="app.img"
 	SEIZE="$(df -h /net/mmx/dev/mnand0t177 | awk '{print $2}')"
 	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/mmx2/app/70/default/app.img ]; then
 		echo "dumping app.img now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cat /dev/mnand0t177 > $OUTDIR-$OUTPUT 2>> $LOG
+		mkdir -p $OUTDIR/MMX2/app/70/default/
+		on -f mmx cat /dev/mnand0t177 > $OUTDIR/MMX2/app/70/default/app.img 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -136,18 +131,68 @@ trap '' 2
 	OUTPUT="appimg"
 	SEIZE="$(df -h /net/mmx/dev/mnand0t177 | awk '{print $2}')"
 	echo -ne $OUTPUT"........\n" | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIRA-$OUTPUT ]; then
 		echo "copying app.img content now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/app/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/app/* $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-speech) {
+
+trap '' 2
+
+	OUTPUT="speech"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"..........\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		on -f mmx cp -cr /net/mmx/mnt/speech/tts/data_EU/ $OUTDIR/SpeechRes/speech-tts-data_eu/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/speech/tts/data_ROW/ $OUTDIR/SpeechRes/speech-tts-data_row/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/speech/tts/voices/ $OUTDIR/SpeechRes/speech-tts-voices/0/default/ 2>> $LOG
+
+		on -f mmx cp -cr /net/mmx/mnt/speech/tts/vg/ $OUTDIR/SpeechAppRes/speech-tts-app-data-vg/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/speech/common/ $OUTDIR/SpeechAppRes/speech-common-data/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/speech/sr/data/ $OUTDIR/SpeechAppRes/speech-sr-data/0/default/ 2>> $LOG
+
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-fwdump) {
+
+trap '' 2
+
+		on -f mmx cp -cr /net/rcc/mnt/efs-persist/tnrref.csv $OUTDIR/MuTnrRef/data/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/rcc/mnt/efs-persist/SWDL/MainUnit-version2.txt $OUTDIR/MUConsistency/data/0/default/MainUnit-version2.txt 2>> $LOG
+		
+		touch $OUTDIR/"NOT A FW UPDATE" 2>> $LOG
+		touch $OUTDIR/"BACKUP of FW main components" 2>> $LOG
+
+ERROR
+
 trap 2
 
 return 2> /dev/null
@@ -162,13 +207,13 @@ trap '' 2
 	# music, pictures and videos stored on unit
 	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"..........\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT ]; then
+	if [ ! -d $OUTDIRA-$OUTPUT ]; then
 		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -193,7 +238,9 @@ trap '' 2
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/database/ $OUTDIR/Gracenote2/Database/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/Update.txt $OUTDIR/Gracenote2/InfoFile/0/default/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/config/gracenote.json $OUTDIR/Gracenote2/Version/0/default/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -212,13 +259,47 @@ trap '' 2
 	OUTPUT="boardbook"
 	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT ]; then
+	if [ ! -d $OUTDIRA-$OUTPUT ]; then
 		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		if [ -f /net/mmx/mnt/$OUTPUT/boardbook*.iso ]; then
+			on -f mmx cp -c -r -l0 /net/mmx/mnt/$OUTPUT/* $OUTDIRA-$OUTPUT/ 2>> $LOG
+		else
+			echo -ne "No boardbook on unit\n" | $TEE -i -a $LOG
+		fi
+		ERROR
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+	
+trap 2
+
+return 2> /dev/null
+
+};;
+
+-RSDB) {
+
+trap '' 2
+
+	OUTPUT="RSDB"
+	SEIZE="$(df -h /net/mmx/mnt/boardbook/$OUTPUT | awk '{print $3}')"
+	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
+	if [ ! -d $OUTDIR-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/boardbook/"$OUTPUT"/ now"
+		echo "duration: ~5min/GB"
+		echo $SEIZE"B data"
+		echo "please wait..."
+		echo "there will be no additional output until you see - All done - again"
+		if [ ! -d /net/mmx/mnt/$OUTPUT/RSDB/ ]; then
+			on -f mmx cp -cr /net/mmx/mnt/boardbook/$OUTPUT/VW_STL_DB.sqlite $OUTDIR/RadioStationDB/data/0/default/stl.1vw 2>> $LOG
+			on -f mmx cp -cr /net/mmx/mnt/boardbook/$OUTPUT/Update.txt $OUTDIR/RadioStationDB/InfoFile/0/default/update.txt 2>> $LOG
+		else
+			echo -ne "No RSDB on unit\n" | $TEE -i -a $LOG
+		fi
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -237,13 +318,13 @@ trap '' 2
 	OUTPUT="navdb"
 	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"..........\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT ]; then
+	if [ ! -d $OUTDIRA-$OUTPUT ]; then
 		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIR-$OUTPUT/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -259,16 +340,16 @@ return 2> /dev/null
 
 trap '' 2
 
-	OUTPUT="/net/mmx/mnt/system/"
-	SEIZE="$(df -h /net/mmx/mnt/system/ | awk '{print $3}')"
+	OUTPUT="system"
+	SEIZE="$(df -h /net/mmx/mnt/$OUTPUT | awk '{print $3}')"
 	echo -ne $OUTPUT"......\n" | $TEE -i -a $LOG
-	if [ ! -d $OUTDIR-$OUTPUT ]; then
-		echo "dumping "$OUTPUT" now"
+	if [ ! -d $OUTDIRA-$OUTPUT ]; then
+		echo "dumping /net/mmx/mnt/"$OUTPUT"/ now"
 		echo "duration: ~5min/GB"
 		echo $SEIZE"B data"
 		echo "please wait..."
 		echo "there will be no additional output until you see - All done - again"
-		on -f mmx cp -cr /net/mmx/mnt/system/* $OUTDIR-system/mmx/mnt/system/ 2>> $LOG
+		on -f mmx cp -cr /net/mmx/mnt/$OUTPUT/* $OUTDIRA-$OUTPUT/ 2>> $LOG
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
@@ -285,74 +366,79 @@ return 2> /dev/null
 
 trap '' 2
 
-
 if [ -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 	RCC=$BACKUPFOLDER/$MUVERSION-RCC_fs0.bin
-	echo -ne "Dump RCC from SD backup\n" | $TEE -i -a $LOG
+	echo -ne "Use dumped RCC from SD backup\n" | $TEE -i -a $LOG
 else
 	RCC="/net/rcc/dev/fs0"
-	echo -ne "Dump from /net/rcc/dev/fs0\n" | $TEE -i -a $LOG
+	echo -ne "Dump from "$RCC"\n" | $TEE -i -a $LOG
 fi
 
 	echo "dumping RCC images now"
 	echo "duration: max. 5 minutes"
 	echo "please wait..."
 
-	OUTPUT="ipl-mib2.bin"
-
+	OUTPUT="RCC/ipl/21/default/"
+	mkdir -p $OUTDIR/$OUTPUT
 	echo -ne $OUTPUT".........." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/$OUTPUT"ipl-mib2.bin" ]; then
 		SKIPBLOCKS="0"
 		COUNTBLOCKS="32"
-		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR/$OUTPUT"ipl-mib2.bin" 2>> $LOG
 	ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 
-	OUTPUT="ifs-emergency.ifs"
+	OUTPUT="RCC/ifs-emg/21/default/"
+	mkdir -p $OUTDIR/$OUTPUT
 	echo -ne $OUTPUT"....." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/$OUTPUT"ifs-emergency.ifs" ]; then
 		SKIPBLOCKS="32"
 		COUNTBLOCKS="1312"
-		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR/$OUTPUT"ifs-emergency.ifs" 2>> $LOG
 	ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 
-	OUTPUT="ifs-root.ifs"
+	OUTPUT="RCC/ifs-root/21/default/"
+	mkdir -p $OUTDIR/$OUTPUT
 	echo -ne $OUTPUT".........." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/$OUTPUT"ifs-root.ifs" ]; then
 		SKIPBLOCKS="1344"
 		COUNTBLOCKS="6144"
-		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR/$OUTPUT"ifs-root.ifs" 2>> $LOG
 	ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 
-	OUTPUT="efs-system.efs"
+	OUTPUT="RCC/efs-system/21/default/"
+	mkdir -p $OUTDIR/$OUTPUT
 	echo -ne $OUTPUT"........" | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/$OUTPUT"efs-system.efs" ]; then
 		SKIPBLOCKS="7488"
 		COUNTBLOCKS="8128"
-		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR/$OUTPUT"efs-system.efs" 2>> $LOG
 	ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 
-	OUTPUT="AUDI_MIB_DSP.bin.bgz"
+	OUTPUT="RCC/dsp/21/default/"
+	mkdir -p $OUTDIR/$OUTPUT
 	echo -ne $OUTPUT".." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
+	if [ ! -f $OUTDIR/$OUTPUT"AUDI_MIB_DSP.bin.bgz" ]; then
 		SKIPBLOCKS="15616"
 		COUNTBLOCKS="768"
-		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT 2>> $LOG
+		on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR/$OUTPUT"AUDI_MIB_DSP.bin.bgz" 2>> $LOG
 	ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
+
+on -f mmx cp -cr  /net/rcc/etc/version/RCC-version.txt $OUTDIR/RCC/rcc_version_info.txt 2>> $LOG
 
 trap 2
 
@@ -364,60 +450,18 @@ return 2> /dev/null
 
 trap '' 2
 
-# TODO: NOT ready --> RCC copy
-#check MHI2Q
+# TODO: NOT ready
+# check MHI2Q
 
-	MMX="/net/mmx/dev/fs0"
+MMX="/net/mmx/dev/fs0"
 
-	OUTPUT="ipl-mib2.bin"
-	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		SKIPBLOCKS="0"
-		COUNTBLOCKS="32"
-		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
+echo -ne "MXX export not supported yet\n"
 
-	OUTPUT="ifs-emergency.ifs"
-	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		SKIPBLOCKS="32"
-		COUNTBLOCKS="1312"
-		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
+mkdir -p $OUTDIR/MMX2/ 2>> $LOG
+touch $OUTDIR/MMX2/"MMX dump not fully implemented yet" 2>> $LOG
+head -1 /mnt/app/img_ver.txt | sed "s/^#//" > $OUTDIR/MMX2/img_ver.txt 2>> $LOG
 
-	OUTPUT="ifs-root.ifs"
-	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		SKIPBLOCKS="1344"
-		COUNTBLOCKS="6144"
-		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
-
-	OUTPUT="efs-system.efs"
-	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		SKIPBLOCKS="7488"
-		COUNTBLOCKS="8128"
-		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
-
-	OUTPUT="AUDI_MIB_DSP.bin.bgz"
-	echo -ne $OUTPUT"......." | $TEE -i -a $LOG
-	if [ ! -f $OUTDIR-$OUTPUT ]; then
-		SKIPBLOCKS="15616"
-		COUNTBLOCKS="768"
-		$DD bs=4096 skip=$SKIPBLOCKS if=$RCC count=$COUNTBLOCKS of=$OUTDIR-$OUTPUT
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
+ERROR
 
 trap 2
 
@@ -434,14 +478,18 @@ return 2> /dev/null
 		echo ""
 		echo "Options:"
 		echo "        -app 		dump app.img"
+		echo "        -apps 		dump app.img as file structure"
 		echo "        -rcc 		dump RCC images"
-#		echo "        -mmx 		dump MMX images"
+		echo "        -mmx 		dump MMX images"
 		echo "        -abd 		dump AddressBookDB"
 		echo "        -gndb 		dump GraceNoteDB"
-		echo "        -bb 		dump boardbook & RadioStationDB"
+		echo "        -bb 		dump boardbook"
+		echo "        -RSDB 		dump RadioStationDB"
+		echo "        -fileinfo	dump *.fileinfo files"
 		echo "        -media 		dump Media"
 		echo "        -nav 		dump NavDB"
 		echo "        -system 	dump /mnt/system"
+		echo "        -special 	dump special folders"
 		echo "        --help		show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"
