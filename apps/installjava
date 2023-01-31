@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.2.0 (2023-01-16 MIB-Wiki)"
+revision="installjava v0.2.1 (2023-01-31 MIB-Wiki)"
 # Thanks to andrewleech for making this possible! https://github.com/jilleb/mib2-toolbox/pull/189
 # use --help for more info
 
@@ -81,7 +81,7 @@ echo -ne "-- Remove NavActiveIgnore\n" | $TEE -a $LOG
 		echo "NavActiveIgnore.jar removed\nUnit will reboot now\n" | $TEE -a $LOG
 		. $thisdir/reboot -t 10
 	else
-			echo -ne "File not found - navignore patch is not installed\n" | $TEE -a $LOG
+			echo -ne "File not found - navignore patch is not installed\nNew patch will be installed now\n" | $TEE -a $LOG
 	fi
 #else
 #	echo -ne "No supported train found - will stop here\n" | $TEE -a $LOG
@@ -105,6 +105,10 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	echo -ne "Update FW before applying the patch is recommended.\n"
 	if [ -f $APP"g24cp.jar" ]; then
 		echo -ne "File already present on unit.\nWill be updated with file from SD card now...\n" | $TEE -a $LOG
+	fi
+	if [ -f $APP"g24ws.jar" ]; then
+		echo -ne "Old widescreen patch found\nWill be removed from unit now\nNew patch will be installed now\n" | $TEE -a $LOG
+		rm $APP"g24ws.jar" 2>> $LOG
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
@@ -132,6 +136,10 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	echo -ne "Update FW before applying the patch is recommended.\n"
 	if [ -f $APP"g24cp.jar" ]; then
 		echo -ne "File already present on unit.\nWill be updated with file from SD card now....\n" | $TEE -a $LOG
+	fi
+	if [ -f $APP"g24ws.jar" ]; then
+	echo -ne "Old widescreen patch found\nWill be removed from unit now\n" | $TEE -a $LOG
+	rm $APP"g24ws.jar" 2>> $LOG
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
@@ -183,8 +191,8 @@ return 2> /dev/null
 		echo "        -navignoreoff 		remove navignore"
 		echo "        -g24full 		install G24 fullscreen patch"
 		echo "        -g24wide 		install G24 widescreen patch"
-		echo "        -g24rm 		remove G24 patch"
-		echo "        --help		show this help"
+		echo "        -g24rm 			remove G24 patch"
+		echo "        --help			show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"
 		echo ""
