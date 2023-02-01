@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.2.1 (2023-01-31 MIB-Wiki)"
+revision="installjava v0.3.0 (2023-02-01 MIB-Wiki)"
 # Thanks to andrewleech for making this possible! https://github.com/jilleb/mib2-toolbox/pull/189
 # use --help for more info
 
@@ -48,19 +48,25 @@ JAR="NavActiveIgnore.jar"
 trap '' 2
 
 echo -ne "-- Install NavActiveIgnore\n" | $TEE -a $LOG
-#if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]] || [[ "$TRAINVERSION" = *POG1* ]]; then
-	echo -ne "Please note, that this patch will most likely only work on latest FW versions.\n"
-	echo -ne "Update FW before applying the patch is recommended.\n"
+if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
 		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
 	fi
-	cp -r $VOLUME/mod/java/$JAR $APP$JAR 2>> $LOG
+	cp -r $VOLUME/mod/java/navignore_vw.jar $APP$JAR 2>> $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
 	. $thisdir/reboot -t 10
-#else
-#	echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
-#	echo -ne "Audi/Porsche/Bentley are currently not supported by this patch.\n"
-#fi
+elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AUG* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+	echo -ne "Update FW to latest version is recommended.\n"
+	if [ -f $APP$JAR ]; then
+		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
+	fi
+	cp -r $VOLUME/mod/java/navignore_audi.jar $APP$JAR 2>> $LOG
+	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
+	. $thisdir/reboot -t 10
+else
+	echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+fi
 
 trap 2
 
@@ -75,17 +81,13 @@ JAR="NavActiveIgnore.jar"
 trap '' 2
 
 echo -ne "-- Remove NavActiveIgnore\n" | $TEE -a $LOG
-#if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
-	if [ -f $APP$JAR ]; then
-		rm -rf $APP$JAR 2>> $LOG 2>> $LOG
-		echo "NavActiveIgnore.jar removed\nUnit will reboot now\n" | $TEE -a $LOG
-		. $thisdir/reboot -t 10
-	else
-			echo -ne "File not found - navignore patch is not installed\nNew patch will be installed now\n" | $TEE -a $LOG
-	fi
-#else
-#	echo -ne "No supported train found - will stop here\n" | $TEE -a $LOG
-#fi
+if [ -f $APP$JAR ]; then
+	rm -rf $APP$JAR 2>> $LOG
+	echo "NavActiveIgnore.jar removed\nUnit will reboot now\n" | $TEE -a $LOG
+	. $thisdir/reboot -t 10
+else
+		echo -ne "File not found - navignore patch is not installed\nNew patch will be installed now\n" | $TEE -a $LOG
+fi
 
 trap 2
 
