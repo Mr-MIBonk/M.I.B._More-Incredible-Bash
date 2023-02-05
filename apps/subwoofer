@@ -51,7 +51,7 @@ trap '' 2
 echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-  if [ "$DSPERS" = "$DSNOSUB" ]; then
+if [ "$DSPERS" = "$DSNOSUB" ]; then
 	echo -ne "ORIGINAL dataset found on unit\n" | $TEE -a $LOG
 	echo -ne "Installing SUBWOOFER patch\n" | $TEE -a $LOG
 	on -f mmx $PC b:0:3221422112 $DSSUBON 2>> $LOG
@@ -59,11 +59,11 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "DONE\n" | $TEE -a $LOG
 	trap 2
 	. $thisdir/reboot -t 10
-	else
-		echo -ne "No ORIGINAL dataset found on unit\n" | $TEE -a $LOG
-		echo -ne "Go BACK\n" | $TEE -a $LOG
-		trap 2
-	fi	
+else
+	echo -ne "No ORIGINAL dataset found on unit\n" | $TEE -a $LOG
+	echo -ne "Go BACK\n" | $TEE -a $LOG
+	trap 2
+fi	
 
 return 2> /dev/null
 
@@ -77,7 +77,7 @@ trap '' 2
 echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-  if [ "$DSPERS" = "$DSSUBON" ]; then
+if [ "$DSPERS" = "$DSSUBON" ]; then
 	echo -ne "SUBWOOFER patch found on unit\n" | $TEE -a $LOG
 	echo -ne "Installing ORIGINAL dataset\n" | $TEE -a $LOG
 	on -f mmx $PC b:0:3221422112 $DSNOSUB 2>> $LOG
@@ -85,11 +85,11 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 	echo -ne "DONE\n" | $TEE -a $LOG
 	trap 2
 	. $thisdir/reboot -t 10
-	else
-		echo -ne "No ORIGINAL dataset found on unit\n" | $TEE -a $LOG
-		echo -ne "Go BACK\n" | $TEE -a $LOG
-		trap 2
-	fi	
+else
+	echo -ne "No ORIGINAL dataset found on unit\n" | $TEE -a $LOG
+	echo -ne "Go BACK\n" | $TEE -a $LOG
+	trap 2
+fi	
 
 return 2> /dev/null
 
