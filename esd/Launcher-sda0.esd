@@ -2195,6 +2195,36 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> Multimedia System -> AUDI -> Enable SUBWOOFER Control
+#
+###########################################################################################
+screen enable_subwoofer_control AUDI
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"For AUDI only:"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Enables subwoofer control on sstems with internal sound system"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/audi_sub_on.sh"
+	label   "Install SUBWOOFER Patch"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/audi_sub_off.sh"
+	label   "Install ORIGINAL Dataset"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Multimedia System -> AUDI -> Coming & Leaving Sounds
 #
 ###########################################################################################
