@@ -3726,6 +3726,10 @@ bitselect
 	entry	"A6 (4A5) "					165121	#018502
 	entry	"A7 (4KA) "					230657	#018503
 	entry	"Audi Q7 (4M0)"				407297	#013706
+	entry	"Audi A4 B9 (8W0)"			103425	#019401
+	entry	"Audi A4 (8W0)"				168961	#019402
+	entry	"Audi A5 (8W5)"				234497	#019403
+	entry	"Audi RSQ3"					397570	#021106
 
 bitselect
     value   per 0 4101
