@@ -60,7 +60,7 @@ if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAI
 	cp -r $VOLUME/mod/java/navignore_vw.jar $APP$JAR 2>> $LOG
 	echo -ne "navignore_vw.jar installed.\nUnit will reboot now\n" | $TEE -a $LOG
 	. $thisdir/reboot -t 10
-elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AUG* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
 		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
