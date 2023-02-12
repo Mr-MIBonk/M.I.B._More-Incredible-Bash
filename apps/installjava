@@ -50,6 +50,8 @@ JAR="NavActiveIgnore.jar"
 
 trap '' 2
 
+ls -l $APP >> $LOG
+
 echo -ne "-- Install NavActiveIgnore\n" | $TEE -a $LOG
 if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
 	echo -ne "Update FW to latest version is recommended.\nList jar folder content:\n"
