@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Audi subwoofer control v0.1.0 (2023-02-05 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.2.0 (2023-02-12 by Mib-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -15,31 +15,86 @@ if [ -z $LOG ]; then
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
 
-AMP="$(on -f mmx $PC i:0:0x50182CFF)" # long coding byte 11
-echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
-DSPERS="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
-echo -ne "Dataset found on unit:\n$DSPERS\n" | $TEE -a $LOG
-DSNOSUB="004064f70009f70009f70009000000000000000000f700090000000002070102001e262e373f474f5764707d8995a6b6c7dbf03131cbbe"
-DSSUBON="004064f70009f70009f70009000000000000000000f70009f700090002070102001e262e373f474f5764707d8995a6b6c7dbf03131d568"
-
-if [[ "$TRAINVERSION" = *AU* ]]; then
-VALUE=$1
+DSEDIT()
+{
+# <STRING> <BYTEOFFSET> <HEXVALUE> of changed byte"
+if [ ! -z $1 2>/dev/null ]; then
+	echo -ne "Input dataset:\n"$1"\n\n" >> $LOG
+	DS=$1
+	POSITION=$2
+	HEXVALUE=$3
+	echo -ne "Position->"$POSITION" - HEX-Value->"$HEXVALUE"\n\n" >> $LOG
+	if [ ${#HEXVALUE} -eq 2 ] ; then # checks for length of input hex value - must be 2 like "01"
+		HEXVALUE=$(echo $HEXVALUE | awk '{print tolower($0)}') # convert to lower-case
+		LENGTH=${#DS}
+		LENGTH=$(echo $LENGTH -2 | $BC) # adjust LENGTH for HEXVALUE that will be replaced
+		POSITION=$(echo $POSITION *2 | $BC)
+		if [ $POSITION -le $LENGTH ] && [ $(( $POSITION % 2 )) -eq 0 ]; then # -le -> is less than or equal to
+			if [ $POSITION -ge "2" ]; then
+				PRI=$(echo $DS | cut -c1-$POSITION)
+			else
+				PRI=""
+			fi
+			if [ $POSITION -ne $LENGTH ]; then # is not equal to
+				POSITION=$(echo $POSITION +3 | $BC)
+				SEC=$(echo $DS | cut -c$POSITION-$(echo $LENGTH +2 | $BC))
+			else
+				SEC=""
+			fi
+			DSPATCH=$PRI$HEXVALUE$SEC
+			echo -ne "Patched dataset:\n"$DSPATCH"\n\n" >> $LOG
+		else
+			echo -ne "Invalid position\n\n"
+		fi
+	else	
+		echo -ne "Value must be provided as hex value\n\n" | $TEE -a $LOG
+	fi
 else
-VALUE="-stop"
-echo -ne "Wrong brand, this unit is not AUDI!\n" | $TEE -a $LOG
-return 2> /dev/null
+	echo -ne "No dataset provided\n\n" | $TEE -a $LOG
 fi
 
-if [ "$AMP" = 2 ]; then
-	echo -ne "External sound system coding found!\nWe will stop here, as this patch can only be applied to units with 5F internal sound system\n" | $TEE -a $LOG
-	sleep 2
-	return 2> /dev/null
-else
-	echo -ne "No external sound system coding found!\n" | $TEE -a $LOG
-fi
+}
+
+ADDCRC()
+# <STRING>
+{
+. $thisdir/crc16 $1
+crcsum=$(echo $crcsum | awk '{print tolower($0)}') # convert to lower-case
+DSPATCH=$1$crcsum
+}
 
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+if [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *SK* ]] || [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]]; then
+	VALUE=$1
+else
+	VALUE="-stop"
+	echo -ne "Brand not supported\nPorsche & Bentley are not (yet) supported\n" | $TEE -a $LOG
+	return 2> /dev/null
+fi
+
+AMP="$(on -f mmx $PC i:0:0x50182CFF)" # long coding byte 11
+echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
+# echo -ne "$(on -f mmx /eso/bin/dumb_persistence_reader 0 4101)\n" # longcoding output for debugging
+
+SOUND="$(on -f mmx $PC b:0:3221422101:0)" # 0x3000 byte 00 - type of sound system
+echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
+
+if [ "$AMP" = 1 ]; then
+	echo -ne "Internal sound system coding found!\n" | $TEE -a $LOG
+	if [ $SOUND -ge 30 ]; then
+		echo -ne "Sound system is supported\n" | $TEE -a $LOG
+	else
+		echo -ne "Sound system is not supported\n" | $TEE -a $LOG
+		sleep 2
+		return 2> /dev/null
+	fi
+else
+	echo -ne "External sound system coding found!\nWe will stop here, as this patch can only be applied to units with 5F internal sound system\n" | $TEE -a $LOG
+	sleep 2
 	return 2> /dev/null
 fi
 
@@ -53,20 +108,116 @@ trap '' 2
 echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-if [ "$DSPERS" = "$DSNOSUB" ]; then
-	echo -ne "ORIGINAL dataset found on unit\n" | $TEE -a $LOG
-	echo -ne "Installing SUBWOOFER patch\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422112 $DSSUBON 2>> $LOG
+# ---- 0x3B00 ----------------------------------------------------------------------
+	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
+	echo -ne "0x3B00 dataset found on unit:\n$DS3B00\n\n" >> $LOG
+
+	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
+	if [ ! -f $BACKUPFOLDER/0x3B00 ]; then
+		echo $DS3B00 > $BACKUPFOLDER/0x3B00 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	LENGTH=${#DS3B00} # Length DS with crc
+	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
+	DS3B00=$(echo $DS3B00 | cut -c1-$LENGTH) # DS with crc bytes removed
+	echo -ne "0x3B00 dataset without crc:\n$DS3B00\n\n" >> $LOG
+
+	echo -ne "--- set min    range for subwoofer knob\n" 2>> $LOG
+	sleep 1
+	DSEDIT $DS3B00 24 F7 # set min    range for subwoofer knob
+	DS3B00=$DSPATCH
+	echo -ne "--- set center range for subwoofer knob\n" 2>> $LOG
+	sleep 1
+	DSEDIT $DS3B00 25 00 # set center range for subwoofer knob
+	DS3B00=$DSPATCH
+	echo -ne "--- set max    range for subwoofer knob\n" 2>> $LOG
+	sleep 1
+	DSEDIT $DS3B00 26 09 # set max    range for subwoofer knob
+	DS3B00=$DSPATCH
+	if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SK* ]] || [[ "$TRAINVERSION" = *SE* ]]; then
+		echo -ne "--- enable clicks\n" 2>> $LOG
+		DSEDIT $DS3B00 27 01 # enable clicks
+		DS3B00=$DSPATCH
+	fi
+
+	if [[ "$TRAINVERSION" = *AU* ]]; then
+		echo -ne "--- enable 2 EQ dials" 2>> $LOG
+		sleep 1
+		DSEDIT $DS3B00 28 02 # enable 2 EQ dials
+		DS3B00=$DSPATCH
+	elif [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+		echo -ne "--- enable 3 EQ dials\n" 2>> $LOG
+		sleep 1
+		DSEDIT $DS3B00 28 03 # enable 3 EQ dials
+		DS3B00=$DSPATCH
+	elif [[ "$TRAINVERSION" = *SE* ]]; then
+		echo -ne "--- enable 5 EQ dials\n" 2>> $LOG
+		sleep 1
+		DSEDIT $DS3B00 28 05 # enable 5 EQ dials
+		DS3B00=$DSPATCH
+	else
+		echo -ne "no brand match\nByte will not be changed\n" | $TEE -a $LOG
+	fi
+	# DS3B00=$(DSEDIT $DS3B00 30 01) # FocusEffect1 - 1st sound effect 
+	# DS3B00=$(DSEDIT $DS3B00 31 01) # FocusEffect2 - 2nd sound effect 
+
+	echo -ne "\nPatched dataset:\n"$DS3B00"\n\n" >> $LOG
+
+	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "Calculating CRC will take about 20 seconds NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
+	ADDCRC $DS3B00
+	echo -ne "--------------------------- CRC ---------------------------\n"
+	DS3B00=$DSPATCH
+	echo -ne "Patched dataset with CRC:\n"$DS3B00"\n\n" >> $LOG
+	
+	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221422112 $DS3B00 2>> $LOG
 	on -f mmx $PC b:0:1 0 2>> $LOG
-	echo -ne "DONE\n" | $TEE -a $LOG
-	trap 2
-	. $thisdir/reboot -t 10
-else
-	echo -ne "No ORIGINAL dataset found on unit\n" | $TEE -a $LOG
-	echo -ne "Go BACK\n" | $TEE -a $LOG
-fi	
+	echo -ne "DONE\n\n" | $TEE -a $LOG
+
+# ---- 0x3000  ----------------------------------------------------------------------
+	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" #0x3000
+	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
+
+	echo -ne "Backup 0x3000............" | $TEE -i -a $LOG
+	if [ ! -f $BACKUPFOLDER/0x3000 ]; then
+		echo $DS3000 > $BACKUPFOLDER/0x3000 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	LENGTH=${#DS3000} # Length DS with crc
+	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
+	DS3000=$(echo $DS3000 | cut -c1-$LENGTH) # DS with crc bytes removed
+	echo -ne "0x3000 dataset without crc:\n$DS3000\n\n" >> $LOG
+
+	echo -ne "--- set subwoofer max gain\n" 2>> $LOG
+	sleep 1
+	DSEDIT $DS3000 31 5A # set subwoofer max gain
+	DS3000=$DSPATCH
+	echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
+
+	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
+	ADDCRC $DS3000
+	echo -ne "--------------------------- CRC ---------------------------\n"
+	DS3000=$DSPATCH
+	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
+
+	echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221422101 $DS3000 2>> $LOG
+	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 trap 2
+
+. $thisdir/reboot -t 10
 
 return 2> /dev/null
 
@@ -80,18 +231,29 @@ trap '' 2
 echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-if [ "$DSPERS" = "$DSSUBON" ]; then
-	echo -ne "SUBWOOFER patch found on unit\n" | $TEE -a $LOG
-	echo -ne "Installing ORIGINAL dataset\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422112 $DSNOSUB 2>> $LOG
-	on -f mmx $PC b:0:1 0 2>> $LOG
-	echo -ne "DONE\n" | $TEE -a $LOG
-	trap 2
-	. $thisdir/reboot -t 10
-else
-	echo -ne "No SUBWOOFER dataset found on unit\n" | $TEE -a $LOG
-	echo -ne "Go BACK\n" | $TEE -a $LOG
-fi	
+	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
+	if [ -f $BACKUPFOLDER/0x3B00 ] && [ -f $BACKUPFOLDER/0x3000 ]; then
+		echo -ne "Dataset backups found\n" | $TEE -i -a $LOG
+		echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
+		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
+		on -f mmx $PC b:0:3221422112 $(cat $BACKUPFOLDER/0x3B00) 2>> $LOG
+		on -f mmx $PC b:0:1 0 2>> $LOG
+		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
+		echo -ne "0x3B00 DONE\n\n" | $TEE -a $LOG
+		
+		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
+		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" >> $LOG
+		on -f mmx $PC b:0:3221422101 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
+		on -f mmx $PC b:0:1 0 2>> $LOG
+		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" >> $LOG
+		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG
+	else
+		echo -ne " -> Backup not found!\n" | $TEE -i -a $LOG
+	fi
+
+trap 2
+
+. $thisdir/reboot -t 10
 
 trap 2
 
