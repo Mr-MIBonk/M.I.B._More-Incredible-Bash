@@ -5,6 +5,7 @@ revision="MIB2 subwoofer control enabler v0.2.1 (2023-02-12 by Mib-Wiki)"
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
 # https://github.com/NumberOneBot/mqb-mib2-sound-datasets
+# https://mqb-blog.com/en/2022/02/21/sound-dataset/
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
 export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
@@ -83,7 +84,7 @@ AMP="$(on -f mmx $PC i:0:0x50182CFF)" # long coding byte 11
 echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 # echo -ne "$(on -f mmx /eso/bin/dumb_persistence_reader 0 4101)\n" # longcoding output for debugging
 
-SOUND="$(on -f mmx $PC b:0:3221422101:0)" # 0x3000 byte 00 - type of sound system
+SOUND="$(on -f mmx $PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
 echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
 
 if [ "$AMP" = 1 ]; then
@@ -148,7 +149,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	fi
 
 	if [[ "$TRAINVERSION" = *AU* ]]; then
-		echo -ne "--- enable 2 EQ dials" 2>> $LOG
+		echo -ne "--- enable 2 EQ dials\n" 2>> $LOG
 		sleep 1
 		DSEDIT $DS3B00 28 02 # enable 2 EQ dials
 		DS3B00=$DSPATCH
@@ -183,7 +184,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 # ---- 0x3000  ----------------------------------------------------------------------
-	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" #0x3000
+	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
 	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
 
 	echo -ne "Backup 0x3000............" | $TEE -i -a $LOG
@@ -214,7 +215,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
 	echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422101 $DS3000 2>> $LOG
+	on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
 	on -f mmx $PC b:0:1 0 2>> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
@@ -245,10 +246,10 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 		echo -ne "0x3B00 DONE\n\n" | $TEE -a $LOG
 		
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
-		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" >> $LOG
-		on -f mmx $PC b:0:3221422101 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
+		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
+		on -f mmx $PC b:0:3221422100 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
 		on -f mmx $PC b:0:1 0 2>> $LOG
-		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422101)" >> $LOG
+		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
 		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG
 	else
 		echo -ne " -> Backup not found!\n" | $TEE -i -a $LOG
