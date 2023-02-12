@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.2.1 (2023-02-12 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.2.3 (2023-02-12 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -204,7 +204,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "--- set subwoofer max gain\n" 2>> $LOG
 	sleep 1
 	
-	if [ on -f mmx $PC b:0:3221422100:31 -eq 0 ]; then
+	if [ $(on -f mmx $PC b:0:3221422100:31) -eq 0 ]; then
 		DSEDIT $DS3000 31 5A # set subwoofer max gain
 		DS3000=$DSPATCH
 		echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
@@ -224,7 +224,6 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	else
 		echo -ne "Subwoofer gain already coded\nNo need to change it\n\n" | $TEE -a $LOG
 	fi
-	
 
 trap 2
 
