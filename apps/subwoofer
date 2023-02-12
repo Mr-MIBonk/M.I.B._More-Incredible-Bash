@@ -84,13 +84,12 @@ AMP="$(on -f mmx $PC i:0:0x50182CFF)" # long coding byte 11
 echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 # echo -ne "$(on -f mmx /eso/bin/dumb_persistence_reader 0 4101)\n" # longcoding output for debugging
 
-SOUND="$(on -f mmx $PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
-echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
-
 if [ "$AMP" = 1 ]; then
 	echo -ne "Internal sound system coding found!\n" | $TEE -a $LOG
+	SOUND="$(on -f mmx $PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
+	echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
 	if [ $SOUND -ge 30 ]; then
-		echo -ne "Sound system is supported\n" | $TEE -a $LOG
+		echo -ne "Sound system is supported\n\n" | $TEE -a $LOG
 	else
 		echo -ne "Sound system is not supported\n" | $TEE -a $LOG
 		sleep 2
@@ -181,6 +180,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 	on -f mmx $PC b:0:3221422112 $DS3B00 2>> $LOG
 	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "Dataset on unit:\n"$(on -f mmx $PC b:0:3221422112)"\n\n" >> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 # ---- 0x3000  ----------------------------------------------------------------------
@@ -203,21 +203,28 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 
 	echo -ne "--- set subwoofer max gain\n" 2>> $LOG
 	sleep 1
-	DSEDIT $DS3000 31 5A # set subwoofer max gain
-	DS3000=$DSPATCH
-	echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
+	
+	if [ on -f mmx $PC b:0:3221422100:31 -eq 0 ]; then
+		DSEDIT $DS3000 31 5A # set subwoofer max gain
+		DS3000=$DSPATCH
+		echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
+		
+		echo -ne "--------------------------- CRC ---------------------------\n"
+		echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
+		ADDCRC $DS3000
+		echo -ne "--------------------------- CRC ---------------------------\n"
+		DS3000=$DSPATCH
+		echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
-	echo -ne "--------------------------- CRC ---------------------------\n"
-	echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
-	ADDCRC $DS3000
-	echo -ne "--------------------------- CRC ---------------------------\n"
-	DS3000=$DSPATCH
-	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
-
-	echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
-	on -f mmx $PC b:0:1 0 2>> $LOG
-	echo -ne "DONE\n\n" | $TEE -a $LOG
+		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
+		on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
+		on -f mmx $PC b:0:1 0 2>> $LOG
+		echo -ne "Dataset on unit:\n"$(on -f mmx $PC b:0:3221422100)"\n\n" >> $LOG
+		echo -ne "DONE\n\n" | $TEE -a $LOG
+	else
+		echo -ne "Subwoofer gain already coded\nNo need to change it\n\n" | $TEE -a $LOG
+	fi
+	
 
 trap 2
 
