@@ -1,7 +1,10 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.2.0 (2023-02-12 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.2.1 (2023-02-12 by Mib-Wiki)"
 # use --help for more info
+# Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
+# https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
+# https://github.com/NumberOneBot/mqb-mib2-sound-datasets
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
 export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
