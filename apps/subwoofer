@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.2.3 (2023-02-12 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.2.4 (2023-02-12 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -129,15 +129,15 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	DS3B00=$(echo $DS3B00 | cut -c1-$LENGTH) # DS with crc bytes removed
 	echo -ne "0x3B00 dataset without crc:\n$DS3B00\n\n" >> $LOG
 
-	echo -ne "--- set min    range for subwoofer knob\n" 2>> $LOG
+	echo -ne "--- set min    range for subwoofer knob\n" | $TEE -i -a $LOG
 	sleep 1
 	DSEDIT $DS3B00 24 F7 # set min    range for subwoofer knob
 	DS3B00=$DSPATCH
-	echo -ne "--- set center range for subwoofer knob\n" 2>> $LOG
+	echo -ne "--- set center range for subwoofer knob\n" | $TEE -i -a $LOG
 	sleep 1
 	DSEDIT $DS3B00 25 00 # set center range for subwoofer knob
 	DS3B00=$DSPATCH
-	echo -ne "--- set max    range for subwoofer knob\n" 2>> $LOG
+	echo -ne "--- set max    range for subwoofer knob\n" | $TEE -i -a $LOG
 	sleep 1
 	DSEDIT $DS3B00 26 09 # set max    range for subwoofer knob
 	DS3B00=$DSPATCH
@@ -148,17 +148,17 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	fi
 
 	if [[ "$TRAINVERSION" = *AU* ]]; then
-		echo -ne "--- enable 2 EQ dials\n" 2>> $LOG
+		echo -ne "--- enable 2 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
 		DSEDIT $DS3B00 28 02 # enable 2 EQ dials
 		DS3B00=$DSPATCH
 	elif [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
-		echo -ne "--- enable 3 EQ dials\n" 2>> $LOG
+		echo -ne "--- enable 3 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
 		DSEDIT $DS3B00 28 03 # enable 3 EQ dials
 		DS3B00=$DSPATCH
 	elif [[ "$TRAINVERSION" = *SE* ]]; then
-		echo -ne "--- enable 5 EQ dials\n" 2>> $LOG
+		echo -ne "--- enable 5 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
 		DSEDIT $DS3B00 28 05 # enable 5 EQ dials
 		DS3B00=$DSPATCH
@@ -173,14 +173,14 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "--------------------------- CRC ---------------------------\n"
 	echo -ne "Calculating CRC will take about 20 seconds NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
 	ADDCRC $DS3B00
-	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "-------------------------- DONE ---------------------------\n"
 	DS3B00=$DSPATCH
 	echo -ne "Patched dataset with CRC:\n"$DS3B00"\n\n" >> $LOG
 	
 	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 	on -f mmx $PC b:0:3221422112 $DS3B00 2>> $LOG
 	on -f mmx $PC b:0:1 0 2>> $LOG
-	echo -ne "Dataset on unit:\n"$(on -f mmx $PC b:0:3221422112)"\n\n" >> $LOG
+	echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)"\n\n" >> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 # ---- 0x3000  ----------------------------------------------------------------------
@@ -212,14 +212,14 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 		echo -ne "--------------------------- CRC ---------------------------\n"
 		echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
 		ADDCRC $DS3000
-		echo -ne "--------------------------- CRC ---------------------------\n"
+		echo -ne "-------------------------- DONE ---------------------------\n"
 		DS3000=$DSPATCH
 		echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
 		on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
 		on -f mmx $PC b:0:1 0 2>> $LOG
-		echo -ne "Dataset on unit:\n"$(on -f mmx $PC b:0:3221422100)"\n\n" >> $LOG
+		echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)"\n\n" >> $LOG
 		echo -ne "DONE\n\n" | $TEE -a $LOG
 	else
 		echo -ne "Subwoofer gain already coded\nNo need to change it\n\n" | $TEE -a $LOG
