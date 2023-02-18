@@ -1628,7 +1628,7 @@ keyValue
 bitvalue
     value   per 0 4101
 	range   11.0 11.7
-	label   "Sound system"
+	label   "Sound system - LC byte 11"
 	entry	"none" 0
 	entry	"internal" 1
 	entry	"NOT supported - external" 2
@@ -1636,7 +1636,7 @@ bitvalue
 bitvalue
     value   per 0 3221422100
 	range   684.0 684.7
-	label   "Current subwoofer gain in dB"
+	label   "SUB EQ gain - 0x3000 byte 684"
 	entry	"0 dB" 0
 	entry	"2 dB" 25
 	entry	"4 dB" 50
@@ -1649,7 +1649,7 @@ bitvalue
 bitvalue
     value   per 0 3221422100
 	range   0.0 0.7
-	label   "Soundsystem"
+	label   "Soundsystem - 0x3000 byte 0"
 	entry	"none" 0
 	entry	"NOT supported - 2ch (4.0)" 16
 	entry	"NOT supported - 4ch (8.0)" 32
@@ -1664,18 +1664,37 @@ bitvalue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Factory subwoofer gain can range between 0 - 6 dB"
+    label	"INFO: Factory subwoofer gain can range between 0 - 6 dB"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Subwoofer -> Increase subwoofer EQ gain
+#
+###########################################################################################
+
+screen EQ_subwoofer_gain subwoofer
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Increase subwoofer gain in EQ - 0x3000 dataset"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Increase subwoofer gain in 0x3000 dataset"
+    label	"WARNING: Too high gain will DAMAGE your subwoofer - change this on your own risk!"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Too high gain will DAMAGE your subwoofer - change this on your own risk!"
+    label	"This change will be fixed in dataset"
 	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Max. 8dB can be added to the base gain from factory dataset!"
+	poll    0
+
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub2.sh"
@@ -1695,12 +1714,34 @@ script
 
 keyValue
     value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
+	label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> Subwoofer -> Enable control knob
+#
+###########################################################################################
+
+screen enable_control_knob subwoofer
+
+keyValue
+    value   String sys 0x00000000 0
     label	"Enabling subwoofer control knob"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Will not work on all units!"
+    label	"Will not work on all units! FOr some FW versions the knob is not part of the GUI"
 	poll    0
 
 script
@@ -1709,12 +1750,12 @@ script
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Subwoofer gain via knob will not be stored between power cycles and source change"
+    label	"Subwoofer gain via knob will not be stored between power cycle and source change"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"You will have to go back to menu and turn the knob once to enable it again"
+    label	"You will have to go back to menu and turn the knob one step to enable it again"
 	poll    0
 
 keyValue
@@ -1724,7 +1765,7 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
-	label   "Revert to ORIGINAL Datasets"
+	label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
 
 keyValue
     value   String sys 0x00000000 0
