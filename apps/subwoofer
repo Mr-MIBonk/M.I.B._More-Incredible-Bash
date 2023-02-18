@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.2.4 (2023-02-12 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.0 (2023-02-18 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -59,12 +59,71 @@ fi
 
 }
 
+BACKUP()
+{
+	echo -ne "\nREAD sound datasets ---\n" | $TEE -i -a $LOG
+	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
+	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
+	DS3000_684=$(on -f mmx $PC b:0:3221422100:684) #0x3000 Byte 684
+
+	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
+	if [ ! -f $NAND/0x3B00 ]; then
+		echo $DS3B00 > $NAND/0x3B00 2>> $LOG
+		echo $DS3B00 > $BACKUPFOLDER/0x3B00 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+
+	echo -ne "Backup 0x3000............" | $TEE -i -a $LOG
+	if [ ! -f $NAND/0x3000 ] || [ ! -f $NAND/0x3000_684 ]; then
+		echo $DS3000 > $NAND/0x3000 2>> $LOG
+		echo $DS3000 > $BACKUPFOLDER/0x3000 2>> $LOG
+		echo $DS3000_684 > $NAND/0x3000_684 2>> $LOG
+		echo $DS3000 > $BACKUPFOLDER/0x3000_684 2>> $LOG
+		ERROR
+		sleep 1
+	else
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	fi
+}
+
 ADDCRC()
 # <STRING>
 {
 . $thisdir/crc16 $1
 crcsum=$(echo $crcsum | awk '{print tolower($0)}') # convert to lower-case
 DSPATCH=$1$crcsum
+}
+
+ADDGAIN()
+# <Original Gain> <Gain to add> | Output hex value of new gain
+{
+# Gain 4db = hex 32 = dec 50 / 12.5 = 4
+# 2db = 25 decimal = 19 hex
+# echo $(echo "ibase=16; 19" | $BC) = 25 decimal
+# echo $(echo "obase=16; 25" | $BC) = 0x19 hex
+# echo $(echo "ibase=16;19+19" | bc) = 19hex + 19hex =50
+# print $((16#19 + 16#19)) 19hex + 19hex = 50 decimal
+# echo $(echo "2*12.5" | bc)
+
+#echo -ne "$1\n"
+#echo -ne "$2\n"
+
+if [ $(( $2 % 2 )) -eq 0 ] || [ $2 = 0 ]; then
+	GAIN=$(echo "ibase=16;$1" | $BC)
+	GAINADD=$(echo "$2*12.5" | $BC)
+	#echo -ne "Input gain is $GAIN db\nGain to add is $GAINADD in decimal\n"
+	NEWGAIN=$(echo "$GAINADD+$GAIN" | $BC)
+	#echo -ne "$NEWGAIN\n"
+	NEWGAIN=$(echo "obase=16;$NEWGAIN" | $BC)
+	#echo -ne "$NEWGAIN\n"
+else
+	echo -ne "Gain must be multiple of 2\n" | $TEE -a $LOG
+	exit 2> /dev/null
+fi
+
 }
 
 if [ -f $TMP/reboot.mib ]; then
@@ -101,28 +160,91 @@ else
 	return 2> /dev/null
 fi
 
+
 	case $VALUE in
+
+	-subgain) {
+# <Gain to add> in 2dB steps
+# ---- 0x3000 ----------------------------------------------------------------------
+# byte 2AC 684
+
+trap '' 2
+
+	BACKUP
+	
+	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
+	LENGTH=${#DS3000} # Length DS with crc
+	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
+	DS3000=$(echo $DS3000 | cut -c1-$LENGTH) # DS with crc bytes removed
+	echo -ne "0x3000 dataset without crc:\n$DS3000\n\n" >> $LOG
+	
+	#SUBGAIN="$(on -f mmx $PC b:0:3221422100:684)" # 0x3000 byte 00 - type of sound system
+	SUBGAIN=$DS3000_684
+	#echo -ne "Gain found in dataset $SUBGAIN in hex\n"
+	SUBGAINDEC="$(echo "ibase=16; $SUBGAIN" | $BC)"
+	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
+	echo -ne "Subwoofer gain dataset $SUBGAINDEC dB\n" | $TEE -i -a $LOG
+	echo -ne "Subwoofer gain increase $2 dB\n" | $TEE -i -a $LOG
+	
+	echo -ne "ADD gain to dataset ---\n"
+	ADDGAIN $SUBGAIN $2
+	#echo -ne "New subwoofer gain $NEWGAIN in hex\n"
+	SUBGAINDEC="$(echo "ibase=16; $NEWGAIN" | $BC)"
+	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
+	echo -ne "New subwoofer gain $SUBGAINDEC dB\n\n" | $TEE -i -a $LOG
+
+	DS3000_684_ORIG=$(cat $NAND/0x3000_684)
+	ORIGDEC="$(echo "ibase=16; $DS3000_684_ORIG" | $BC)"
+	ORIGDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
+	DIFF="$(echo "$SUBGAINDEC-$ORIGDEC" | $BC)"
+	if [ $DIFF -le 8 ]; then # is less than or equal to
+		echo -ne "Continue subwoofer gain increase\n"
+	else
+		echo -ne "Subwoofer gain increase to stock value is bigger than +8dB\nWill stop here\n"
+		sleep 2
+		exit 2> /dev/null
+	fi
+
+	echo -ne "\nCreate new dataset ---\n"
+	DSEDIT $DS3000 684 $NEWGAIN # set center range for subwoofer knob
+	DS3000=$DSPATCH
+	echo -ne "Patched dataset:\n"$DSPATCH"\n\n" >> $LOG
+
+	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
+	ADDCRC $DS3000
+	echo -ne "-------------------------- DONE ---------------------------\n"
+	DS3000=$DSPATCH
+	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
+
+	echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
+	on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
+	sleep 1
+	on -f mmx $PC b:0:1 0 2>> $LOG
+	echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)"\n\n" >> $LOG
+	echo -ne "DONE\n\n" | $TEE -a $LOG
+
+trap 2
+
+. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+};;
 
 	-subon) {
 
 trap '' 2
+
+BACKUP
 
 [ -z "$GEM" ] && echo -ne "\033[36m"
 echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
 # ---- 0x3B00 ----------------------------------------------------------------------
-	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
-	echo -ne "0x3B00 dataset found on unit:\n$DS3B00\n\n" >> $LOG
 
-	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
-	if [ ! -f $BACKUPFOLDER/0x3B00 ]; then
-		echo $DS3B00 > $BACKUPFOLDER/0x3B00 2>> $LOG
-		ERROR
-		sleep 1
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
+	echo -ne "0x3B00 dataset found on unit:\n$DS3B00\n\n" >> $LOG
 
 	LENGTH=${#DS3B00} # Length DS with crc
 	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
@@ -184,17 +306,8 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 # ---- 0x3000  ----------------------------------------------------------------------
-	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
-	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
 
-	echo -ne "Backup 0x3000............" | $TEE -i -a $LOG
-	if [ ! -f $BACKUPFOLDER/0x3000 ]; then
-		echo $DS3000 > $BACKUPFOLDER/0x3000 2>> $LOG
-		ERROR
-		sleep 1
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-	fi
+	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
 
 	LENGTH=${#DS3000} # Length DS with crc
 	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
@@ -282,6 +395,7 @@ return 2> /dev/null
 		echo "Options:"
 		echo "        -subon 			Install SUBWOOFER patch"
 		echo "        -suboff 			Install ORIGINAL dataset (disable subwoofer control)"
+		echo "        -subgain <value> 	Add X dB to gain - max 8 dB"
 		echo "        --help			show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"

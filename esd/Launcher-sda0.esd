@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			01-17-2023
+# Date:			02-18-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -1614,6 +1614,125 @@ screen multimedia_system =>M.I.B.<=
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> Multimedia System -> Subwoofer
+#
+###########################################################################################
+
+screen subwoofer multimedia_system
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"For units with internal sound system and subwoofer only - all brands"
+	poll    0
+
+bitvalue
+    value   per 0 4101
+	range   11.0 11.7
+	label   "Sound system"
+	entry	"none" 0
+	entry	"internal" 1
+	entry	"NOT supported - external" 2
+
+bitvalue
+    value   per 0 3221422100
+	range   684.0 684.7
+	label   "Current subwoofer gain in dB"
+	entry	"0 dB" 0
+	entry	"2 dB" 25
+	entry	"4 dB" 50
+	entry	"6 dB" 75
+	entry	"8 dB" 125
+	entry	"10 dB" 150
+	entry	"12 dB" 175
+	entry	"14 dB" 200
+
+bitvalue
+    value   per 0 3221422100
+	range   0.0 0.7
+	label   "Soundsystem"
+	entry	"none" 0
+	entry	"NOT supported - 2ch (4.0)" 16
+	entry	"NOT supported - 4ch (8.0)" 32
+	entry	"NOT supported - 4ch / 2ch compatible (8.0 / 4.0)" 33
+	entry	"6ch center sub (9.1)" 48
+	entry	"6ch center sub / 2/4ch compatible (9.1 / 8.0 / 4.0)" 49
+	entry	"6ch doublesub (8.2)" 50
+	entry	"6ch doublesub / 2/4ch compatible (8.2 / 8.0 / 4.0)" 51
+	entry	"6ch frontwoofer (9.1)" 52
+	entry	"6ch frontwoofer / 2/4ch compatible (9.1 / 8.0 / 4.0)" 53
+	
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Factory subwoofer gain can range between 0 - 6 dB"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Increase subwoofer gain in 0x3000 dataset"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Too high gain will DAMAGE your subwoofer - change this on your own risk!"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub2.sh"
+	label   "+2 dB"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub4.sh"
+	label   "+4 dB"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub6.sh"
+	label   "+6 dB"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub8.sh"
+	label   "+8 dB"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Enabling subwoofer control knob"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Will not work on all units!"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_on.sh"
+	label   "Install SUBWOOFER Patch"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Subwoofer gain via knob will not be stored between power cycles and source change"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"You will have to go back to menu and turn the knob once to enable it again"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
+	label   "Revert to ORIGINAL Datasets"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Multimedia System -> Radio
 #
 ###########################################################################################
@@ -1662,8 +1781,6 @@ keyValue
     value   String sys 0x00000000 0
 	label	"___________________________________________________________________________"
 	poll    0
-
-
 
 ###########################################################################################
 #
@@ -2162,7 +2279,6 @@ bitselect
 #TODO
 #output MXXXX-StartupImageConfig.txt to screen
 
-
 keyValue
     value   String sys 0x00000000 0
     label	"___________________________________________________________________________"
@@ -2191,36 +2307,6 @@ screen AUDI multimedia_system
 keyValue
     value   String sys 0x00000000 0
 	label	"Functions within are only usable on AUDI units"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Multimedia System -> AUDI -> Enable SUBWOOFER Control
-#
-###########################################################################################
-screen enable_subwoofer_control AUDI
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"For AUDI only:"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Enables subwoofer control on sstems with internal sound system"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/audi_sub_on.sh"
-	label   "Install SUBWOOFER Patch"
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/audi_sub_off.sh"
-	label   "Install ORIGINAL Dataset"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
 	poll    0
 
 ###########################################################################################
