@@ -1,0 +1,84 @@
+#!/bin/sh
+
+revision="showimage v0.3.0 (2023-02-18 by Mib-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+	case $1 in
+
+	-load) {
+# <filename> <duration in s>
+# supported image formats:
+# jpeg, png, gif (no animations), bmp
+
+trap '' 2
+
+echo "displaying ${3}"
+
+export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
+LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target:/armle/lib/dll /eso/bin/apps/loadandshowimage ${3}&
+
+/eso/bin/apps/dmdt sc 0 -9 # trigger display of image
+sleep $2
+LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target /eso/bin/apps/loadandshowimage 1 2 3 4 5 
+/eso/bin/apps/dmdt sb 0 # switch back to standard output screen
+
+trap 2
+
+#. $thisdir/reboot -t 10
+
+return 2> /dev/null
+
+};;
+
+	-ts) {
+
+trap '' 2
+
+/eso/bin/apps/dmdt ts 0 /net/mmx/fs/sda0/tttt.png
+
+return 2> /dev/null
+
+};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [DURATION] [FILE]"
+		echo ""
+		echo "Options:"
+		echo "        -load 			loads defined image to screen"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0

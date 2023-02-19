@@ -23,9 +23,13 @@ keyValue
     label   "NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF"
 	poll    0
 
+#script
+#	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
+#	label    "GPL License"
+
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
-	label    "GPL License"
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/showimage_test.sh"
+	label    "Image Test"
 
 keyValue
     value   String sys 0x00000000 0
@@ -1646,6 +1650,11 @@ bitvalue
 	entry	"12 dB" 175
 	entry	"14 dB" 200
 
+keyValue
+    value   String sys 0x00000000 0
+    label	"INFO: Factory subwoofer gain can range between 0 - 6 dB"
+	poll    0
+
 bitvalue
     value   per 0 3221422100
 	range   0.0 0.7
@@ -1660,11 +1669,18 @@ bitvalue
 	entry	"6ch doublesub / 2/4ch compatible (8.2 / 8.0 / 4.0)" 51
 	entry	"6ch frontwoofer (9.1)" 52
 	entry	"6ch frontwoofer / 2/4ch compatible (9.1 / 8.0 / 4.0)" 53
-	
+
+bitvalue
+    value   per 0 3221422112
+	range   28.0 28.7
+	label   "EQ dials - 0x3B00 byte 28"
+	entry	"2 EQ dials - trebble/bass" 2
+	entry	"3 EQ dials - trebble/middle/bass" 3
+	entry	"5 EQ dials - trebble/midtrebble/middle/midbass/bass" 5
 
 keyValue
     value   String sys 0x00000000 0
-    label	"INFO: Factory subwoofer gain can range between 0 - 6 dB"
+    label	"INFO: Not all FW GUI versions can show all dials. There might be more activated than visible/usable"
 	poll    0
 
 ###########################################################################################
@@ -1736,12 +1752,17 @@ screen enable_control_knob subwoofer
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Enabling subwoofer control knob"
+    label	"Enabling subwoofer control knob - 0x3B00 dataset byte 24-26"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Will not work on all units! FOr some FW versions the knob is not part of the GUI"
+    label	"Enables max EQ dials for brand - 0x3B00 dataset byte 28"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Will not work on all units! For some FW versions the knob is not part of the GUI"
 	poll    0
 
 script
