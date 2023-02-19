@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="showimage v0.3.0 (2023-02-18 by Mib-Wiki)"
+revision="showimage v0.1.0 (2023-02-19 by Mib-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -18,7 +18,7 @@ fi
 	case $1 in
 
 	-load) {
-# <filename> <duration in s>
+# <duration in s> <path> <filename>
 # supported image formats:
 # jpeg, png, gif (no animations), bmp
 
@@ -29,28 +29,35 @@ echo "displaying ${4}"
 export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
 LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target:/armle/lib/dll /eso/bin/apps/loadandshowimage ${3}${4}&
 
-/eso/bin/apps/dmdt sc 0 -9 | $TEE -a $LOG# trigger display of image
+/net/mmx/eso/bin/apps/dmdt sc 0 -9 | $TEE -a $LOG# trigger display of image
 sleep 1
-/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/screenshot_$4" | $TEE -a $LOG
+/net/mmx/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/screenshot_$4" | $TEE -a $LOG
 
 sleep $2
 
 LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target /eso/bin/apps/loadandshowimage 1 2 3 4 5 
-/eso/bin/apps/dmdt sb 0 | $TEE -a $LOG# switch back to standard output screen
+/net/mmx/eso/bin/apps/dmdt sb 0 | $TEE -a $LOG# switch back to standard output screen
 
 trap 2
-
-#. $thisdir/reboot -t 10
 
 return 2> /dev/null
 
 };;
 
 	-ts) {
-
+# Take a screenshot from screen 0 and dump to *.png file
+# <time until screenshot> <file name appendix>
 trap '' 2
 
-/eso/bin/apps/dmdt ts 0 /net/mmx/fs/sda0/tttt.png
+if [ -z $2 ]; then
+	sleep 0
+else
+	sleep $2
+fi
+
+ID=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
+
+/net/mmx/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/SCREENSHOT_${3}${ID}.png"
 
 return 2> /dev/null
 
@@ -61,10 +68,11 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [DURATION] [FILE]"
+		echo "Usage: "$thisname" "
 		echo ""
 		echo "Options:"
-		echo "        -load 			loads defined image to screen"
+		echo "        -load 	[DURATION] [PATH] [FILE]			loads defined image to screen"
+		echo "        -ts 	[time [s] until screenshot]	[file name appendix]	takes a screenshot of main screen"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
