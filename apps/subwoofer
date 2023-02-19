@@ -252,6 +252,8 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "0x3B00 dataset without crc:\n$DS3B00\n\n" >> $LOG
 
 	echo -ne "--- set min    range for subwoofer knob\n" | $TEE -i -a $LOG
+	# hex value converted into decimal / 10 will give the number of steps for -/+ range on kno
+	# hex 
 	sleep 1
 	DSEDIT $DS3B00 24 F7 # set min    range for subwoofer knob
 	DS3B00=$DSPATCH
@@ -272,17 +274,17 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	if [[ "$TRAINVERSION" = *AU* ]]; then
 		echo -ne "--- enable 2 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
-		DSEDIT $DS3B00 28 02 # enable 2 EQ dials
+		DSEDIT $DS3B00 28 02 # enable 2 EQ dials - trebble/bass - Max display for Audi
 		DS3B00=$DSPATCH
 	elif [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
 		echo -ne "--- enable 3 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
-		DSEDIT $DS3B00 28 03 # enable 3 EQ dials
+		DSEDIT $DS3B00 28 03 # enable 3 EQ dials - trebble/middle/bass
 		DS3B00=$DSPATCH
 	elif [[ "$TRAINVERSION" = *SE* ]]; then
 		echo -ne "--- enable 5 EQ dials\n" | $TEE -i -a $LOG
 		sleep 1
-		DSEDIT $DS3B00 28 05 # enable 5 EQ dials
+		DSEDIT $DS3B00 28 05 # enable 5 EQ dials - trebble/midtrebble/middle/midbass/bass
 		DS3B00=$DSPATCH
 	else
 		echo -ne "no brand match\nByte will not be changed\n" | $TEE -a $LOG
