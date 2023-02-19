@@ -19,9 +19,9 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/640x480.png
-/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/800x600.png
-/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/1280x640.png
+/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/ 640x480.png
+/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/ 800x600.png
+/net/mmx/fs/sda0/apps/showimage -load 5 /net/mmx/fs/sda0/mod/images/showimage/ 1280x640.png
 sleep 3
 
 echo ""

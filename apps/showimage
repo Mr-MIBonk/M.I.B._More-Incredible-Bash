@@ -24,15 +24,19 @@ fi
 
 trap '' 2
 
-echo "displaying ${3}"
+echo "displaying ${4}"
 
 export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
-LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target:/armle/lib/dll /eso/bin/apps/loadandshowimage ${3}&
+LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target:/armle/lib/dll /eso/bin/apps/loadandshowimage ${3}${4}&
 
-/eso/bin/apps/dmdt sc 0 -9 # trigger display of image
+/eso/bin/apps/dmdt sc 0 -9 | $TEE -a $LOG# trigger display of image
+sleep 1
+/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/screenshot_$4" | $TEE -a $LOG
+
 sleep $2
+
 LD_LIBRARY_PATH=/eso/lib:/armle/lib:/root/lib-target /eso/bin/apps/loadandshowimage 1 2 3 4 5 
-/eso/bin/apps/dmdt sb 0 # switch back to standard output screen
+/eso/bin/apps/dmdt sb 0 | $TEE -a $LOG# switch back to standard output screen
 
 trap 2
 
