@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd fecel.sh v0.1.0 (2021-02-22 by MIBonk)
+# esd fecel.sh v0.1.1 (2023-02-20 by MIBonk)
 
 trap '' 2
 
@@ -19,8 +19,10 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
+/net/mmx/fs/sda0/apps/addfec -l #output FECs before addfec
 /net/mmx/fs/sda0/apps/fecel -fec
 /net/mmx/fs/sda0/apps/fecel -el
+/net/mmx/fs/sda0/apps/addfec -l #output FECs after addfec
 
 echo "All done! now you can go back..."
 
