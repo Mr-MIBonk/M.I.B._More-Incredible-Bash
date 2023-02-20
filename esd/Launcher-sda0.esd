@@ -1320,7 +1320,7 @@ script
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Activate hotspot - ONLY usable on units with SIM card and data plan"
+	label 	"Activate hotspot - ONLY useable on units with SIM card and data plan"
 	poll    0
 
 script
@@ -1680,7 +1680,7 @@ bitvalue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"INFO: Not all FW GUI versions can show all dials. There might be more activated than visible/usable"
+    label	"INFO: Not all FW GUI versions can show all dials. There might be more activated than visible/useable"
 	poll    0
 
 ###########################################################################################
@@ -2368,7 +2368,7 @@ screen AUDI multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Functions within are only usable on AUDI units"
+	label	"Functions within are only useable on AUDI units"
 	poll    0
 
 ###########################################################################################
@@ -2547,7 +2547,7 @@ screen SKODA multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Functions within are only usable on SKODA units"
+	label	"Functions within are only useable on SKODA units"
 	poll    0
 
 ###########################################################################################
@@ -2664,7 +2664,7 @@ screen Porsche multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Functions within are only usable on Porsche units"
+	label	"Functions within are only useable on Porsche units"
 	poll    0
 
 ###########################################################################################
@@ -2777,7 +2777,7 @@ screen Bentley multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Functions within are only usable on Bentley units"
+	label	"Functions within are only useable on Bentley units"
 	poll    0
 
 ###########################################################################################
