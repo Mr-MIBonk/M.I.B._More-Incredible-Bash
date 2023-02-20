@@ -64,6 +64,8 @@ BACKUP()
 	echo -ne "\nREAD sound datasets ---\n" | $TEE -i -a $LOG
 	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
 	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
+	DS3000_6=$(on -f mmx $PC b:0:3221422100:6) #0x3000 Byte hex 06
+	DS3000_31=$(on -f mmx $PC b:0:3221422100:31) #0x3000 Byte hex 1F
 	DS3000_684=$(on -f mmx $PC b:0:3221422100:684) #0x3000 Byte 684
 
 	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
@@ -252,8 +254,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "0x3B00 dataset without crc:\n$DS3B00\n\n" >> $LOG
 
 	echo -ne "--- set min    range for subwoofer knob\n" | $TEE -i -a $LOG
-	# hex value converted into decimal / 10 will give the number of steps for -/+ range on kno
-	# hex 
+	# hex value converted into decimal will provide the number of steps for -/+ range on knob
 	sleep 1
 	DSEDIT $DS3B00 24 F7 # set min    range for subwoofer knob
 	DS3B00=$DSPATCH
@@ -318,9 +319,8 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 
 	echo -ne "--- set subwoofer max gain\n" 2>> $LOG
 	sleep 1
-	
-	if [ $(on -f mmx $PC b:0:3221422100:31) -eq 0 ]; then
-		DSEDIT $DS3000 31 5A # set subwoofer max gain
+	if [ ! $DS3000_31 = $DS3000_6 ]; then
+		DSEDIT $DS3000 31 $DS3000_6 # set subwoofer max gain
 		DS3000=$DSPATCH
 		echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
 		
