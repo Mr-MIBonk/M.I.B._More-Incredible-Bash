@@ -33,7 +33,8 @@ if ! grep -q "Find and append jar files" ${LSD}; then
 	fi
 	echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
 	cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
-	$SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
+	# Not working on VW/SKODA/SEAT like it is - additional jars do not load - $SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
+	$SED -ir 's,^$J9,BOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
 else
 	echo "lsd.sh is already patched" | $TEE -a $LOG
 fi
