@@ -1088,6 +1088,10 @@ script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/NavActiveIgnore_off.sh"
 	label   "Remove dual navigation"
 
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/lsd_sh_rmpatch.sh"
+	label   "Remove lsd.sh patch"
+
 keyValue
     value   String sys 0x00000000 0
 	label	"Unit will reboot after patch is installed"
