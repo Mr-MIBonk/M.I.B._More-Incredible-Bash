@@ -26,18 +26,47 @@ BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
 
 mount -uw /net/mmx/mnt/app
 
-if ! grep -q "Find and append jar files" ${LSD}; then
-	if [ ! -e $BU ]; then
-		echo "Backup lsd.sh" | $TEE -a $LOG
-		cp -v $LSD $BU 2>> $LOG
+if [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+	if ! grep -q "Find and append jar files" ${LSD}; then
+		if [ ! -e $BU ]; then
+			echo "Backup lsd.sh" | $TEE -a $LOG
+			cp -v $LSD $BU 2>> $LOG
+		fi
+		echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
+		cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
+		# Not working on VW/SKODA/SEAT like it is - additional jars do not load - $SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
+		$SED -ir 's,^$J9,BOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
+	else
+		echo "lsd.sh is already ready to load additional *.jar" | $TEE -a $LOG
 	fi
-	echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
-	cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
-	# Not working on VW/SKODA/SEAT like it is - additional jars do not load - $SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
-	$SED -ir 's,^$J9,BOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
-else
-	echo "lsd.sh is already patched" | $TEE -a $LOG
-fi
+elif [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+	if grep -q "Find and append jar files" ${LSD}; then
+		echo -ne "Old lsd.sh patch found\n" | $TEE -a $LOG
+		if [ -e $BU ]; then
+			echo "Restore lsd.sh" | $TEE -a $LOG
+			cp -v $BU $LSD 2>> $LOG
+			echo -ne "Original lsd.sh restored\n" | $TEE -a $LOG
+		fi
+		echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
+		cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
+		$SED -ir 's,^$J9,#Append jar files\nBOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
+		echo "lsd.sh is patched" | $TEE -a $LOG
+	elif ! grep -q "Append jar files" ${LSD}; then
+		if [ ! -e $BU ]; then
+			echo "Backup lsd.sh" | $TEE -a $LOG
+			cp -v $LSD $BU 2>> $LOG
+		fi
+		echo "Patching lsd.sh to run additional *.jar" | $TEE -a $LOG
+		cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
+		# Not working on VW/SKODA/SEAT like it is - additional jars do not load - $SED -ir 's,^$J9,## Find and append jar files\nif [[ -d /net/mmx/mnt/app/eso/hmi/lsd/jars/ ]]; then\n	JARS=$(find /net/mmx/mnt/app/eso/hmi/lsd/jars/ -name '*.zip' -or -name '*.jar')\n	if [[ ! "x$JARS" == "x" ]]; then\n		for jar in $JARS; do\n			BOOTCLASSPATH="$BOOTCLASSPATH:$jar"\n		done\n	fi\nfi\n$J9,g' $LSD 2>> $LOG
+		$SED -ir 's,^$J9,#Append jar files\nBOOTCLASSPATH="$BOOTCLASSPATH -Xbootclasspath/p:$BASE_DIR/lsd/jars/NavActiveIgnore.jar"\n$J9,g' $LSD 2>> $LOG
+		echo "lsd.sh is patched" | $TEE -a $LOG
+	else
+		echo "lsd.sh is already patched" | $TEE -a $LOG
+	fi
+
+echo "List .../jars/ folder content:\n" >> $LOG
+ls -l $APP | $TEE -a $LOG >> $LOG 
 
 case $1 in
 
@@ -55,8 +84,7 @@ ls -l $APP >> $LOG
 
 echo -ne "-- Install NavActiveIgnore\n" | $TEE -a $LOG
 if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
-	echo -ne "Update FW to latest version is recommended.\nList jar folder content:\n"
-	ls -l $APP | $TEE -a $LOG
+	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
 		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
 	fi
