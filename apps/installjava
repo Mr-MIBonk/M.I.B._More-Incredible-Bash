@@ -192,6 +192,32 @@ return 2> /dev/null
 
 };;
 
+-rmLSDPatch) {
+
+trap '' 2
+
+echo -ne "-- Remove LSD.sh patch\n" | $TEE -a $LOG
+
+if [ -e $BU ]; then
+	echo "Restore lsd.sh Backup" | $TEE -a $LOG
+	cp -v $BU $LSD 2>> $LOG
+	echo "DONE" | $TEE -a $LOG
+else
+	if [ -e $BACKUPFOLDER/$MUVERSION-lsd.sh ]; then
+		echo "Restore lsd.sh from SD backup" | $TEE -a $LOG
+		cp -r $BACKUPFOLDER/$MUVERSION-lsd.sh $LSD 2>> $LOG
+		echo "DONE" | $TEE -a $LOG
+	else
+		echo "lsd.sh hasn't been patched" | $TEE -a $LOG
+	fi
+fi
+
+trap 2
+
+return 2> /dev/null
+
+};;
+
 # help or unknown parameter ------------------------------
 	*) {
 		echo ""
