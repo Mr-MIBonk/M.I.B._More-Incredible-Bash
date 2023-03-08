@@ -1711,7 +1711,6 @@ keyValue
     label	"Max. 8dB can be added to the base gain from factory dataset!"
 	poll    0
 
-
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub2.sh"
 	label   "+2 dB"
@@ -2973,7 +2972,7 @@ keyValue
 
 choice    
     value 	per 0 0x50182010
-    label 	"BT available"
+    label 	"AUX in"
     poll    1000
 
 keyValue
