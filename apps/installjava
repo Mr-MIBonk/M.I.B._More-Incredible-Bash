@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.3.2 (2023-02-13 MIB-Wiki)"
+revision="installjava v0.3.3 (2023-03-09 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -18,6 +18,12 @@ fi
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
 	echo "Backup or reboot is already running..."
 	return 2> /dev/null
+fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
 fi
 
 APP="/net/mmx/mnt/app/eso/hmi/lsd/jars/"
@@ -95,7 +101,7 @@ if [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAI
 	fi
 	cp -r $VOLUME/mod/java/navignore_vw.jar $APP$JAR 2>> $LOG
 	echo -ne "navignore_vw.jar installed.\nUnit will reboot now\n" | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
@@ -103,7 +109,7 @@ elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAI
 	fi
 	cp -r $VOLUME/mod/java/navignore_audi.jar $APP$JAR 2>> $LOG
 	echo -ne "navignore_audi.jar installed.\nUnit will reboot now\n" | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
 	echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
 fi
@@ -124,7 +130,7 @@ echo -ne "-- Remove NavActiveIgnore\n" | $TEE -a $LOG
 if [ -f $APP$JAR ]; then
 	rm -rf $APP$JAR 2>> $LOG
 	echo "NavActiveIgnore.jar removed\nUnit will reboot now\n" | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
 		echo -ne "File not found - navignore patch is not installed\nNew patch will be installed now\n" | $TEE -a $LOG
 fi
@@ -156,7 +162,7 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
 	echo -ne "No supported train found - will stop here\n" | $TEE -a $LOG
 	echo -ne "Only Porsche/Bently G24 units are supported.\n"
@@ -189,7 +195,7 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
-	. $thisdir/reboot -t 10
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
 	echo -ne "No supported train found - will stop here\n" | $TEE -a $LOG
 	echo -ne "Only Porsche/Bently G24 units are supported.\n"
@@ -210,7 +216,7 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	if [ -f $APP"g24cp.jar" ]; then
 		rm -f $APP"g24cp.jar" 2>> $LOG
 		echo "G24 patch removed from unit.\nUnit will reboot now\n" | $TEE -a $LOG
-		. $thisdir/reboot -t 10
+		[ -z "$noboot" ] && . $thisdir/reboot -t 10
 	else
 		echo -ne "No patch found on unit\n" | $TEE -a $LOG
 	fi
@@ -230,7 +236,7 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
 		echo "        -navignoreon 		enable navignore"
