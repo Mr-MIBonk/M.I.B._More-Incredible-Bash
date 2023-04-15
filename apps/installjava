@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.3.3 (2023-03-09 MIB-Wiki)"
+revision="installjava v0.3.4 (2023-04-14 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -45,7 +45,7 @@ if [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINV
 	else
 		echo "lsd.sh is already ready to load additional *.jar" | $TEE -a $LOG
 	fi
-elif [[ "$TRAINVERSION" = *VWG1* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
+elif [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
 	if grep -q "Find and append jar files" ${LSD}; then
 		echo -ne "Old lsd.sh patch found\n" | $TEE -a $LOG
 		if [ -e $BU ]; then
