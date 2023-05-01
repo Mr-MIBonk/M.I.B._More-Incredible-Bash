@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			02-18-2023
+# Date:			01-05-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -28,8 +28,8 @@ keyValue
 #	label    "GPL License"
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/showimage_test.sh"
-	label    "Image Test"
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
+	label    "GPL License"
 
 keyValue
     value   String sys 0x00000000 0
