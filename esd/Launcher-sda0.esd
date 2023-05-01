@@ -23,10 +23,6 @@ keyValue
     label   "NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF"
 	poll    0
 
-#script
-#	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
-#	label    "GPL License"
-
 script
 	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
 	label    "GPL License"
@@ -71,10 +67,9 @@ keyValue
 	label	" "
 	poll    0
 
-keyValue
-    value   String sys 0x00000000 0
-    label   "Create backup of your unit and keep it safe"
-	poll    0
+script
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr.sh"
+	label    "Check: QR links to MIB ressources - 15s duration"
 
 ###########################################################################################
 #
