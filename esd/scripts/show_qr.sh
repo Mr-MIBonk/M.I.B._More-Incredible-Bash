@@ -10,7 +10,7 @@ unset LD_PRELOAD
 
 export GEM=1
 
-/net/mmx/fs/sda0/apps/showimage -load 20 /net/mmx/fs/sda0/mod/images/showimage/ MoreIncredibleBash_splash_v2.png &
+/net/mmx/fs/sda0/apps/showimage -load 15 /net/mmx/fs/sda0/mod/images/showimage/ MoreIncredibleBash_splash_v2.png &
 sleep 3
 
 echo ""
