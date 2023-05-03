@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.2.0 (2023-05-03 by MIBonk & MIB-Wiki)"
+revision="flash v0.2.1 (2023-05-03 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -67,7 +67,7 @@ if [ -f "$IFS2" ]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		/net/rcc/usr/bin/flashit -v -d -x -a bc0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	else
-		/net/rcc/usr/bin/flashlock | $TEE -i -a $LOG
+		/net/rcc/usr/bin/flashlock >> $LOG
 		echo -ne "\nFlash offset invalid, flashing aborted!\n\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		exit 0
@@ -99,7 +99,7 @@ if [ -f "$IFS2" ]; then
 	trap 2
 	
 	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
-	on -f rcc /net/rcc/usr/bin/flashlock | $TEE -i -a $LOG
+	on -f rcc /net/rcc/usr/bin/flashlock >> $LOG
 	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
 	
 else
@@ -163,7 +163,7 @@ else
 		echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
 		echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" nedded to patch this unit\n" | $TEE -i -a $LOG
 		if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
-			echo -ne "\nUnit is already patched!\nHeader seize on unit - $STAGE2SIZE - matches patch files - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
+			echo -ne "\nUnit is already patched!\nHeader seize on unit - $STAGE2SIZE - matches patch file - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
 			echo -ne "No need to patch unit again!\n\nYou can go back now...\n"
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			exit 0
@@ -184,6 +184,7 @@ IFSstage2
 . $thisdir/rccd -d
 . $thisdir/fecel -fec
 . $thisdir/fecel -el
+/net/mmx/fs/sda0/apps/showimage -load 30 /net/mmx/fs/sda0/mod/images/showimage/ success.png
 . $thisdir/reboot -t 10
 
 return 2> /dev/null
