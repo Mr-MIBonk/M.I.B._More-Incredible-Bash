@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.3.4 (2023-04-14 MIB-Wiki)"
+revision="installjava v0.3.5 (2023-05-04 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -77,7 +77,7 @@ elif [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAI
 fi
 
 echo "List .../jars/ folder content:\n" >> $LOG
-ls -l $APP | $TEE -a $LOG >> $LOG 
+ls -l $APP | $TEE -a $LOG
 
 case $1 in
 
@@ -90,8 +90,6 @@ case $1 in
 JAR="NavActiveIgnore.jar"
 
 trap '' 2
-
-ls -l $APP >> $LOG
 
 echo -ne "-- Install NavActiveIgnore\n" | $TEE -a $LOG
 if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SKG1* ]] || [[ "$TRAINVERSION" = *SEG1* ]]; then
@@ -155,8 +153,6 @@ echo -ne "-- Install G24 Fullscreen CarPlay patch\n" | $TEE -a $LOG
 if [[ "$TRAINVERSION" = *G24* ]]; then
 	echo -ne "Please note, that this patch will most likely only work on latest FW versions.\n"
 	echo -ne "Update FW before applying the patch is recommended.\n"
-	echo -ne "List jar folder content:\n"
-	ls -l $APP | $TEE -a $LOG
 	if [ -f $APP"g24cp.jar" ]; then
 		echo -ne "File already present on unit.\nWill be updated with file from SD card now...\n" | $TEE -a $LOG
 	fi
@@ -165,6 +161,8 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 		rm $APP"g24ws.jar" 2>> $LOG
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
+	echo -ne "List jar folder content:\n"
+	ls -l $APP | $TEE -a $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
 	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
@@ -188,8 +186,6 @@ echo -ne "-- Install G24 Widescreen CarPlay patch\n" | $TEE -a $LOG
 if [[ "$TRAINVERSION" = *G24* ]]; then
 	echo -ne "Please note, that this patch will most likely only work on latest FW versions.\n"
 	echo -ne "Update FW before applying the patch is recommended.\n"
-	echo -ne "List jar folder content:\n"
-	ls -l $APP | $TEE -a $LOG
 	if [ -f $APP"g24cp.jar" ]; then
 		echo -ne "File already present on unit.\nWill be updated with file from SD card now....\n" | $TEE -a $LOG
 	fi
@@ -198,6 +194,8 @@ if [[ "$TRAINVERSION" = *G24* ]]; then
 	rm $APP"g24ws.jar" 2>> $LOG
 	fi
 	cp -r $VOLUME/mod/java/$JAR $APP"g24cp.jar" 2>> $LOG
+	echo -ne "List jar folder content:\n"
+	ls -l $APP | $TEE -a $LOG
 	echo -ne "$JAR installed.\nUnit will reboot now\n" | $TEE -a $LOG
 	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 else
