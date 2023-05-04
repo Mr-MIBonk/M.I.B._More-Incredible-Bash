@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd patch_aio.sh v0.2.1 (2023-05-03 by MIBonk & MIB-Wiki)
+# esd patch_aio.sh v0.2.2 (2023-05-03 by MIBonk & MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -29,7 +29,7 @@ TRAINVERSION="$(on -f mmx /net/mmx/fs/sda0/apps/sbin/pc s:30:1966084 2> /dev/nul
 sleep 3
 on -f rcc /net/mmx/fs/sda0/apps/carp -b
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
-	on -f rcc /net/mmx/fs/sda0/apps/javag24 -on -noboot
+	on -f rcc /net/mmx/fs/sda0/apps/installjava -g24wide -noboot
 fi
 if [[ "$TRAINVERSION" = *POG11* ]]; then
 	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11on -noboot
