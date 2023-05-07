@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.2.1 (2023-05-03 by MIBonk & MIB-Wiki)"
+revision="flash v0.2.2 (2023-05-07 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -144,7 +144,7 @@ echo -ne "\n" >> $LOG
 if [ ! -d $PF ]; then
 	echo -ne "Patch folder "$PF" NOT found on SD card\n\n" | $TEE -i -a $LOG
 	echo -ne "Possible reasons:\n1. Patch folder is not copied to SD\n2. FW is not yet known to M.I.B\n\n"
-	echo -ne "Actions:\n1. Copy folder $TRAINVERSION"_"$MUVERSION"_PATCH" to SD card\n2. Share your backup in case no patch is available for this FW yet\n\n"
+	echo -ne "Actions:\n1. Copy folder "$TRAINVERSION"_"$MUVERSION"_PATCH to SD card\n2. Share your backup in case no patch is available for this FW yet\n\n"
 	echo -ne "Missing files/folders - no patch can be applied\n\n"
 	echo -ne "You can go back now...\n"
 	rm -rf $TMP/$thisname.mib 2>/dev/null
@@ -156,8 +156,8 @@ else
 		sleep 2
 	else
 		STAGE2SIZE_STOCK=$(find $PF -name $MUVERSION"*.ifs" 2> /dev/null | cut -b 92-99) # Stock ifs-root-stage2 header seize
-		STAGE2FILE_SD=$(find $PF -name $MUVERSION"*.ifs" -type f -printf "%f\n")
-		STAGE2FILE_SD_PATH=$(find $PF -name $MUVERSION"*.ifs")
+		STAGE2FILE_SD=$(find $PF -name $MUVERSION"*.ifs" -type f -printf "%f\n") # Stock ifs-root-stage2 file name
+		STAGE2FILE_SD_PATH=$(find $PF -name $MUVERSION"*.ifs") # Stock ifs-root-stage2 file name with path
 		# /net/mmx/fs/sda0/patches/MHI2_ER_SKG13_P4526_MU1440_PATCH/MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs
 		STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | /net/mmx/fs/sda0/apps/sbin/xxd -u -ps) # Patched ifs-root-stage2 header seize
 		echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
