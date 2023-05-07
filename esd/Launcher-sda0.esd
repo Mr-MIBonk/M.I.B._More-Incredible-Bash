@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			01-05-2023
+# Date:			07-05-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -76,21 +76,11 @@ script
 # Main -> M.I.B. -> PATCH AIO
 #
 ###########################################################################################
-screen patch_ifs_root_aio =>M.I.B.<=
+screen patch_unit_aio =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
 	label	"Always get latest M.I.B version - mib.mibsolution.one"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"NOTE: Patch can only be applied to stock FW"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Go back to stock FW by applying update via user defined SWDL -> select all Yes"
 	poll    0
 
 keyValue
@@ -100,24 +90,19 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
-	label   "Flash patched image | add FECs | CP/AA coding | and more"
+	label   "PATCH NOW: Patch | add FECs | enable CP/AA coding | and more"
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"For details on AIO functions -> aio_patch_details"
+	label 	"For details on AIO functions, check below -> aio_patch_details"
 	poll    0
 
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0   
-
 ###########################################################################################
 #
-# Main -> M.I.B. -> Patch Details
+# Main -> M.I.B. -> PATCH AIO -> Patch Details
 #
 ###########################################################################################
-screen aio_patch_details patch_ifs_root_aio
+screen aio_patch_details patch_unit_aio
 
 keyValue
     value   String sys 0x00000000 0
@@ -151,19 +136,34 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
+	label 	"NOTE: Patch can only be applied to stock FW"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Go back to stock FW by applying update via user defined SWDL -> select all Yes"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
 	label	"___________________________________________________________________________"
 	poll    0  
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> addFec
+# Main -> M.I.B. -> PATCH AIO -> addFec
 #
 ###########################################################################################
-screen add_FecContainer.fec patch_ifs_root_aio
+screen add_FecContainer.fec patch_unit_aio
 
 keyValue
     value   String sys 0x00000000 0
 	label 	"Info: Part of AIO Patch function"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Only run AFTER patch is applied --> patch_unit_aio."
 	poll    0
 
 keyValue
@@ -187,7 +187,7 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> addFec -> FEC list
+# Main -> M.I.B. -> PATCH AIO -> addFec -> FEC list
 #
 ###########################################################################################
 screen fec_list add_FecContainer.fec
@@ -213,14 +213,14 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> CarPlay
+# Main -> M.I.B. -> PATCH AIO -> CarPlay
 #
 ###########################################################################################
-screen carplay_activation patch_ifs_root_aio
+screen carplay_activation patch_unit_aio
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Info: Part of AIO Patch function"
+	label 	"Info: AIO Patch function has to be run 1st!"
 	poll    0
 
 keyValue
