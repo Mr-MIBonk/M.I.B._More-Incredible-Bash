@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="settrain v0.1.7 (2023-04-14 by MIB-Wiki)"
+revision="settrain v0.1.8 (2023-05-08 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -53,7 +53,7 @@ echo -ne ""
 			echo -ne "MHI2_ER_VWG11_K3342\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 2>> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 32 00 00 2>> $LOG
-		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]]  || [[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]]; then
+		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?09* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?10* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?12* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]]  || [[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]]; then
 			echo -ne "VWG13 found will change train now\n"
 			echo -ne "MHI2_ER_VWG13_P4521\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 33 5f 50 34 2>> $LOG
@@ -99,7 +99,7 @@ echo -ne ""
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 47 32 32 5f 4b 33 2>> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 36 00 00 2>> $LOG
 		else
-				echo -ne "\n\nTrain not found in conversion list get in contact with M.I.B team\n" | $TEE -i -a $LOG
+				echo -ne "\n\nTrain not found in conversion list\nShare your backup with M.I.B team\nThey can add support for your FW\n" | $TEE -i -a $LOG
 				echo -ne "Nothing happend!\n"
 				sleep 5
 		fi
