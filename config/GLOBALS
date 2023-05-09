@@ -1,4 +1,4 @@
-# GLOBALS v0.2.1 (2022-08-21 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.0 (2023-05-09 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -31,11 +31,12 @@ CUT="$VOLUME/apps/sbin/cut" # /net/mmx/usr/bin
 PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 VERSIONS="/net/rcc/dev/shmem/version.txt"
+TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
 
 # Set temp
 TMP="/net/rcc/dev/shmem"
 
-# set storage
+# Set storage
 fs0p0="/net/rcc/dev/fs0p0"
 
 if [ -f /usr/apps/MIBRoot ]; then
@@ -50,11 +51,21 @@ if [ -f $thisdir/../../devconfig/GLOBALS ]; then
 	. $thisdir/../../devconfig/GLOBALS
 else
 	# Set globals
-	TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
-	MUVERSION="MU$(on -f mmx $PC s:30:1966083 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
-	FAZIT="$($PERSR 0 3221291024 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
-	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
-	NAND=$MNT/$MUVERSION/
+	if [ -f $PC ]; then
+		TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+		MUVERSION="MU$(on -f mmx $PC s:30:1966083 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+		FAZIT="$($PERSR 0 3221291024 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
+		NAND=$MNT/$MUVERSION/
+	else
+		echo -ne "LEGACY MODE enabled\nM.I.B running on an old FW with missing persistence binary\n\nBackup and some functions might work in this mode, but not all M.I.B functions are available\nMany scripts will throw errors\nUpdate to newer FW!\n"
+		sleep 5
+		MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+		TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+		FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
+		NAND=$MNT/$MUVERSION/
+	fi
 fi
 
 # internals...
@@ -65,5 +76,8 @@ BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
 
 # first, set LOGS var...
 . $thisdir/../config/LOGS
+
+# add timestamp to log
+echo -ne "\n-----------\ntimestamp: $TIMESTAMP\n" >> $LOG
 
 return 2> /dev/null
