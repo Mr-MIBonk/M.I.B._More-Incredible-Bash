@@ -1812,6 +1812,16 @@ slider
 	limits	absolute 0 21
     poll    1000
 
+BIOSCtrl
+    value       int per 28442848 503
+    label       "summertime algo."
+    entry	    "none" 0
+	entry	    "manual" 1
+	entry	    "MESZ" 2
+    entry	    "USA" 3
+    entry	    "NavDB/automatic" 4
+	poll        1000
+
 bitselect
     value   per 0 4101
 	range   11.0 11.7
