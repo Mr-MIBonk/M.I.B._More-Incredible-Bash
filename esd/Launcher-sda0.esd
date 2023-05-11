@@ -1813,22 +1813,40 @@ slider
     poll    1000
 
 BIOSCtrl
-    value       int per 28442848 503
-    label       "summertime algo."
-    entry	    "none" 0
-	entry	    "manual" 1
-	entry	    "MESZ" 2
-    entry	    "USA" 3
-    entry	    "NavDB/automatic" 4
-	poll        1000
+	value	int per 28442848 503
+	label	"summertime algo."
+	entry	"none" 0
+	entry	"manual" 1
+	entry	"MESZ" 2
+	entry	"USA" 3
+	entry	"NavDB/automatic" 4
+	poll	1000
+
+BIOSCtrl
+	value	int per 28442848 520
+	label	"Set PayTMC"
+	entry	"none" 0
+	entry	"DE/EU" 32771 
+	entry	"China" 32783
+	poll	1000
 
 bitselect
-    value   per 0 4101
-	range   11.0 11.7
-	label   "Sound system"
+	value	per 0 4101
+	range	11.0 11.7
+	label	"Sound system"
 	entry	"none" 0
 	entry	"internal" 1
 	entry	"external" 2
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Will be enabled after reboot again:"
+	poll    0
+
+choice
+	value	per 0xb 0x000b0002
+	label	"Loudness"
+	poll	100
 
 keyValue
     value   String sys 0x00000000 0
