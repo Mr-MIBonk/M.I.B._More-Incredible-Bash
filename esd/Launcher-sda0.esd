@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.6.0 "QR Edition""
+    label   "M.I.B. - More Incredible Bash - V3.6.0 QR Edition"
 	poll    0
 
 keyValue
@@ -1270,6 +1270,388 @@ table
 	maxrows	        1
 	orientation     horizontal
 	columns 		( "GPS status information" String 690 )
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings
+#
+###########################################################################################
+screen advanced_settings =>M.I.B.<=
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Only use the functions within if you really know what you are doing!"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Chance to brick your units is higher the further down you go in this list!"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> Fix SVM
+#
+###########################################################################################
+screen SVM_fix advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Run to remove Check Software Version Management error in 5F"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/svm.sh"
+	label   "Fix SVM error"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> 1-Click EU Conversion
+#
+###########################################################################################
+screen eu_conversion advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"This will mess up your unit, if you do not know what you are doing!"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"!!! Only use this to start converting units to EU region !!!"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	" "
+	poll    0
+
+keyValue
+    value   String per 30 1966084
+    label   "Your current train"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	" "
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Train, variant, coding, adaption & language will be switched to EU:"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
+    label   "1-Click EU Conversion"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"AFTER reboot confirm new train (e.g. in this menu), download that FW and install it to unit"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> SWDL FW Updates
+#
+###########################################################################################
+screen SWDL_FW_Updates advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Enable things and go back to FW update screen without reboot"
+	poll    0
+
+choice
+	value   per 30 1966081
+	label   "Enable user defined SWDL"
+	
+choice
+	value   per 30 1966082
+	label   "Ignore Region and Variant"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"--- ENABLED during M.I.B install ---"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+	label	"Enable FW updates without MOST connected to MHI2 unit"
+	poll    0
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/most.sh"
+	label   "Toggle skipMostPopup"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> SWDL CLEANER
+#
+###########################################################################################
+screen SWDL_cleaner advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Removes remnants from FW updates (e.g. update.txt*, illegal/withdrawn FECs)"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Clears '1556 - Internal Control Module Memory Check Sum Error' from 5F"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cswdl.sh"
+	label   "Clean SWDL"	
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> Block 5F External Access
+#
+###########################################################################################
+screen hide_unit advanced_settings
+
+keyValue
+    value   String per 30 1966084
+    label   "Current Train Info"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Protects your unit from external access via OBD and from FW updates"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"by changing unit train from MHI2_... to MIB2_..."
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"e.g. MHI2_ER_VWG13_P4521 to MIB2_ER_VWG13_P4521"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/obd.sh"
+	label   "Toggle train MHI/MIB"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> Info USB Ethernet devices
+#
+###########################################################################################
+screen add_usb_ethernet_devices advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Will add support for additional ASIX USB-Ethernet devices"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"You can use many (cheap) alternatives to D-Link DUB-E100 now"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	" "
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Supported vid/pid:"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"AX88179 0b95/1790 | AX88772 0b95/7720 & 0b95/772a"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"AX88772B 0b95/772b | AX88772C 0b95/772c"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"___________________________________________________________________________"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/udevice.sh"
+	label   "Install devices (again)"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"NOTE: Additional devices will be installed to unit permanently"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. --> Advanced Settings --> Clean Navigation DB
+#
+###########################################################################################
+screen format_nav_DB advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"NOTE: MHI2 units ONLY!!!"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"NOTE: This will format your navigation DB - all maps will be removed"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"This will help with map installation issues"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Fixing errors like 136, 137 - pointing towards a corrupt navdb partition"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label 	"Also helpful after region conversion to remove old maps"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+	label 	" "
+	poll    0
+
+script
+	value	sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/delnavdb.sh"
+    label   "Format navigation DB"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> SSHD
+#
+###########################################################################################
+screen sshd_info advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"In case shell access is required you can install a SSH server on your MHI2 unit"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Go to mib2-toolbox and copy the folder /Toolbox/ to your M.I.B SD"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"SSH server will be installed during M.I.B FW update installation process"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/Toolbox/scripts/sshd_install.sh"
+    label   "or by pressing this button - after /Toolbox/ folder is on SD"
+		
+keyValue
+    value   String sys 0x00000000 0
+    label	"You can connect to your unit via ssh clients for console and file access"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+    label	"Connect with D-Link --> 172.16.250.248:22"
+	poll    0
+	
+keyValue
+    value   String sys 0x00000000 0
+    label	"Connect without D-Link --> use WLAN in client or access point mode (use WLAN IP:22)"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"NOTE: mib2-toolbox development is independent of M.I.B --> NO support here"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> Individual Script
+#
+###########################################################################################
+screen run_individual_script advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"ON YOUR OWN RISK"
+	poll    0
+	
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/individual.sh"
+    label   "Run individual script"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Place command.sh with script in /mod/ folder in M.I.B SD root"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -3223,383 +3605,6 @@ table
     poll     	5000
     columns  	( "16 Label" String 200 ) ( "SID" String 70 ) ( "SCIDI" String 70 ) ( "EnsID" String 80 ) ( "Type" String 80 ) ( "URL" String 150 ) 
     maxrows  	25
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings
-#
-###########################################################################################
-screen advanced_settings =>M.I.B.<=
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Only use the functions within if you really know what you are doing!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Chance to brick your units is higher the further down you go in this list!"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> Fix SVM
-#
-###########################################################################################
-screen SVM_fix advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Run to remove Check Software Version Management error in 5F"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/svm.sh"
-	label   "Fix SVM error"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> SWDL FW Updates
-#
-###########################################################################################
-screen SWDL_FW_Updates advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Enable things and go back to FW update screen without reboot"
-	poll    0
-
-choice
-	value   per 30 1966081
-	label   "Enable user defined SWDL"
-	
-choice
-	value   per 30 1966082
-	label   "Ignore Region and Variant"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"--- ENABLED during M.I.B install ---"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-	label	"Enable FW updates without MOST connected to MHI2 unit"
-	poll    0
-	
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/most.sh"
-	label   "Toggle skipMostPopup"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> SWDL CLEANER
-#
-###########################################################################################
-screen SWDL_cleaner advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Removes remnants from FW updates (e.g. update.txt*, illegal/withdrawn FECs)"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Clears '1556 - Internal Control Module Memory Check Sum Error' from 5F"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cswdl.sh"
-	label   "Clean SWDL"	
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-    label   "Reboot unit"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> Block 5F External Access
-#
-###########################################################################################
-screen hide_unit advanced_settings
-
-keyValue
-    value   String per 30 1966084
-    label   "Current Train Info"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Protects your unit from external access via OBD and from FW updates"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"by changing unit train from MHI2_... to MIB2_..."
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"e.g. MHI2_ER_VWG13_P4521 to MIB2_ER_VWG13_P4521"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/obd.sh"
-	label   "Toggle train MHI/MIB"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> Info USB Ethernet devices
-#
-###########################################################################################
-screen add_usb_ethernet_devices advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Will add support for additional ASIX USB-Ethernet devices"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"You can use many (cheap) alternatives to D-Link DUB-E100 now"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Supported vid/pid:"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"AX88179 0b95/1790 | AX88772 0b95/7720 & 0b95/772a"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"AX88772B 0b95/772b | AX88772C 0b95/772c"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/udevice.sh"
-	label   "Install devices (again)"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"NOTE: Additional devices will be installed to unit permanently"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> 1-Click EU Conversion
-#
-###########################################################################################
-screen eu_conversion advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"This will mess up your unit, if you do not know what you are doing!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"!!! Only use this to start converting units to EU region !!!"
-	poll    0
-
-keyValue
-    value   String per 30 1966084
-    label   "Your current train"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Various coding and adaptions will be switched to EU settings"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
-    label   "1-Click EU Conversion"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"AFTER reboot confirm new train (e.g. in this menu), download that FW and install it to unit"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. --> Advanced Settings --> Clean Navigation DB
-#
-###########################################################################################
-screen format_nav_DB advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"NOTE: MHI2 units ONLY!!!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"NOTE: This will format your navigation DB - all maps will be removed"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"This will help with map installation issues"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Fixing errors like 136, 137 - pointing towards a corrupt navdb partition"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Also helpful after region conversion to remove old maps"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-	label 	" "
-	poll    0
-
-script
-	value	sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/delnavdb.sh"
-    label   "Format navigation DB"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> SSHD
-#
-###########################################################################################
-screen sshd_info advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"In case shell access is required you can install a SSH server on your MHI2 unit"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Go to mib2-toolbox and copy the folder /Toolbox/ to your M.I.B SD"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"SSH server will be installed during M.I.B FW update installation process"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/Toolbox/scripts/sshd_install.sh"
-    label   "or by pressing this button - after /Toolbox/ folder is on SD"
-		
-keyValue
-    value   String sys 0x00000000 0
-    label	"You can connect to your unit via ssh clients for console and file access"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-    label	"Connect with D-Link --> 172.16.250.248:22"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-    label	"Connect without D-Link --> use WLAN in client or access point mode (use WLAN IP:22)"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"NOTE: mib2-toolbox development is independent of M.I.B --> NO support here"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> Individual Script
-#
-###########################################################################################
-screen run_individual_script advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"ON YOUR OWN RISK"
-	poll    0
-	
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/individual.sh"
-    label   "Run individual script"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"Place command.sh with script in /mod/ folder in M.I.B SD root"
-	poll    0
 
 keyValue
     value   String sys 0x00000000 0
