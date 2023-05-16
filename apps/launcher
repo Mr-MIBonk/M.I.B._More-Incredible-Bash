@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="launcher v0.1.0 (2022-07-22 MIB-Wiki)"
+revision="launcher v0.1.1 (2023-05-16 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,8 +12,8 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
 	echo "Backup or reboot is already running..."
@@ -74,7 +74,7 @@ if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/AppDevelopment.jar ]; then
 	echo "AppDevelopment.jar found" | $TEE -a $LOG
 	elif [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
 		GEMJAR="GEM.jar"
-    echo "GEM.jar found"
+	echo "GEM.jar found"
 	else
 		echo "*.jar not found" | $TEE -a $LOG
 fi
@@ -115,7 +115,7 @@ fi
 mount -uw $VOLUME
 if [ -f $VOLUME/mod/command.sh ]; then
 	. $VOLUME/mod/command.sh
-	echo "-- individual scripts done!" | $TEE -a $LOG
+	echo "-- individual scripts found & done!" | $TEE -a $LOG
 fi
 
 trap 2
