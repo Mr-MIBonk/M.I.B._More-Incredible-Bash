@@ -1,4 +1,4 @@
-# LOGS settings v0.1.1 (2021-12-29 by MIBonk)
+# LOGS settings v0.1.2 (2023-05-16 by MIBonk)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ if [ ! -f $LOG ]; then
 	echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
 	echo -ne "Variant: $VARIANT\n" >> $LOG	
 	echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
-	echo -ne "Dataset Version: $DATASETV\n" >> $LOG
+	echo -ne "Parameterization Version: $DATASETV\n" >> $LOG
 	echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
 	echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
 	if [ ! -f $thisdir/../backup/$BACKUPFOLDER/$MUVERSION.log ]; then
