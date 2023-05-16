@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setregeu v0.1.1 (2021-09-17 by MIB-Wiki)"
+revision="setregeu v0.1.2 (2023-05-16 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,13 +12,22 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
 fi
+echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
 fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
+fi
+
+# Get Train from EEPROM (AIO EU conversion)
+TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 
 	case $1 in
 
@@ -33,12 +42,14 @@ mount -uw /net/rcc/mnt/efs-persist
 		#echo -ne "NOTE: This will disable DAB functions\n"
 		#echo -ne "Converted units do not have DAB...\n"
 		echo -ne "--------\n"
-		sleep 3
-		echo -ne "visible_MMI_language_dataset - 0x2d00 - EU\n"
-		on -f mmx $PC b:10:0xC0030006 1B64655F444503656E5F47420366725F46520169745F49540165735F45530163735F435A016E6C5F4E4C0170745F50540172755F52550173765F53450174725F545202706C5F504C016E6F5F4E4F0164615F444B01656C5F47520168725F48520168755F48550166695F46490162735F424101726F5F524F01736B5F534B01736C5F53490173725F52530162675F4247016C745F4C54016C765F4C5601756B5F554101656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000304214B7
-		sleep 1
-		echo -ne "language dataset - 0x280 - GB_en\n"
-		on -f mmx $PC b:10:0xC0030005 656E5F474200656E5F474200656E5F4742004331E45D
+		# echo -ne "visible_MMI_language_dataset - 0x2d00 - EU\n"
+		# on -f mmx $PC b:10:0xC0030006 1B64655F444503656E5F47420366725F46520169745F49540165735F45530163735F435A016E6C5F4E4C0170745F50540172755F52550173765F53450174725F545202706C5F504C016E6F5F4E4F0164615F444B01656C5F47520168725F48520168755F48550166695F46490162735F424101726F5F524F01736B5F534B01736C5F53490173725F52530162675F4247016C745F4C54016C765F4C5601756B5F554101656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201656E5F474201000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000304214B7
+		# sleep 1
+		# echo -ne "language dataset - 0x280 - GB_en\n"
+		# on -f mmx $PC b:10:0xC0030005 656E5F474200656E5F474200656E5F4742004331E45D
+		
+		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
+		
 		sleep 1
 		echo -ne "summertime algo.\n"
 		on -f mmx $PC i:28442848:503 2
@@ -183,14 +194,17 @@ mount -uw /net/rcc/mnt/efs-persist
 		echo -ne "store changes to persistence\n"
 		on -f mmx $PC b:0:1 0
 			sleep 2
-		echo -ne "\nAll done! now you can go back...\n"
+		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 	else
 		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
 	fi
-	
+
 return 2> /dev/null
 
 trap 2
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -198,7 +212,7 @@ trap 2
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
 		echo "        -eu			set Region to EU"

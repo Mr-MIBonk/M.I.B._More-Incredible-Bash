@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd setregeu.sh v0.1.0 (2021-10-12 by @MIB-Wiki)
+# esd aio_conversion_eu.sh v0.1.0 (2023-05-16 by @MIB-Wiki)
 
 trap '' 2
 
@@ -18,8 +18,13 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
+# Set train to EU
+/net/mmx/fs/sda0/apps/settrain -eu -noboot
 # Set coding to EU
-/net/mmx/fs/sda0/apps/setreg -eu
+/net/mmx/fs/sda0/apps/setreg -eu -noboot
+#Set variant
+/net/mmx/fs/sda0/apps/setvariant -var
+
 sleep 3
 
 echo "All done! now you can go back..."

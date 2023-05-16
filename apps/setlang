@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setlang v0.2.1 (2023-04-30 MIB-Wiki)"
+revision="setlang v0.2.2 (2023-05-16 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,13 +12,22 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
 	echo "Backup or reboot is already running..."
 	return 2> /dev/null
 fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
+fi
+
+# Get Train from EEPROM (AIO EU conversion)
+TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 
 case $1 in
 
@@ -78,11 +87,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 	};;
 
@@ -106,12 +117,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
 
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 
@@ -135,11 +147,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 	
@@ -163,12 +177,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
 
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 
@@ -192,12 +207,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
 
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 	
@@ -221,12 +237,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
 
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 
@@ -250,11 +267,13 @@ trap '' 2
 
 	#echo -ne "store changes to persistence\n"
 	on -f mmx $PC b:0:1 0
-	echo -ne "Go back and reboot unit to apply changes\n"
+	[ -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 return 2> /dev/null
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 };;
 
@@ -264,7 +283,7 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
 		echo "        -eu 		set EU languages"

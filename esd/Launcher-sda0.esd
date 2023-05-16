@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			07-05-2023
+# Date:			16-05-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash"
+    label   "M.I.B. - More Incredible Bash - V3.6.0 "QR Edition""
 	poll    0
 
 keyValue
@@ -1043,15 +1043,11 @@ script
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
     label   "Enable Australia navigation"
-	
+
 	keyValue
     value   String sys 0x00000000 0
 	label	""
 	poll    0
-	
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
-	label   "2. Write Navigation to Variant_1 in eeprom"
 
 keyValue
     value   String sys 0x00000000 0
@@ -3439,10 +3435,10 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Advanced Settings -> Convert to EU train
+# Main -> M.I.B. -> Advanced Settings -> 1-Click EU Conversion
 #
 ###########################################################################################
-screen eu_conversion_train advanced_settings
+screen eu_conversion advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
@@ -3455,65 +3451,8 @@ keyValue
 	poll    0
 
 keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-keyValue
     value   String per 30 1966084
     label   "Your current train"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/settrain.sh"
-    label   "Change train to EU"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"AFTER reboot and train change is confirmed, install EU FW"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Unit will reboot automatically after train is changed"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-	
-
-###########################################################################################
-#
-# Main -> M.I.B. -> Advanced Settings -> 1-Click EU Coding
-#
-###########################################################################################
-screen eu_conversion_coding advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"This will mess up your unit, if you do not know what you are doing!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"!!! Only apply to EU converted units !!!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"AFTER conversion/FW update to EU FW is completed"
-	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -3526,16 +3465,13 @@ keyValue
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setreg.sh"
-	label   "1. Apply 1-Click EU coding"
-	
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
-	label   "2. Change Variant_1 in eeprom"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
+    label   "1-Click EU Conversion"
 
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-    label   "3. Reboot unit to apply changes"
+keyValue
+    value   String sys 0x00000000 0
+    label	"AFTER reboot confirm new train (e.g. in this menu), download that FW and install it to unit"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -3848,10 +3784,6 @@ button
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
 	label   "Set Variant_1 based on coding above"
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setvariant v0.1.0 (2021-12-10 by MIB-Wiki)"
+revision="setvariant v0.1.1 (2023-05-16 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,12 +12,18 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
 fi
+echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
+fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
 fi
 
 	case $1 in
@@ -136,7 +142,7 @@ if [ $VARERROR = 0 ]; then
 	echo -ne "---- Clean Variant - 13 bytes 00\n" >> $LOG
 	on -f rcc /usr/apps/modifyE2P w ba 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
 	echo -ne "---- Write Variant_1\n" | $TEE -i -a $LOG
-	on -f rcc /usr/apps/modifyE2P w ba $EVAR  | $TEE -i -a $LOG
+	on -f rcc /usr/apps/modifyE2P w ba $EVAR | $TEE -i -a $LOG
 	echo -ne "---- Read Variant_1 back for log\n" >> $LOG
 	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
@@ -150,9 +156,9 @@ else
 	echo -ne "No changes to Variant_1 will be applied\n\n" | $TEE -i -a $LOG
 fi
 
-
-
 trap 2
+[ -z "$noboot" ] && echo -ne "\nAll done!\n"
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 return 2> /dev/null
 
@@ -163,7 +169,7 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
 		echo "        -var			set variant_1"
