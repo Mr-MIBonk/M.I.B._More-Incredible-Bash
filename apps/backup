@@ -12,7 +12,7 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+	echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 fi
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ]; then
@@ -170,7 +170,9 @@ echo -ne "Version info....." | $TEE -i -a $LOG
 
 if [ -z $AB ]; then
 echo -ne "GEM info........" | $TEE -i -a $LOG
-	if [ ! -f $BACKUPFOLDER/$MUVERSION-GEM.jar ] || [ ! -f $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar ]; then
+	if [ -f $BACKUPFOLDER/$MUVERSION-GEM.jar ] || [ -f $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar ]; then
+		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+	else
 		if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
 			on -f mmx cp /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar $BACKUPFOLDER/$MUVERSION-GEM.jar 2>> $LOG
 			if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_GEM.jar ]; then
@@ -184,8 +186,6 @@ echo -ne "GEM info........" | $TEE -i -a $LOG
 		fi
 		ERROR
 		sleep 1
-	else
-		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
 fi
 
