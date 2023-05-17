@@ -13,7 +13,7 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" 2>> $LOG
+echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
@@ -32,8 +32,10 @@ fi
 
 trap '' 2
 
+VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+
 echo -ne "Variant_1 will be generated from Variant_2 coding on unit\n"
-echo -ne "Variant Information can be changed in GEM\n\n"
+echo -ne "Variant_2: $VARIANT\n"
 echo -ne "Result will be written to eeprom\n\n"
 
 #Type
@@ -137,23 +139,24 @@ EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 #echo $EVAR
 
 if [ $VARERROR = 0 ]; then
-	echo -ne "---- Read original Variant_1 from unit\n" >> $LOG
+	echo -ne "--- Read original Variant_1 from unit\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
-	echo -ne "---- Clean Variant - 13 bytes 00\n" >> $LOG
+	echo -ne "--- Clean Variant - 13 bytes 00\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w ba 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
-	echo -ne "---- Write Variant_1\n" | $TEE -i -a $LOG
-	on -f rcc /usr/apps/modifyE2P w ba $EVAR | $TEE -i -a $LOG
-	echo -ne "---- Read Variant_1 back for log\n" >> $LOG
+	echo -ne "--- Write Variant_1\n" | $TEE -i -a $LOG
+	on -f rcc /usr/apps/modifyE2P w ba $EVAR >> $LOG
+	echo -ne "--- Read Variant_1 back for log\n" >> $LOG
 	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
 	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
 	AVAR=$(echo "$EVAR" | $XXD -r -p)
-	echo -ne "\nNew Variant_1: "$AVAR"\n"	
+	echo -ne "\nNew Variant_1: "$AVAR"\n" | $TEE -i -a $LOG
 	echo -ne "\nReboot unit to apply changes\n"
 else
 	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
 	echo -ne "Check messages above\n"
 	echo -ne "No changes to Variant_1 will be applied\n\n" | $TEE -i -a $LOG
+	exit 1
 fi
 
 trap 2

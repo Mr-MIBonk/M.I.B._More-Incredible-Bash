@@ -18,16 +18,12 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-# Set train to EU
-/net/mmx/fs/sda0/apps/settrain -eu -noboot
-# Set coding to EU
-/net/mmx/fs/sda0/apps/setreg -eu -noboot
-#Set variant
+# 2-click EU conversion
+/net/mmx/fs/sda0/apps/settrain -eu -noboot && \
+/net/mmx/fs/sda0/apps/setreg -eu -noboot && \
 /net/mmx/fs/sda0/apps/setvariant -var
 
 sleep 3
-
-echo "All done! now you can go back..."
 
 trap 2
 

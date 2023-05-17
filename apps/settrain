@@ -13,7 +13,7 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" >> $LOG
+echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Reboot running...\n"
@@ -39,7 +39,7 @@ echo -ne ""
 		echo -ne "EU train found - will stop here\n"  | $TEE -i -a $LOG
 		echo -ne "you can go back now...\n"
 	else
-		echo -ne "no EU train found - will proceed with train change\n\n backup will be created now\n" | $TEE -i -a $LOG
+		echo -ne "no EU train found - will proceed with train change\n\nBackup will be created now\n\n" | $TEE -i -a $LOG
 		
 		# Get backup before conversion
 		. $thisdir/backup -a
@@ -63,7 +63,12 @@ echo -ne ""
 			sleep 3
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 32 00 00 >> $LOG
-		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?09* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?10* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?12* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]]  || [[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]]; then
+		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || \
+		[[ "$TRAINVERSION" = *CN_VW48x_?09* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?10* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?11* ]] || \
+		[[ "$TRAINVERSION" = *CN_VW48x_?12* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || \
+		[[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]] || \
+		[[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]] || \
+		[[ "$TRAINVERSION" = *CN_VW511_?10* ]]; then
 			echo -ne "VWG13 found will change train now\n"
 			echo -ne "MHI2_ER_VWG13_P4521\n"
 			sleep 3
@@ -120,11 +125,11 @@ echo -ne ""
 		else
 				echo -ne "\n\nTrain not found in conversion list\nShare your backup with M.I.B team\nThey can add support for your FW\n" | $TEE -i -a $LOG
 				echo -ne "Nothing happend!\n"
-				sleep 5
+				exit 1
 				
 		fi
 	
-	echo -ne "\nTrain written above is your target FW.\nDownload the FW update fle and install it to unit after reboot\n"
+	echo -ne "\nTrain written above is your target FW.\nDownload the FW update file and install it to unit after reboot\n"
 	sleep 5
 	[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 
@@ -134,7 +139,7 @@ trap 2
 
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 
-return 2> /dev/null
+#return 2> /dev/null
 
 	};;
 
