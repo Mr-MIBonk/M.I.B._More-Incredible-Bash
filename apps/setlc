@@ -43,7 +43,6 @@ echo -ne "\n----coding on unit-----\n"\
 "    Screen: $SCREEN \n"\
 "-----------------------\n\n" | $TEE -i -a $LOG
 
-mount -uw /net/rcc/mnt/efs-persist
 	if [[ "$TRAINVERSION" = *ER* ]]; then
 		echo -ne "--- EU train found\n\n" | $TEE -a $LOG
 		echo -ne "--- setting screening/skinning in LC byte 17/18 to avoid black screen after conversion\n"\
