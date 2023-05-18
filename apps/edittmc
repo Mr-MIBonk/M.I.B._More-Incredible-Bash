@@ -26,7 +26,7 @@ else
 	noboot=""
 fi
 
-NAVAPP="/mnt/app/navigation/resources/app"
+NAVAPP="/net/mmx/mnt/app/navigation/resources/app"
 
 echo -ne "--- Checking unit Brand\n"
 if [[ "$TRAINVERSION" = *VW* ]]; then
@@ -60,9 +60,18 @@ mount -uw /net/mmx/mnt/app
 trap '' 2
 
 NAVVERSION="11.30.9876"
+PTJSON="$VOLUME/mod/tmc/paytmc.json"
+PTAUSJSON="$VOLUME/mod/tmc/paytmc_aus.json"
 
-echo -ne "--- Backup version-cfg.txt version\n" | $TEE -a $LOG
-cp -f $NAVAPP/$BRAND/asia/version-cfg.txt $NAVAPP/$BRAND/asia/version-cfg_bck.txt 2>> $LOG
+echo -ne "--- Backup tmc files to unit\n" | $TEE -a $LOG
+	if [ -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json ]; then
+		echo -ne "--- Backup does already exist\n--- Will be skipped\n\n" | $TEE -a $LOG
+	else
+		cp -f $NAVAPP/$BRAND/asia/tti/paytmc.json $NAVAPP/$BRAND/asia/tti/paytmc_bck.json 2>> $LOG
+		cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus.json $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json 2>> $LOG
+		cp -f $NAVAPP/$BRAND/asia/version-cfg.txt $NAVAPP/$BRAND/asia/version-cfg_bck.txt 2>> $LOG
+		echo -ne "--- Backup done.\n" | $TEE -a $LOG
+	fi
 
 echo -ne "--- Adjusting version-cfg.txt version - $NAVVERSION\n" | $TEE -a $LOG
 echo $NAVVERSION > $NAVAPP/$BRAND/asia/version-cfg.txt 2>> $LOG
@@ -74,14 +83,6 @@ echo $NAVVERSION > $NAVAPP/$BRAND/msa/version-cfg.txt 2>> $LOG
 echo $NAVVERSION > $NAVAPP/$BRAND/msa2/version-cfg.txt 2>> $LOG
 echo $NAVVERSION > $NAVAPP/$BRAND/neast/version-cfg.txt 2>> $LOG
 echo $NAVVERSION > $NAVAPP/$BRAND/za/version-cfg.txt 2>> $LOG
-
-PTJSON="$VOLUME/mod/tmc/paytmc.json"
-PTAUSJSON="$VOLUME/mod/tmc/paytmc_aus.json"
-
-echo -ne "--- Backup tmc files to unit\n" | $TEE -a $LOG
-cp -f $NAVAPP/$BRAND/asia/tti/paytmc.json $NAVAPP/$BRAND/asia/tti/paytmc_bck.json 2>> $LOG
-
-cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus.json $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json 2>> $LOG
 
 echo -ne "--- Copy custom TMC files to unit\n" | $TEE -a $LOG
 cp -f $PTJSON $NAVAPP/$BRAND/asia/tti/paytmc.json 2>> $LOG
@@ -107,9 +108,10 @@ cp -f $PTAUSJSON $NAVAPP/$BRAND/za/tti/paytmc_aus.json 2>> $LOG
 mount -ur /net/mmx/mnt/app
 
 [ -z "$noboot" ] && echo -ne "All done!\n"
-echo -ne "-- After reboot apply the new TMC Setting via GEM\n"\
-"    Custom EU\n"\
-"    Custom Australien\n"\
+# echo -ne "\n--- After reboot apply the new TMC Setting via GEM\n"\
+# "    Custom EU\n"\
+# "    Custom Australien\n"\
+# "------------------------------------------\n"
 
 return 2> /dev/null
 
