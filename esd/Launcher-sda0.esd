@@ -2243,6 +2243,7 @@ BIOSCtrl
 	entry	"none" 0
 	entry	"DE/EU" 32771
 	entry	"France" 32788
+	entry	"Australia" 1024
 	entry	"China" 32783
 	poll	1000
 
