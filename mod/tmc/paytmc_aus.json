@@ -1,0 +1,2186 @@
+{
+#	this Version must correspondent with software version.
+#	Changing requires code-changing
+	
+	"Version" : "1.1.0",
+
+	
+#	MinorVersion could be changed, when single values are changed
+#	Navtec TableNumbers ist set to 1 (was 0)
+#	added Blacklist and Whitelist
+
+	"MinorVersion" : "1.1.5",
+
+# currentWorldRegion
+# WORLD_REGION_EMEA = 1, ///< EMEA (Europe, Middle East, Africa)
+# WORLD_REGION_AMERICAS, ///< AMERICAS (Both North and South America)
+# WORLD_REGION_APAC , ///< APAC (Asia Pacific including Oceania, India, China, Thailand, ...)
+
+	"currentWorldRegion" : 1,
+
+	"FileName" : "paytmc_aus.json",
+
+	
+	"Providers" : [
+		{
+			"Name" : "free",
+			"Type" : "unencrypted"
+		},
+
+		{
+			"Name" : "tmcpro",
+			"Type" : "encrypted",
+			"SDKItem" :[
+
+#			SetIntItem
+#				TMC_FEATURE_TMC_PRO
+				{
+					"Name"  : "TMC_PRO",
+					"Nr"    : 1224736791,
+					"Value" : 1,
+
+#					Type "set" means, the value ist set to an integer item, not appended to a list
+#					if omitted, the value belongs to list and should be appended.
+					"Type"  : "set"
+				},
+
+				# TMC_FEATURE_CLEAR_CHANNEL
+				{
+					"Name"  : "CLEAR_CHANNEL",
+					"Nr"    : 1224736795,
+					"Value" : 1,
+					"Type"  : "set"
+				},
+
+#			Append TMCpro
+#				TMC_FEATURE_SUPPORTED_ENCRYPTED_PAY_TMC_SID
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 50
+				},
+
+#				TMC_FEATURE_SUPPORTED_ENCRYPTED_PAY_TMC_TABLENUMBERS
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 1
+				},
+
+#				TMC_FEATURE_SUPPORTED_ENCRYPTED_PAY_TMC_COUNTRYCODES
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 13
+				},
+
+#				TMC_FEATURE_SUPPORTED_ENCRYPTED_PAY_TMC_WORLDREGIONS
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				
+#				TMC_FEATURE_SUPPORTED_ENCRYPTED_PAY_TMC_SVKTABLENR
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 1
+				},
+
+#			Append Navtec
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 50
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 1
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 1
+				}
+			]
+		},
+
+		{
+			"Name" : "trafficmaster",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+# TMC_FEATURE_SUPPORTED_UNENCRYPTED_PAY_TMC_WORLDREGIONS
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736801,
+					"Value" : 1
+				},
+				{
+# TMC_FEATURE_SUPPORTED_UNENCRYPTED_PAY_TMC_TABLENUMBERS
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736802,
+					"Value" : 7
+				},
+				{
+# TMC_FEATURE_SUPPORTED_UNENCRYPTED_PAY_TMC_COUNTRYCODES
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736803,
+					"Value" : 12
+				}
+			]
+		},
+
+#		Itis is required (TMC Sets MIB mod 0.2 JPW Proposal.doc) but currently not supported by SDK
+		{
+			"Name" : "itis",
+			"Type" : "unencrypted"
+		},
+
+#		Mediamobile France is required (TMC Sets MIB mod 0.2 JPW Proposal.doc) but currently not supported by SDK
+		{
+			"Name" : "mediamobile",
+			"Type" : "encrypted"
+		},
+
+#		These values found in our code (don't know, who wrote this)
+		{
+			"Name" : "viamichelin",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736801,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736802,
+					"Value" : 29
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736803,
+					"Value" : 15
+				}
+			]
+		},
+
+#		TMC_FEATURE_INFOBLU_ITALY
+		{
+			"Name" : "infoblu",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 50
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 5
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 1
+				}
+			]
+		},
+
+#		norwaydestia is TMC_FEATURE_MEDIAMOBILE_NORDIC_NORWAY now
+		{
+			"Name" : "norwaydestia",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 0
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 15
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 2
+				}
+			]
+		},
+
+#		swedendestia is TMC_FEATURE_MEDIAMOBILE_NORDIC_SWEDEN now
+		{
+			"Name" : "swedendestia",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 2
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 0
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 14
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 2
+				}
+			]
+		},
+
+#		finlanddestia is TMC_FEATURE_MEDIAMOBILE_NORDIC_FINLAND now
+		{
+			"Name" : "finlanddestia",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 0
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 6
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 2
+				}
+			]
+		},
+
+#		polanddestia is TMC_FEATURE_MEDIAMOBILE_NORDIC_POLAND now
+		{
+			"Name" : "polanddestia",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 2
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 0
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 3
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 2
+				}
+			]
+		},
+
+#		UNKNOWN
+		{
+			"Name" : "russianavteq",
+			"Type" : "unencrypted"
+		},
+#		UNKNOWN
+		{
+			"Name" : "russiafreetmc",
+			"Type" : "unencrypted"
+		},
+
+		#		UNKNOWN
+		{
+			"Name" : "southafrica",
+			"Type" : "unencrypted"
+		},
+
+		#       SUNA 1
+		{
+			"Name" : "Captial Territory (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 53
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 1
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 2
+		{
+			"Name" : "New South Wales (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 54
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 2
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 3
+		{
+			"Name" : "Victoria (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 3
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 4
+		{
+			"Name" : "Queensland,Brisbane,Gold Coast (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 56
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 4
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 5
+		{
+			"Name" : "South Australia (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 57
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 5
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 6
+		{
+			"Name" : "Western Australia (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 58
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 6
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 7
+		{
+			"Name" : "Tasmania (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 59
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 8
+		{
+			"Name" : "Northern Territory (AUZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 60
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 8
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+		#       SUNA 9
+		{
+			"Name" : "Aukland, Wellington, Christchurch (NZ)",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 41
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 9
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 4
+				}
+			]
+		},
+
+#		UNKNOWN
+		{
+			"Name" : "onlinetraffic",
+			"Type" : "unencrypted"
+		}
+	],
+
+	
+#################################################
+#################################################
+#################################################
+# Sets
+#################################################
+#################################################
+#################################################
+	
+	"Sets" : [
+		{
+			"SetId" : 0,
+			"Name"  : "free",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Captial Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "New South Wales (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Victoria (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Queensland,Brisbane,Gold Coast (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "South Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Western Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Tasmania (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Northern Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Aukland, Wellington, Christchurch (NZ)",
+					"Value" : "yes"					
+				}				
+			]
+		},
+		{
+			"SetId" : 1,
+			"Name"  : "Audi TMCpro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 2,
+			"Name"  : "AUDI w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 3,
+			"Name"  : "VW TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 4,
+			"Name"  : "VW w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 5,
+			"Name"  : "Bentley TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 6,
+			"Name"  : "Bentley w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 7,
+			"Name"  : "Bentley w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "exclusive"					
+				}
+			]
+		},
+		{
+			"SetId" : 8,
+			"Name"  : "AUDI TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 9,
+			"Name"  : "AUDI w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 10,
+			"Name"  : "VW TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 11,
+			"Name"  : "VW w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 12,
+			"Name"  : "Bentley TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 13,
+			"Name"  : "Bentley w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 14,
+			"Name"  : "TMCPro + itis + infoBlu + viaMichelin",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "itis",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 15,
+			"Name"  : "TMCPro + trafficmaster + infoBlu + viaMichelin",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+								{
+					"Name"  : "Captial Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "New South Wales (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Victoria (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Queensland,Brisbane,Gold Coast (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "South Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Western Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Tasmania (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Northern Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Aukland, Wellington, Christchurch (NZ)",
+					"Value" : "yes"					
+				}				
+			]
+		},
+		{
+			"SetId" : 16,
+			"Name"  : "TMCPro + trafficmaster + infoBlu + viaMichelin + freeTM russia",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "russiafreetmc",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 17,
+			"Name"  : "TMCPro + trafficmaster + infoBlu + viaMichelin + freeTM russia",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "russiafreetmc",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "russianavteq",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 1024,
+			"Name"  : "SUNA Traffic (Intelematics)",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Captial Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "New South Wales (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Victoria (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Queensland,Brisbane,Gold Coast (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "South Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Western Australia (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Tasmania (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Northern Territory (AUZ)",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "Aukland, Wellington, Christchurch (NZ)",
+					"Value" : "yes"					
+				}				
+			]
+		},
+		{
+			"SetId" : 1025,
+			"Name"  : "Altech Netstar",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "southafrica",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 0
+			"SetId" : 32768,
+			"Name"  : "online traffic + only free TMC",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 1
+			"SetId" : 32769,
+			"Name"  : "online traffic + AUDI TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 2
+			"SetId" : 32770,
+			"Name"  : "online traffic + AUDI w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 3
+			"SetId" : 32771,
+			"Name"  : "online traffic + VW TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 4
+			"SetId" : 32772,
+			"Name"  : "online traffic + VW w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 5
+			"SetId" : 32773,
+			"Name"  : "online traffic + Bentley TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 6
+			"SetId" : 32774,
+			"Name"  : "online traffic + Bentley w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 7
+			"SetId" : 32775,
+			"Name"  : "online traffic + Bentley w/o TMCPro",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 8
+			"SetId" : 32776,
+			"Name"  : "online traffic + AUDI TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 9
+			"SetId" : 32777,
+			"Name"  : "online traffic + AUDI w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 10
+			"SetId" : 32778,
+			"Name"  : "online traffic + VW TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "exclusive"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 11
+			"SetId" : 32779,
+			"Name"  : "online traffic + VW w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 12
+			"SetId" : 32780,
+			"Name"  : "online traffic + Bentley TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 13
+			"SetId" : 32781,
+			"Name"  : "online traffic + Bentley w/o TMCPro + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "mediamobile",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 14
+			"SetId" : 32782,
+			"Name"  : "online traffic + Bentley w/o TMCPro + itis + viaMichelin + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "itis",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+#					  32768 + 15
+			"SetId" : 32783,
+			"Name"  : "online traffic + Bentley w/o TMCPro + trafficmaster + viaMichelin + infoBlu",
+			"ProviderSet" : [
+				{
+					"Name"  : "free",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "tmcpro",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "trafficmaster",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "viamichelin",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "infoblu",
+					"Value" : "yes"					
+				},
+				{
+					"Name"  : "onlinetraffic",
+					"Value" : "yes"					
+				}
+			]
+		},
+		{
+			"SetId" : 65534,
+			"Name"  : "No TMC + Mecca indicator"
+		},
+		{
+			"SetId" : 65535,
+			"Name"  : "No TMC"
+		}
+	],
+
+#**************************************************************************
+#**************************************************************************
+#**************************************************************************
+	"Blacklist" : [
+		{
+#	if Name is empty, this country is not part of the blacklist
+#	if you want to use this, Name should be "Germany", because the CountryCode is 13, this means Germany
+			"Name" : "",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+# TMC_FEATURE_DEACTIVATED_PUBLIC_TMC_WORLDREGIONS
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736797,
+					"Value" : 1
+				},
+				{
+# TMC_FEATURE_DEACTIVATED_PUBLIC_TMC_TABLENUMBERS
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736798,
+					"Value" : 1
+				},
+				{
+# TMC_FEATURE_DEACTIVATED_PUBLIC_TMC_COUNTRYCODES
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736799,
+					"Value" : 13
+				}
+			]
+		},
+		{
+#	if you want to use this, Name should be "Austria", because the CountryCode is 10, this means Austria
+			"Name" : "",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736797,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736798,
+					"Value" : 1
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736799,
+					"Value" : 10
+				}
+			]
+		}
+	],
+
+#**************************************************************************
+#**************************************************************************
+#**************************************************************************
+	"Whitelist" : [
+		{
+#	if Name is empty, this country is not part of the whitelist
+#	if you want to use this, Name should be "Germany", because the CountryCode is 13, this means Germany
+			"Name" : "Germany",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+# TMC_FEATURE_SUPPORTED_ONLINE_TMC_WORLDREGIONS
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+# TMC_FEATURE_SUPPORTED_ONLINE_TMC_COUNTRYCODES
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 1
+				},
+				{
+# TMC_FEATURE_SUPPORTED_ONLINE_TMC_TABLENUMBERS
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 13
+				}
+			]
+		},
+		{
+#	if you want to use this, Name should be "Austria", because the CountryCode is 10, this means Austria
+			"Name" : "Austria",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 1
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 10
+				}
+			]
+		},
+		{
+			"Name" : "Belgium",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 1
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 6
+				}
+			]
+		},
+		{
+			"Name" : "Switzerland",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 9
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 4
+				}
+			]
+		},
+		{
+			"Name" : "Czechia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 25
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 2
+				}
+			]
+		},
+		{
+			"Name" : "Denmark",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 9
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 9
+				}
+			]
+		},
+		{
+			"Name" : "Spain",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 17
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 14
+				}
+			]
+		},
+		{
+			"Name" : "Finland",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 17
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 6
+				}
+			]
+		},
+		{
+			"Name" : "France",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 32
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 15
+				}
+			]
+		},
+		{
+			"Name" : "UK-Trafficmaster",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 7
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 12
+				}
+			]
+		},
+		{
+			"Name" : "Italy",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 1
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 5
+				}
+			]
+		},
+		{
+		# https://jira.elektrobit.com/browse/BLACKY-6768
+			"Name" : "Luxemburg",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 1
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "The Netherlands",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 17
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 8
+				}
+			]
+		},
+		{
+			"Name" : "Norway",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 49
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 15
+				}
+			]
+		},
+		{
+		# https://jira.elektrobit.com/browse/BLACKY-6768
+			"Name" : "Poland",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 5
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 3
+				}
+			]
+		},
+		{
+		# https://jira.elektrobit.com/browse/BLACKY-6768
+			"Name" : "Portugal",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 42
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 8
+				}
+			]
+		},
+		{
+		# https://jira.elektrobit.com/browse/BLACKY-6768
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 23
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 24
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 25
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 26
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 27
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Russia",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 28
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 7
+				}
+			]
+		},
+		{
+			"Name" : "Sweden",
+			"Type" : "unencrypted",
+			"SDKItem" :[
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736822,
+					"Value" : 1
+				},
+				{
+					"Name"  : "TableNumbers",
+					"Nr"    : 1224736823,
+					"Value" : 33
+				},
+				{
+					"Name"  : "CountryCodes",
+					"Nr"    : 1224736824,
+					"Value" : 14
+				}
+			]
+		}
+	]
+}
