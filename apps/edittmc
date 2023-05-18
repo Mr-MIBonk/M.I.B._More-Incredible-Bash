@@ -49,15 +49,15 @@ fi
 
 echo -ne "--- $BRAND found\n"
 
+# Make app volume writable
+echo -ne "--- Mounting app folder\n"
+mount -uw /net/mmx/mnt/app
+
 	case $1 in
 
 	-replace) {
 
 trap '' 2
-
-# Make app volume writable
-echo -ne "--- Mounting app folder\n"
-mount -uw /net/mmx/mnt/app
 
 NAVVERSION="11.30.9876"
 
@@ -156,6 +156,8 @@ cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/neast/tti/paytm
 cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/za/tti/paytmc_aus.json 2>> $LOG
 
 [ -z "$noboot" ] && echo -ne "All done!\n"
+
+mount -ur /net/mmx/mnt/app
 
 return 2> /dev/null
 
