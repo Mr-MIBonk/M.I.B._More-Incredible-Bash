@@ -44,14 +44,14 @@ mount -uw /net/rcc/mnt/efs-persist
 		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
 		
 		sleep 1
-		echo -ne "\n--- summertime algo.\n"
+		echo -ne "\n--- summertime algo.\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:503 2
 					#  "none" 0
 					#  "manual" 1
 					#  "MESZ" 2
 					#  "USA" 3
 					sleep 1
-		echo -ne "--- FM Bandsetting\n"
+		echo -ne "--- FM Bandsetting\n" | $TEE -a $LOG
 		on -f mmx $PC i:0:0x5018240F 1
 					# 0:		BAND_FM_NO_SETTING
 					# 1:		BAND_FM_EU_RDW
@@ -60,7 +60,7 @@ mount -uw /net/rcc/mnt/efs-persist
 					# 4:		BAND_FM_KOR
 					sleep 1
 		echo -ne "--- AM Bandsetting\n"
-		on -f mmx $PC i:0:0x501824F0 1
+		on -f mmx $PC i:0:0x501824F0 1 | $TEE -a $LOG
 					# 0:		BAND_AM_NO_SETTING
 					# 1:		BAND_AM_EU_RDW
 					# 2:		BAND_AM_NAR
@@ -85,10 +85,10 @@ mount -uw /net/rcc/mnt/efs-persist
 					# 1:		BAND_DAB2_L_BAND (EU default)
 					# 2:		BAND_DAB2_DOWNLOAD_TABLE_2
 					sleep 1
-		echo -ne "--- Radiotext+ off/on\n"
+		echo -ne "--- Radiotext+ off/on\n" | $TEE -a $LOG
 		on -f mmx $PC i:0:0x50183408 1
 		sleep 1
-		echo -ne "--- Navigation Country\n"
+		echo -ne "--- Navigation Country\n" | $TEE -a $LOG
 		on -f mmx $PC i:0:0x50180CFF 1
 					#  "EU" 1
 					#  "NAR" 2
@@ -108,32 +108,32 @@ mount -uw /net/rcc/mnt/efs-persist
 					#  "Taiwan" 16
 					#  "MSA 2 (Chile)" 17
 				sleep 1
-		echo -ne "--- Import media\n"
+		echo -ne "--- Import media\n" | $TEE -a $LOG
 		on -f mmx $PC i:0:0x50186010 1
 		sleep 1
-		echo -ne "--- Media Ripping\n"
+		echo -ne "--- Media Ripping\n" | $TEE -a $LOG
 		on -f mmx $PC i:0:0x50186020 1
 		sleep 1
-		echo -ne "--- Regionalcodes DVD\n"
+		echo -ne "--- Regionalcodes DVD\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:515 2
 		sleep 1
-		echo -ne "--- Regionalcodes Blueray\n"
+		echo -ne "--- Regionalcodes Blueray\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:516 2
 		sleep 1
-		echo -ne "--- R. Codes DVD Counter\n"
+		echo -ne "--- R. Codes DVD Counter\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:517 5
 		sleep 1
-		echo -ne "--- R. Codes Blueray Counter\n"
+		echo -ne "--- R. Codes Blueray Counter\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:518 5
 		sleep 1
-		echo -ne "--- TMCPro EU\n"
+		echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
 		on -f mmx $PC i:28442848:520 32783
 		sleep 1
-		echo -ne "--- Gracenote local ON\n"
+		echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
 		on -f mmx $PC b:0:3221356628:1.6 1
 		on -f mmx $PC b:0:3221356628:1.7 1
 		sleep 1
-		echo -ne "--- Radio stationlogo DB\n"
+		echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
 		on -f mmx $PC b:0:3221356628:6 1
 			#	"none" 0
 			#	"EU" 1
@@ -143,7 +143,7 @@ mount -uw /net/rcc/mnt/efs-persist
 			#	"China" 28
 			#	"Macao" 67
 			sleep 1
-		echo -ne "--- SDS region Flag\n"
+		echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
 		on -f mmx $PC b:0:3221356628:9 1
 			#	"no region" 0
 			#	"EU" 1
@@ -166,7 +166,7 @@ mount -uw /net/rcc/mnt/efs-persist
 			#	"China 2" 18
 			#	"China 3" 19
 			sleep 1
-		echo -ne "--- variant region\n"
+		echo -ne "--- variant region\n" | $TEE -a $LOG
 		on -f mmx $PC i:0x286f058c:9 2
 			#   "Europe/ROW" 1
 			#   "Europe" 2  
