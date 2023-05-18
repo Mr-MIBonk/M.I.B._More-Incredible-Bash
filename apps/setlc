@@ -1,0 +1,125 @@
+#!/bin/sh
+
+revision="setlc v0.1.0 (2023-05-18 by MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+fi
+echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
+fi
+
+# Get Train from EEPROM (AIO EU conversion)
+TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+
+	case $1 in
+
+	-eu) {
+
+trap '' 2
+
+SCREEN=$(on -f mmx $PC i:0:0x501844FF)
+SKIN=$(on -f mmx $PC i:0:0x501848FF)
+
+echo -ne "\n----coding on unit-----\n"\
+"    Skin  : $SKIN \n"\
+"    Screen: $SCREEN \n"\
+"-----------------------\n\n" | $TEE -i -a $LOG
+
+mount -uw /net/rcc/mnt/efs-persist
+	if [[ "$TRAINVERSION" = *ER* ]]; then
+		echo -ne "--- EU train found\n\n" | $TEE -a $LOG
+		echo -ne "--- setting screening/skinning in LC byte 17/18 to avoid black screen after conversion\n"\
+"--- You have to adjust these bytes to fit your car model after conversion\n"\
+"--- Default values will be applied now\n"
+		sleep 3
+		if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+			on -f mmx $PC i:0:0x501844FF 1 >> $LOG #skinning LC byte 17 - 1
+		else
+			on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skinning LC byte 17 - 0
+		fi
+		on -f mmx $PC i:0:0x501848FF 0 >> $LOG #screening LC byte 18 - 0
+		sleep 1
+
+		SCREEN=$(on -f mmx $PC i:0:0x501844FF)
+		SKIN=$(on -f mmx $PC i:0:0x501848FF)
+
+		echo -ne "\n-------new coding------\n"\
+"    Skin  : $SKIN \n"\
+"    Screen: $SCREEN \n"\
+"-----------------------\n\n" | $TEE -i -a $LOG
+
+		echo -ne "--- store changes to persistence\n\n"
+		on -f mmx $PC b:0:1 0 >> $LOG
+		sleep 2
+
+		echo -ne "!!! Do NOT reboot unit !!!\n"\
+"1. Exit GEM\n"\
+"2. Insert SD card with EU FW - $TRAINVERSION\n"\
+"3. Start installation\n"
+		sleep 5
+
+		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
+	else
+		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
+		exit 1
+	fi
+
+# return 2> /dev/null
+
+trap 2
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+	};;
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
+		echo ""
+		echo "Options:"
+		echo "        -eu			set Region to EU"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
