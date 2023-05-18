@@ -1400,6 +1400,50 @@ keyValue
 	label	"___________________________________________________________________________"
 	poll    0
 
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> TMC settings
+#
+###########################################################################################
+screen tmc_settings advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Change TMC settings:"
+	poll    0
+
+BIOSCtrl
+	value	int per 28442848 520
+	label	"Set TMC"
+	entry	"none" 0
+	entry	"DE - TMCPro" 32771
+	entry	"France" 32788
+	entry	"Australia" 1024
+	entry	"China" 32783
+	poll	1000
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Install custom TMC profiles (EU/AUS) to unit"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_replace.sh"
+    label   "Install custom TMC"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_restore.sh"
+    label   "Restore stock TMC"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
 
 ###########################################################################################
 #
@@ -1474,7 +1518,6 @@ keyValue
     value   String sys 0x00000000 0
     label	"___________________________________________________________________________"
 	poll    0
-
 
 ###########################################################################################
 #
@@ -1598,7 +1641,7 @@ keyValue
     value   String sys 0x00000000 0
 	label 	"Also helpful after region conversion to remove old maps"
 	poll    0
-	
+
 keyValue
     value   String sys 0x00000000 0
 	label 	" "
@@ -1615,10 +1658,10 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Advanced Settings -> SSHD
+# Main -> M.I.B. -> Advanced Settings -> Install SSHD
 #
 ###########################################################################################
-screen sshd_info advanced_settings
+screen install_sshd advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
@@ -1638,7 +1681,7 @@ keyValue
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/Toolbox/scripts/sshd_install.sh"
     label   "or by pressing this button - after /Toolbox/ folder is on SD"
-		
+
 keyValue
     value   String sys 0x00000000 0
     label	"You can connect to your unit via ssh clients for console and file access"
@@ -1648,7 +1691,7 @@ keyValue
     value   String sys 0x00000000 0
     label	"Connect with D-Link --> 172.16.250.248:22"
 	poll    0
-	
+
 keyValue
     value   String sys 0x00000000 0
     label	"Connect without D-Link --> use WLAN in client or access point mode (use WLAN IP:22)"
@@ -2235,16 +2278,6 @@ BIOSCtrl
 	entry	"MESZ" 2
 	entry	"USA" 3
 	entry	"NavDB/automatic" 4
-	poll	1000
-
-BIOSCtrl
-	value	int per 28442848 520
-	label	"Set PayTMC"
-	entry	"none" 0
-	entry	"DE/EU" 32771
-	entry	"France" 32788
-	entry	"Australia" 1024
-	entry	"China" 32783
 	poll	1000
 
 bitselect
