@@ -1,0 +1,202 @@
+#!/bin/sh
+
+revision="edittmc v0.1.0 (2023-05-18 by MIB-Wiki & catatonicChimp)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+fi
+echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
+fi
+
+NAVAPP="/mnt/app/navigation/resources/app"
+
+echo -ne "--- Checking unit Brand\n"
+if [[ "$TRAINVERSION" = *VW* ]]; then
+	BRAND="vw"
+elif [[ "$TRAINVERSION" = *AU* ]]; then
+	BRAND="au"
+elif [[ "$TRAINVERSION" = *SE* ]]; then
+	BRAND="se"
+elif [[ "$TRAINVERSION" = *SK* ]]; then
+	BRAND="sk"
+elif [[ "$TRAINVERSION" = *POG* ]]; then
+	BRAND="po"
+elif [[ "$TRAINVERSION" = *BY* ]]; then
+	BRAND="by"
+else
+	echo -ne "No brand found\n"
+	echo -ne "Nothing happend!\n"
+	exit 1
+fi
+
+echo -ne "--- $BRAND found\n"
+
+	case $1 in
+
+	-replace) {
+
+trap '' 2
+
+# Make app volume writable
+echo -ne "--- Mounting app folder\n"
+mount -uw /net/mmx/mnt/app
+
+NAVVERSION="11.30.9876"
+
+echo -ne "--- Backup version-cfg.txt version\n" | $TEE -a $LOG
+cp -f $NAVAPP/$BRAND/asia/version-cfg.txt $NAVAPP/$BRAND/asia/version-cfg_bck.txt 2>> $LOG
+
+echo -ne "--- Adjusting version-cfg.txt version - $NAVVERSION\n" | $TEE -a $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/asia/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/aus/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/il/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/india/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/meast/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/msa/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/msa2/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/neast/version-cfg.txt 2>> $LOG
+echo $NAVVERSION > $NAVAPP/$BRAND/za/version-cfg.txt 2>> $LOG
+
+PTJSON="$VOLUME/mod/tmc/paytmc.json"
+PTAUSJSON="$VOLUME/mod/tmc/paytmc_aus.json"
+
+echo -ne "--- Backup tmc files to unit\n" | $TEE -a $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc.json $NAVAPP/$BRAND/asia/tti/paytmc_bck.json 2>> $LOG
+
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus.json $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json 2>> $LOG
+
+echo -ne "--- Copy custom TMC files to unit\n" | $TEE -a $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/asia/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/aus/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/il/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/india/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/meast/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/msa/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/msa2/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/neast/tti/paytmc.json 2>> $LOG
+cp -f $PTJSON $NAVAPP/$BRAND/za/tti/paytmc.json 2>> $LOG
+
+cp -f $PTAUSJSON $NAVAPP/$BRAND/asia/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/aus/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/il/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/india/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/meast/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/msa/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/msa2/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/neast/tti/paytmc_aus.json 2>> $LOG
+cp -f $PTAUSJSON $NAVAPP/$BRAND/za/tti/paytmc_aus.json 2>> $LOG
+
+mount -ur /net/mmx/mnt/app
+
+[ -z "$noboot" ] && echo -ne "All done!\n"
+echo -ne "-- After reboot apply the new TMC Setting via GEM\n"\
+"    Custom EU\n"\
+"    Custom Australien\n"\
+
+return 2> /dev/null
+
+trap 2
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+	};;
+
+	-restore) {
+
+trap '' 2
+
+echo -ne "--- Restore version-cfg.txt from backup\n" | $TEE -a $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/asia/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/aus/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/il/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/india/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/meast/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/msa/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/msa2/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/neast/version-cfg.txt 2>> $LOG
+cp - $NAVAPP/$BRAND/asia/version-cfg_bck.txt $NAVAPP/$BRAND/za/version-cfg.txt 2>> $LOG
+
+echo -ne "--- Restore TMC files from backup\n" | $TEE -a $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/asia/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/aus/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/il/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/india/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/meast/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/msa/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/msa2/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/neast/tti/paytmc.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json $NAVAPP/$BRAND/za/tti/paytmc.json 2>> $LOG
+
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/asia/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/aus/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/il/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/india/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/meast/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/msa/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/msa2/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/neast/tti/paytmc_aus.json 2>> $LOG
+cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/za/tti/paytmc_aus.json 2>> $LOG
+
+[ -z "$noboot" ] && echo -ne "All done!\n"
+
+return 2> /dev/null
+
+trap 2
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+	};;
+
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" [OPTION] [-noboot]"
+		echo ""
+		echo "Options:"
+		echo "        -replace			replace TMC information on unit"
+		echo "        -restore			restore TMC information on unit"
+		echo "        --help		show this help"
+		echo ""
+		echo "Note: Backup will only work in RCC bash!"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
