@@ -18,7 +18,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-# 2-click EU conversion
+# EU conversion
 /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
 /net/mmx/fs/sda0/apps/setreg -eu -noboot && \
 /net/mmx/fs/sda0/apps/setvariant -var

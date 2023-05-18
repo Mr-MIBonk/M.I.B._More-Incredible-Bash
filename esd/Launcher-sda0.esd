@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			16-05-2023
+# Date:			17-05-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -1316,14 +1316,14 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Advanced Settings -> 1-Click EU Conversion
+# Main -> M.I.B. -> Advanced Settings -> EU Conversion
 #
 ###########################################################################################
 screen eu_conversion advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"This will mess up your unit, if you do not know what you are doing!"
+    label	"This WILL mess up your unit, if you do not know what you are doing!"
 	poll    0
 
 keyValue
@@ -1332,37 +1332,74 @@ keyValue
 	poll    0
 
 keyValue
-    value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-keyValue
     value   String per 30 1966084
     label   "Your current train"
 
 keyValue
     value   String sys 0x00000000 0
-    label	" "
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Train, variant, coding, adaption & language will be switched to EU:"
+    label	"Train, variant, coding, adaption & language will be converted to EU:"
 	poll    0
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
-    label   "1-Click EU Conversion"
+    label   "1. EU Conversion"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"AFTER reboot confirm new train (e.g. in this menu), download that FW and install it to unit"
+    label	"2. AFTER reboot confirm new train (e.g. in this menu), download FW and and prepare SD"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Directly BEFORE installation of EU FW run this script:"
+	poll    0
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/conversion_fix_eu.sh"
+    label   "3. FIX Skin/Screen bug"
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"4. DO NOT reboot unit - Directly install EU FW"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
 	label	"___________________________________________________________________________"
 	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> EU Conversion -> What is the Skin/Screen Bug
+#
+###########################################################################################
+screen What_is_skin_screen_bug eu_conversion
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"Some - not all - international FW use Skin and Screening ID, which are not known to EU FW"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"After installation the unit will get stuck in a black screen and bootloop"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"D-Link and shell access will be required to fix this"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"This can in most cases be avoided by running the FIX script immediatly before EU FW install"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
 
 ###########################################################################################
 #
@@ -2204,7 +2241,8 @@ BIOSCtrl
 	value	int per 28442848 520
 	label	"Set PayTMC"
 	entry	"none" 0
-	entry	"DE/EU" 32771 
+	entry	"DE/EU" 32771
+	entry	"France" 32788
 	entry	"China" 32783
 	poll	1000
 
