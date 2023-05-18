@@ -1419,7 +1419,8 @@ BIOSCtrl
 	entry	"DE - TMCPro" 32771
 	entry	"France" 32788
 	entry	"Australia" 1024
-	entry	"China" 32783
+	entry	"China" 32782
+	entry	"Russia" 32785
 	poll	1000
 
 keyValue
