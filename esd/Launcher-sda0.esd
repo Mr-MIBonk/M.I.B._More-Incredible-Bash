@@ -1351,7 +1351,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Directly BEFORE installation of EU FW run this script:"
+    label	"Directly before installation of EU FW run this script:"
 	poll    0
 
 script
