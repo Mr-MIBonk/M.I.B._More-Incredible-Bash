@@ -29,7 +29,7 @@ case $1 in
 
 trap '' 2
 
-UnitVersion="SKG13"
+UnitVersion="SKG13_P4526"
 
 	if [[ "$TRAINVERSION" = *$UnitVersion* ]]; then
 		echo -e "\nInstall image MOD on "$UnitVersion"\n"
