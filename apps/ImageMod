@@ -20,7 +20,8 @@ if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; th
 	return 2> /dev/null
 fi
 
-IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
+#IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
+IMGDIR="$VOLUME/Resources"
 
 case $1 in
 
@@ -28,35 +29,35 @@ case $1 in
 
 trap '' 2
 
-	if [[ "$TRAINVERSION" = *SKG13* ]]; then
-		UnitVersion="SKG13"
+UnitVersion="SKG13"
+
+	if [[ "$TRAINVERSION" = *$UnitVersion* ]]; then
 		echo -e "\nInstall image MOD on "$UnitVersion"\n"
 		mount -uw /net/mmx/mnt/app
-
 		if [ ! -f $IMGDIR/skin0/images.bck ];then
 			mv -f $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
 			echo -e "Create backup for skin0..." 2>&1 | $TEE -a $LOG
 		else
-			echo -e "Image backup for skin0 already exists!" 2>&1 | $TEE -a $LOG
+			echo -e "Image backup for skin0 already exists!\n\n" 2>&1 | $TEE -a $LOG
 		fi
 
 		# create patched /skin0/images.mcf from /skin0/images.mcf
-		echo -ne "Patching image files part 1 - skin0\n--- Duration: ~1 minute" | $TEE -a $LOG
+		echo -ne "Patching image files part 1 - skin0\n--- Duration: ~1 minute\n" | $TEE -a $LOG
 		$RDIFF -f patch $IMGDIR/skin0/images.bck $VOLUME/mod/images/$UnitVersion/skin0/images.mcf.delta $IMGDIR/skin0/images.mcf 2>> $LOG
 		CHECKSUM_Skin0="2faf30f3f28b2fd69ae04e9cfd158aec95a5bc72"
 		checksum_unit="$($SHA1 $IMGDIR/skin0/images.mcf | awk '{print $1}')" 2>> $LOG
 		if [ $CHECKSUM_Skin0 = $checksum_unit ]; then
-			echo "--> Patch DONE\n" | $TEE -a $LOG
+			echo "--> DONE\n" | $TEE -a $LOG
 		else
-			echo "Something went wrong\nrevert to images.mcf from backup\nCancel install" | $TEE -a $LOG
+			echo "Something went wrong\nRevert to images.mcf from backup\nCancel install\n" | $TEE -a $LOG
 			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
 			exit 1
 		fi
 
 		# copy files from skin1 to skin3
-		echo -ne "Built up skin3\n--- Duration: ~1 minute" | $TEE -a $LOG
+		echo -ne "Built up skin3\n" | $TEE -a $LOG
 		cp -crf $IMGDIR/skin1/Alphabets/* $IMGDIR/skin3/Alphabets/ 2>> $LOG
-		cp -crf $IMGDIR/skin1/Fonts/* $IMGDIR/Fonts/Alphabets/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/Fonts/* $IMGDIR/skin3/Fonts/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/i18n/* $IMGDIR/skin3/i18n/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/view/* $IMGDIR/skin3/view/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/ambienceColorMap.res $IMGDIR/skin3/ 2>> $LOG
@@ -66,14 +67,14 @@ trap '' 2
 		cp -crf $VOLUME/mod/images/$UnitVersion/skin3/info.txt $IMGDIR/skin3/ 2>> $LOG
 
 		# create patched /skin3/images.mcf from /skin1/images.mcf
-		echo -ne "Patching image files part 2 - skin3\n--- Duration: ~1 minute" | $TEE -a $LOG
+		echo -ne "Patching image files part 2 - skin3\n--- Duration: ~1 minute\n" | $TEE -a $LOG
 		$RDIFF -f patch $IMGDIR/skin1/images.mcf $VOLUME/mod/images/$UnitVersion/skin3/images.mcf.delta $IMGDIR/skin3/images.mcf 2>> $LOG
-		CHECKS_Skin3="0a322d581cb320c60bc6be87e2817fcdf20aa2f2"
+		CHECKSUM_Skin3="0a322d581cb320c60bc6be87e2817fcdf20aa2f2"
 		checksum_unit="$($SHA1 $IMGDIR/skin3/images.mcf | awk '{print $1}')" 2>> $LOG
 		if [ $CHECKSUM_Skin3 = $checksum_unit ]; then
-			echo "--> Patch DONE\n" | $TEE -a $LOG
+			echo "--> DONE\n" | $TEE -a $LOG
 		else
-			echo "Something went wrong\nrevert unit to stock\nCancel install" | $TEE -a $LOG
+			echo "Something went wrong\nRevert unit to stock\nCancel install\n" | $TEE -a $LOG
 			rm -rf $IMGDIR/skin3 2>> $LOG
 			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
 			exit 1
@@ -103,6 +104,7 @@ trap '' 2
 		mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>&1 | $TEE -a $LOG
 		rm -rf $IMGDIR/skin3 2>> $LOG
 		echo -e "do restore..." 2>&1 | $TEE -a $LOG
+		echo -e "MOD removed...\n" 2>&1 | $TEE -a $LOG
 		. $thisdir/reboot -t 10
 	else
 		echo -e "Image backup not exists!" 2>&1 | $TEE -a $LOG
