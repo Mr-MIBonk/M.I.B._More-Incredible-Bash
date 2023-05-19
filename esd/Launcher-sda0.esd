@@ -1446,6 +1446,31 @@ keyValue
 	label	"___________________________________________________________________________"
 	poll    0
 
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_23.sh"
+   label    "Install Russia TMC Patch (Moscow, TMC23)"
+
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_24.sh"
+   label    "Install Russia TMC Patch (Saint-Peterburg, TMC24)"
+
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_25.sh"
+   label    "Install Russia TMC Patch (Ekaterinburg, TMC25)"
+
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_26.sh"
+   label    "Install Russia TMC Patch (N.Novgorod, TMC26)"
+
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_27.sh"
+   label    "Install Russia TMC Patch (Krasnodar, TMC27)"
+
+script
+   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_28.sh"
+   label    "Install Russia TMC Patch (Novosibirsk, TMC28)"
+    
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> Advanced Settings -> SWDL FW Updates
@@ -3103,25 +3128,38 @@ keyValue
 # Main -> M.I.B. -> Multimedia System -> SKODA -> Install Image MOD
 #
 ###########################################################################################
-screen O3_Image_MOD SKODA
+screen SKG13_Image_MOD SKODA
 
 keyValue
     value   String sys 0x00000000 0
-	label	"ONLY working for SKODA Octavia 3 cars with Train SKG13_1440"
+	label	"ONLY working on SKODA MIB2.5 units with Train MHI2_ER_SKG13_P4526_MU1440"
 	poll    0
 
 keyValue
-    value   String sys 0x00000000 0
+    value   String per 30 1966084
+    label   "Unit train"
+
+script
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod.sh"
+	label    "QR code link to MOD images on Git"
+
+keyValue
+	value   String sys 0x00000000 0
 	label	""
 	poll    0
 
 script #/apps/ImageMod -m
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ImageMod.sh"
-	label   "change/intall Images"
+	label   "Install MOD"
 
 script #/apps/ImageMod -b
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ImageRestore.sh"
-	label   "restore original Images"
+	label   "Remove MOD"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
