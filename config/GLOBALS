@@ -1,4 +1,4 @@
-# GLOBALS v0.3.0 (2023-05-09 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.1 (2023-05-19 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@ PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 VERSIONS="/net/rcc/dev/shmem/version.txt"
 TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
+SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
+RDIFF="$VOLUME/apps/sbin/rdiff" # not on any unit
 
 # Set temp
 TMP="/net/rcc/dev/shmem"

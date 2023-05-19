@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="ImageMod v0.1.0 (2022-10-03 MIBonk)"
+revision="ImageMod v0.1.1 (2023-05-19 MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,8 +12,8 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
 	echo "Backup or reboot is already running..."
@@ -32,14 +32,54 @@ trap '' 2
 		UnitVersion="SKG13"
 		echo -e "\nInstall image MOD on "$UnitVersion"\n"
 		mount -uw /net/mmx/mnt/app
+
 		if [ ! -f $IMGDIR/skin0/images.bck ];then
-			mv $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
-			echo -e "do backup from skin0..." 2>&1 | $TEE -a $LOG
+			mv -f $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
+			echo -e "Create backup for skin0..." 2>&1 | $TEE -a $LOG
 		else
-			echo -e "Image backup already exists!" 2>&1 | $TEE -a $LOG
+			echo -e "Image backup for skin0 already exists!" 2>&1 | $TEE -a $LOG
 		fi
-		cp -r $VOLUME/mod/images/$UnitVersion/* $IMGDIR 2>> $LOG
-		echo -e "Install MOD...\n" 2>&1 | $TEE -a $LOG
+
+		# create patched /skin0/images.mcf from /skin0/images.mcf
+		echo -ne "Patching image files part 1 - skin0\n--- Duration: ~1 minute" | $TEE -a $LOG
+		$RDIFF -f patch $IMGDIR/skin0/images.bck $VOLUME/mod/images/$UnitVersion/skin0/images.mcf.delta $IMGDIR/skin0/images.mcf 2>> $LOG
+		CHECKSUM_Skin0="2faf30f3f28b2fd69ae04e9cfd158aec95a5bc72"
+		checksum_unit="$($SHA1 $IMGDIR/skin0/images.mcf | awk '{print $1}')" 2>> $LOG
+		if [ $CHECKSUM_Skin0 = $checksum_unit ]; then
+			echo "--> Patch DONE\n" | $TEE -a $LOG
+		else
+			echo "Something went wrong\nrevert to images.mcf from backup\nCancel install" | $TEE -a $LOG
+			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
+			exit 1
+		fi
+
+		# copy files from skin1 to skin3
+		echo -ne "Built up skin3\n--- Duration: ~1 minute" | $TEE -a $LOG
+		cp -crf $IMGDIR/skin1/Alphabets/* $IMGDIR/skin3/Alphabets/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/Fonts/* $IMGDIR/Fonts/Alphabets/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/i18n/* $IMGDIR/skin3/i18n/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/view/* $IMGDIR/skin3/view/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/ambienceColorMap.res $IMGDIR/skin3/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/images.res $IMGDIR/skin3/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/viewhandler.zip $IMGDIR/skin3/ 2>> $LOG
+
+		cp -crf $VOLUME/mod/images/$UnitVersion/skin3/info.txt $IMGDIR/skin3/ 2>> $LOG
+
+		# create patched /skin3/images.mcf from /skin1/images.mcf
+		echo -ne "Patching image files part 2 - skin3\n--- Duration: ~1 minute" | $TEE -a $LOG
+		$RDIFF -f patch $IMGDIR/skin1/images.mcf $VOLUME/mod/images/$UnitVersion/skin3/images.mcf.delta $IMGDIR/skin3/images.mcf 2>> $LOG
+		CHECKS_Skin3="0a322d581cb320c60bc6be87e2817fcdf20aa2f2"
+		checksum_unit="$($SHA1 $IMGDIR/skin3/images.mcf | awk '{print $1}')" 2>> $LOG
+		if [ $CHECKSUM_Skin3 = $checksum_unit ]; then
+			echo "--> Patch DONE\n" | $TEE -a $LOG
+		else
+			echo "Something went wrong\nrevert unit to stock\nCancel install" | $TEE -a $LOG
+			rm -rf $IMGDIR/skin3 2>> $LOG
+			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
+			exit 1
+		fi
+
+		echo -e "MOD Installed...\n" 2>&1 | $TEE -a $LOG
 	mount -ur /net/mmx/mnt/app
 	echo -e "\n ---> image mod done, be happy ;-)\n" 2>&1 | $TEE -a $LOG
 	. $thisdir/reboot -t 10
@@ -61,6 +101,7 @@ trap '' 2
 	mount -uw /net/mmx/mnt/app
 	if [ -f $IMGDIR/skin0/images.bck ];then
 		mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>&1 | $TEE -a $LOG
+		rm -rf $IMGDIR/skin3 2>> $LOG
 		echo -e "do restore..." 2>&1 | $TEE -a $LOG
 		. $thisdir/reboot -t 10
 	else
@@ -81,7 +122,7 @@ return 2> /dev/null
 		echo "Usage: "$thisname
 		echo ""
 		echo "        -m 		install MOD images"
-		echo "        -b 		undo MOD, back to original"
+		echo "        -b 		remove MOD, back to original"
 		echo "        --help		show this help"
 		echo ""		echo ""
 		echo "This program is free software; you can redistribute it and/or"
