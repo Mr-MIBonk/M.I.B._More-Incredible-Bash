@@ -1,4 +1,4 @@
-# LOGS settings v0.1.2 (2023-05-16 by MIBonk)
+# LOGS settings v0.1.3 (2023-05-19 by MIBonk)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -17,6 +17,9 @@
 # set logs...
 LOG="$thisdir/../backup/logs/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
+	if [ ! -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+		echo -ne "LEGACY MODE enabled\n\n"  >> $LOG
+	fi
 	mkdir -p $thisdir/../backup/logs
 	cat $thisdir/../config/LOGO > $LOG
 	if [ -z $MODELID ]; then

@@ -1,4 +1,4 @@
-# GLOBALS v0.3.1 (2023-05-19 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.2 (2023-05-19 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -47,12 +47,6 @@ else
 	ME="MMX"
 fi
 
-# first, set LOGS var...
-. $thisdir/../config/LOGS
-
-# add timestamp to log
-echo -ne "\n-----------\ntimestamp: $TIMESTAMP\n" >> $LOG
-
 # Set dev globals
 if [ -f $thisdir/../../devconfig/GLOBALS ]; then
 	# only used on Dev....
@@ -66,7 +60,7 @@ else
 		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
 		NAND=$MNT/$MUVERSION/
 	else
-		echo -ne "LEGACY MODE enabled\n" | $TEE -a $LOG
+		echo -ne "GLOBALS - LEGACY MODE enabled\n"
 		echo -ne "M.I.B running on an old FW with missing persistence binary\n\n"\
 "Backup and some functions might work in this mode, but not all M.I.B functions are available\n"\
 "Many scripts will throw errors\n"\
@@ -85,5 +79,11 @@ VERSION="$(cat $VOLUME/VERSION)"
 
 # Set Backup
 BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
+
+# first, set LOGS var...
+. $thisdir/../config/LOGS
+
+# add timestamp to log
+echo -ne "\n-----------\ntimestamp: $TIMESTAMP\n" >> $LOG
 
 return 2> /dev/null

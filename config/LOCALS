@@ -1,4 +1,4 @@
-# LOCALS v0.1.0 (2021-12-29 by MIB-Wiki)
+# LOCALS v0.1.1 (2023-05-19 by MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -16,6 +16,11 @@
 
 
 # set locals
+
+
+
+# set locals
+if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 	MODELID=$($PERSR 0 4101 2> /dev/null | cut -b 1-6)
 	MODEL=$(grep -e $MODELID $VOLUME/mod/model_db/MODEL_DB 2> /dev/null | cut -b 8-60)
 	PARTNO="$($PERSR 0 3221291025 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
@@ -25,5 +30,18 @@
 	VINCAR="$(on -f mmx $PC s:1501:30 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
 	VINMIB="$(on -f mmx $PC s:1501:5 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
 	HWNO="$($PERSR 0 3221291023 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+else
+	echo -ne "LOCALS - LEGACY MODE enabled\n" | $TEE -a $LOG
+	sleep 1
+	MODELID="$(on -f rcc /net/rcc/usr/apps/modifyE2P r F1 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+	MODEL=$(grep -e $MODELID $VOLUME/mod/model_db/MODEL_DB 2> /dev/null | cut -b 8-60)
+	PARTNO="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 80 11 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	VARIANT=""
+	DATASETV=""
+	VINCAR=""
+	VINMIB=""
+	HWNO="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 96 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+fi
 
 return 2> /dev/null
