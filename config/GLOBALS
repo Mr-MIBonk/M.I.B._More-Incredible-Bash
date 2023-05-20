@@ -1,4 +1,4 @@
-# GLOBALS v0.3.2 (2023-05-19 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.3 (2023-05-20 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -19,7 +19,9 @@
 
 # global bin's
 SHA="/net/rcc/usr/bin/sha1sum"
-FLASHLOCK="on -f rcc /usr/bin/flashlock"
+FLASHLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashlock" # /usr/bin/
+FLASHIT="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashit" # /usr/bin/
+FLASHUNLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashunlock" # /usr/bin/
 VERSIONS="/net/rcc/dev/shmem/version.txt"
 XXD="$VOLUME/apps/sbin/xxd" # not on any unit
 GZIP="$VOLUME/apps/sbin/gzip" # /net/mmx/mnt/app/armle/bin
@@ -30,6 +32,8 @@ DD="$VOLUME/apps/sbin/dd" # /net/mmx/bin
 CUT="$VOLUME/apps/sbin/cut" # /net/mmx/usr/bin
 PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
+PERSW="on -f mmx $VOLUME/apps/sbin/dumb_persistence_writer" # /net/mmx/mnt/app/eso/bin/
+UDP="on -f mmx $VOLUME/apps/sbin/updatePersistence" # from FW update
 VERSIONS="/net/rcc/dev/shmem/version.txt"
 TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
 SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
