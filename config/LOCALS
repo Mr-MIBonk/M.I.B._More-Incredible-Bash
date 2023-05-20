@@ -14,11 +14,6 @@
 #along with this program; if not, write to the Free Software Foundation,
 #Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-# set locals
-
-
-
 # set locals
 if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 	MODELID=$($PERSR 0 4101 2> /dev/null | cut -b 1-6)
@@ -33,7 +28,7 @@ if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 else
 	echo -ne "LOCALS - LEGACY MODE enabled\n" | $TEE -a $LOG
 	sleep 1
-	MODELID="$(on -f rcc /net/rcc/usr/apps/modifyE2P r F1 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+	MODELID="$(on -f rcc /net/rcc/usr/apps/modifyE2P r F1 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g' )"
 	MODEL=$(grep -e $MODELID $VOLUME/mod/model_db/MODEL_DB 2> /dev/null | cut -b 8-60)
 	PARTNO="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 80 B | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"

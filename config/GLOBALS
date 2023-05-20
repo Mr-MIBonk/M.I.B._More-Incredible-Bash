@@ -33,7 +33,7 @@ CUT="$VOLUME/apps/sbin/cut" # /net/mmx/usr/bin
 PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 PERSW="on -f mmx /net/mmx/eso/bin/dumb_persistence_writer" #
-UDP="on -f mmx $VOLUME/apps/sbin/updatePersistence" # from FW update
+UDP="on -f rcc $VOLUME/apps/sbin/updatePersistence" # from FW update
 VERSIONS="/net/rcc/dev/shmem/version.txt"
 TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
 SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
@@ -72,7 +72,7 @@ else
 		sleep 3
 		MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 		TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-		FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 16 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+		FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
 		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
 		NAND=$MNT/$MUVERSION/
 	fi

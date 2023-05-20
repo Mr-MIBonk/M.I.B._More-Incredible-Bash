@@ -22,10 +22,10 @@ if [ ! -f $LOG ]; then
 	fi
 	mkdir -p $thisdir/../backup/logs
 	cat $thisdir/../config/LOGO > $LOG
+	echo $VERSION >> $LOG
 	if [ -z $MODELID ]; then
 		. $thisdir/../config/LOCALS > /dev/null
 	fi
-	echo $VERSION >> $LOG
 	echo -ne "______________________________________________________________________\n" >> $LOG
 	echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
 	echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
