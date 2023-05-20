@@ -57,7 +57,7 @@ while [ $START -lt $END ]; do
 		SUBJECT="$($PERSR $PART $START -t int 2> /dev/null)"
 		if  [ -z "$SUBJECT" ]; then
 			OBJECT=",string"
-			SUBJECT="$(on -f mmx $PC s:$PART:$START 2> /dev/null)"
+			SUBJECT="$($PERSR $PART $START -t string 2> /dev/null)"
 			if  [ -z "$SUBJECT" ]; then
 				SUBJECT=""
 				OBJECT=",error"
