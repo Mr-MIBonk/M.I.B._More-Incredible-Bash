@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="launcher v0.1.1 (2023-05-16 MIB-Wiki)"
+revision="launcher v0.1.2 (2023-05-20 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -101,7 +101,8 @@ echo "-- M.I.B GEM link installed" | $TEE -a $LOG
 
 # GEM ON
 mount -uw /net/mmx/mnt/app
-on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
+#on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
+/net/mmx/eso/bin/dumb_persistence_writer -P 0 3221356557 01 2>> $LOG
 on -f mmx $VOLUME/apps/sbin/pc b:0:1 0 2>> $LOG
 echo "-- Development Mode - GEM - activated" | $TEE -a $LOG
 
