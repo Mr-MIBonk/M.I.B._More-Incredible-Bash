@@ -20,8 +20,7 @@ if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; th
 	return 2> /dev/null
 fi
 
-#IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
-IMGDIR="$VOLUME/Resources"
+IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
 
 case $1 in
 
