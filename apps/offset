@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="offset v0.1.2 (2023-05-16 by MIBonk)"
+revision="offset v0.1.3 (2023-05-21 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -55,6 +55,11 @@ fi
 
 	LOG|SHOW) {
 
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	echo -ne "\nRCC offset function not supported on MHIG\nWe will stop script here..." | $TEE -i -a $LOG
+	exit 0
+fi
+
 # determine ifs-root-part2 offset...
 BASE=0x540000
 OFFSET=$($DD bs=4096 skip=1344 count=1 if=$fs0p0 2> /dev/null | $DD bs=4 skip=21 count=1 2> /dev/null | $SED 's/\\/\\\\/g;s/\x0/\\x0/g' | $SED 's/\\x//g');
@@ -91,7 +96,7 @@ else
 	OFFSETPART2="failed"
 	SKIPBLOCKS=""
 	echo -ne "Can't find ifs-root-part2 offset, firmware not supported!\n" | $TEE -a $LOG
-	echo -ne "Backup will continue. A patch will not be avilable (yet)\n" | $TEE -a $LOG
+	echo -ne "Backup will continue. A patch will not be available (yet)\n" | $TEE -a $LOG
 	echo -ne "Upload your backup to mibsolution\n" | $TEE -a $LOG
 	sleep 5
 	echo -ne "Backup will start now, but will throw errors\n" | $TEE -a $LOG
