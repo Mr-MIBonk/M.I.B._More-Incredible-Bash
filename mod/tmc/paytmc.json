@@ -900,11 +900,11 @@
 					"Nr"	: 1224736807,
 					"Value"	: 9
 				},
-        {
+        		{
 					"Name"  : "encrypted ExtendedCountryCodes",
 					"Nr"    : 1224736831,
 					"Value" : 240
-        },
+        		},
 				{
 					"Name"  : "WorldRegions",
 					"Nr"    : 1224736805,
@@ -914,6 +914,339 @@
 					"Name"	: "SVKTableNr",
 					"Nr"	: 1224736809,
 					"Value"	: 4
+				}
+			]
+		},
+		#       HereTraffic ACT 1
+		{
+			"Name" : "HereTraffic ACT",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 53
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 1
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic NSW 2
+		{
+			"Name" : "HereTraffic NSW",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 54
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 2
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic VIC 3
+		{
+			"Name" : "HereTraffic VIC",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 1
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 3
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic QLD 4
+		{
+			"Name" : "HereTraffic QLD",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 56
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 4
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic SA 5
+		{
+			"Name" : "HereTraffic SA",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 57
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 5
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic WA 6
+		{
+			"Name" : "HereTraffic WA",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 58
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 6
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic TAS 7
+		{
+			"Name" : "HereTraffic TAS",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 59
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic NT 8
+		{
+			"Name" : "HereTraffic NT",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 60
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 8
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 240
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#       HereTraffic NZ 9
+		{
+			"Name" : "HereTraffic NZ",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 41
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 9
+				},
+				{
+					"Name"  : "encrypted ExtendedCountryCodes",
+					"Nr"    : 1224736831,
+					"Value" : 241
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : 3
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
 				}
 			]
 		},
@@ -998,6 +1331,233 @@
 		{
 			"Name" : "China Autonavi",
 			"Type" : "unencrypted"
+		},
+		# SLAVA UKRAINI, HEROYAM SLAVA!
+		# Given the ongoing invasion of Ukraine by the Russian Federation, I approach this addition with caution.
+		# The original concept for editing the TMC-RDS configurations originates from Drive.ru,
+		# which is where I first discovered it prior to the war. For that specific reason, I'm including
+		# the configurations they discovered into the list, though in a more organized manner
+		# that will work without having to modify the code for each city/region.
+		{
+			"Name" : "Russia HereTraffic Moscow",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 23
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#SLAVA UKRAINI, HEROYAM SLAVA!
+		{
+			"Name" : "Russia HereTraffic St Petersburg",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 24
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#SLAVA UKRAINI, HEROYAM SLAVA!
+		{
+			"Name" : "Russia HereTraffic Yekaterinburg",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 25
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#SLAVA UKRAINI, HEROYAM SLAVA!
+		{
+			"Name" : "Russia HereTraffic Novgorod",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 26
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#SLAVA UKRAINI, HEROYAM SLAVA!
+		{
+			"Name" : "Russia HereTraffic Stavropol",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 27
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
+		},
+		#SLAVA UKRAINI, HEROYAM SLAVA!
+		{
+			"Name" : "RussiaHereTMC Vladivostok",
+			"Type" : "encrypted",
+			"SDKItem" :[
+				{
+					"Name"	: "SID",
+					"Nr"	: 1224736808,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "TableNumbers",
+					"Nr"	: 1224736806,
+					"Value"	: 28
+				},
+				{
+					"Name"	: "CountryCodes",
+					"Nr"	: 1224736807,
+					"Value"	: 7
+				},
+				{
+					"Name"	: "encrypted ExtendedCountryCodes",
+					"Nr"	: 1224736831,
+					"Value"	: 224
+				},
+				{
+					"Name"  : "WorldRegions",
+					"Nr"    : 1224736805,
+					"Value" : "Value of currentWorldRegion"
+				},
+				{
+					"Name"	: "SVKTableNr",
+					"Nr"	: 1224736809,
+					"Value"	: 7
+				}
+			]
 		},
 		#		NAR SDARS Sirius /XM
 		{
@@ -1442,6 +2002,30 @@
 				{
 					"Name"  : "russianavteq",
 					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Moscow",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic St Petersburg",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Yekaterinburg",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Novgorod",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Stavropol",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "RussiaHereTMC Vladivostok",
+					"Value" : "yes"
 				}
 			]
 		},
@@ -1743,7 +2327,43 @@
 				{
 					"Name"  : "Aukland, Wellington, Christchurch (NZ)",
 					"Value" : "yes"
-				}				
+				},
+				{
+                    "Name"  : "HereTraffic ACT",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic NSW",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic VIC",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic QLD",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic SA",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic WA",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic TAS",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic NT",
+                    "Value" : "yes"
+                },
+                {
+                    "Name"  : "HereTraffic NZ",
+                    "Value" : "yes"
+                }				
 			]
 		},
 		{
@@ -2296,6 +2916,30 @@
 					"Value" : "yes"
 				},
 				{
+					"Name"  : "Russia HereTraffic Moscow",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic St Petersburg",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Yekaterinburg",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Novgorod",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "Russia HereTraffic Stavropol",
+					"Value" : "yes"
+				},
+				{
+					"Name"  : "RussiaHereTMC Vladivostok",
+					"Value" : "yes"
+				},
+				{
 					"Name"  : "onlinetraffic",
 					"Value" : "yes"
 				}
@@ -2652,6 +3296,42 @@
 					"Name"  : "Aukland, Wellington, Christchurch (NZ)",
 					"Value" : "yes"
 				},
+				{
+                    "Name"  : "HereTraffic ACT",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic NSW",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic VIC",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic QLD",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic SA",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic WA",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic TAS",
+                    "Value" : "yes"
+                },
+				{
+                    "Name"  : "HereTraffic NT",
+                    "Value" : "yes"
+                },
+                {
+                    "Name"  : "HereTraffic NZ",
+                    "Value" : "yes"
+                },
 				{
 					"Name"  : "onlinetraffic",
 					"Value" : "yes"
