@@ -34,7 +34,7 @@ UnitVersion="SKG13_P4526"
 		echo -e "\nInstall image MOD on "$UnitVersion"\n"
 		mount -uw /net/mmx/mnt/app
 		if [ ! -f $IMGDIR/skin0/images.bck ];then
-			mv -f $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
+			cp -f $IMGDIR/skin0/images.mcf $IMGDIR/skin0/images.bck 2>&1 | $TEE -a $LOG
 			echo -e "Create backup for skin0..." 2>&1 | $TEE -a $LOG
 		else
 			echo -e "Image backup for skin0 already exists!\n\n" 2>&1 | $TEE -a $LOG
@@ -42,14 +42,16 @@ UnitVersion="SKG13_P4526"
 
 		# create patched /skin0/images.mcf from /skin0/images.mcf
 		echo -ne "Patching image files part 1 - skin0\n--- Duration: ~1 minute\n" | $TEE -a $LOG
-		$RDIFF -f patch $IMGDIR/skin0/images.bck $VOLUME/mod/images/$UnitVersion/skin0/images.mcf.delta $IMGDIR/skin0/images.mcf 2>> $LOG
+		$RDIFF -f patch $IMGDIR/skin0/images.bck $VOLUME/mod/images/$UnitVersion/skin0/images.mcf.delta $IMGDIR/skin0/images.patch 2>> $LOG
 		CHECKSUM_Skin0="2faf30f3f28b2fd69ae04e9cfd158aec95a5bc72"
-		checksum_unit="$($SHA1 $IMGDIR/skin0/images.mcf | awk '{print $1}')" 2>> $LOG
+		checksum_unit="$($SHA1 $IMGDIR/skin0/images.patch | awk '{print $1}')" 2>> $LOG
 		if [ $CHECKSUM_Skin0 = $checksum_unit ]; then
+			mv -f $IMGDIR/skin0/images.patch $IMGDIR/skin0/images.mcf 2>> $LOG
+			chmod +x $IMGDIR/skin0/images.mcf 2>> $LOG
 			echo "--> DONE\n" | $TEE -a $LOG
 		else
 			echo "Something went wrong\nRevert to images.mcf from backup\nCancel install\n" | $TEE -a $LOG
-			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
+			rm -f $IMGDIR/skin0/images.bck 2>> $LOG
 			exit 1
 		fi
 		ls -l $IMGDIR/skin0/ >> $LOG
@@ -63,21 +65,23 @@ UnitVersion="SKG13_P4526"
 		cp -crf $IMGDIR/skin1/ambienceColorMap.res $IMGDIR/skin3/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/images.res $IMGDIR/skin3/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/viewhandler.zip $IMGDIR/skin3/ 2>> $LOG
+		cp -crf $IMGDIR/skin1/images.mcf $IMGDIR/skin3/ 2>> $LOG
 		ls -l $IMGDIR/skin3/ >> $LOG
-
-		cp -crf $VOLUME/mod/images/$UnitVersion/skin3/info.txt $IMGDIR/skin3/ 2>> $LOG
 
 		# create patched /skin3/images.mcf from /skin1/images.mcf
 		echo -ne "Patching image files part 2 - skin3\n--- Duration: ~1 minute\n" | $TEE -a $LOG
-		$RDIFF -f patch $IMGDIR/skin1/images.mcf $VOLUME/mod/images/$UnitVersion/skin3/images.mcf.delta $IMGDIR/skin3/images.mcf 2>> $LOG
+		
+		$RDIFF -f patch $IMGDIR/skin3/images.mcf $VOLUME/mod/images/$UnitVersion/skin3/images.mcf.delta $IMGDIR/skin3/images.patch 2>> $LOG
 		CHECKSUM_Skin3="0a322d581cb320c60bc6be87e2817fcdf20aa2f2"
-		checksum_unit="$($SHA1 $IMGDIR/skin3/images.mcf | awk '{print $1}')" 2>> $LOG
+		checksum_unit="$($SHA1 $IMGDIR/skin3/images.patch | awk '{print $1}')" 2>> $LOG
 		if [ $CHECKSUM_Skin3 = $checksum_unit ]; then
+			cp -crf $VOLUME/mod/images/$UnitVersion/skin3/info.txt $IMGDIR/skin3/ 2>> $LOG
+			mv -f $IMGDIR/skin3/images.patch $IMGDIR/skin3/images.mcf 2>> $LOG
+			chmod +x $IMGDIR/skin3/images.mcf 2>> $LOG
 			echo "--> DONE\n" | $TEE -a $LOG
 		else
 			echo "Something went wrong\nRevert unit to stock\nCancel install\n" | $TEE -a $LOG
 			rm -rf $IMGDIR/skin3 2>> $LOG
-			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
 			exit 1
 		fi
 
