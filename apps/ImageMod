@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="ImageMod v0.1.1 (2023-05-19 MIBonk)"
+revision="ImageMod v0.1.2 (2023-05-22 MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -52,6 +52,7 @@ UnitVersion="SKG13_P4526"
 			mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>> $LOG
 			exit 1
 		fi
+		ls -l $IMGDIR/skin0/ >> $LOG
 
 		# copy files from skin1 to skin3
 		echo -ne "Built up skin3\n" | $TEE -a $LOG
@@ -62,6 +63,7 @@ UnitVersion="SKG13_P4526"
 		cp -crf $IMGDIR/skin1/ambienceColorMap.res $IMGDIR/skin3/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/images.res $IMGDIR/skin3/ 2>> $LOG
 		cp -crf $IMGDIR/skin1/viewhandler.zip $IMGDIR/skin3/ 2>> $LOG
+		ls -l $IMGDIR/skin3/ >> $LOG
 
 		cp -crf $VOLUME/mod/images/$UnitVersion/skin3/info.txt $IMGDIR/skin3/ 2>> $LOG
 
