@@ -35,10 +35,6 @@ if [ ! -f $LOG ]; then
 	echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
 	echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
 	echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
-	if [ ! -f $thisdir/../backup/$BACKUPFOLDER/$MUVERSION.log ]; then
-		mkdir -p $BACKUPFOLDER
-		cp -rf $LOG $BACKUPFOLDER/$MUVERSION.log
-	fi
     echo -ne "\n ls --> " >> $LOG
     ls -als $thisdir/.. >> $LOG
     echo -ne "\n"
