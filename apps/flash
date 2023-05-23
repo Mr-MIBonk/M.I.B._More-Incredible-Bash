@@ -184,7 +184,7 @@ IFSstage2
 . $thisdir/rccd -d
 . $thisdir/fecel -fec
 . $thisdir/fecel -el
-/net/mmx/fs/sda0/apps/showimage -load 30 /net/mmx/fs/sda0/mod/images/showimage/ success.png
+. $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
 . $thisdir/reboot -t 10
 
 return 2> /dev/null
