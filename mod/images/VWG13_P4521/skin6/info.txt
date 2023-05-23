@@ -1,0 +1,30 @@
+#Thu, 23 Mai 2023 15:48:02 +0300
+#SkinEditor: DEVELOPMENT/H29.319.75 (smurfette)
+#Thu Apr 19 15:47:11 CEST 2018
+layout.direction=LEFT_TO_RIGHT
+SkinShortVersion=HIGH_GP_VW_Skin_A-523Q9E3
+DefaultMenuMode=Grid
+SkinBuildHmiSoftwareVersion=BH29.319.75-201804191425
+Layout.CarLife.Canvas_Dimension.height=640
+SdsLanguageHash=H29.319.75
+Layout.AndroidAuto.Canvas_Dimension.width=1280
+skin.modname=VW_MOS_GP_Skin_A
+Layout.CarLife.Canvas_Dimension.width=1280
+skin.name=HIGH_GP_VW_Skin_A
+Layout.AndroidAuto.Canvas_Dimension.height=640
+SkinSkinFileVersion=HIGH_GP_VW_Skin_A_42
+SpfName=VW_HIGH_GP_Skin_A.spf
+SupportedLanguages=en_DE,de_DE,en_GB,fr_FR,it_IT,es_ES,cs_CZ,nl_NL,pt_PT,ru_RU,sv_SE,tr_TR,pl_PL,no_NO,en_US,pt_BR,es_MX,ja_JP,ko_KR,fr_CA,zh_CN,zh_TW,zh_HK,zh_MO,da_DK,el_GR,hr_HR,hu_HU,fi_FI,bs_BA,ro_RO,sk_SK,sl_SI,sr_RS,bg_BG,lv_LV,et_EE,lt_LT,uk_UA,en_SA
+Layout.Mirrorlink.Canvas_Dimension.width=1174
+SkinVersion=BH29.319.75-201804191425-MS29.319.18-LSEV-HIGH_GP_VW_Skin_A_42
+Layout.Carplay.Canvas.Offset.x=8
+Layout.Mirrorlink.Canvas_Dimension.height=640
+SkinBrand=2
+Layout.Carplay.Canvas_Dimension.height=640
+TranslationDate=VWTexte_88.21.4_H29.315.4
+UserSwitchableMenuMode=false
+skin.displayname=ALPINE_VW_Skin_Singlecolor
+Layout.Carplay.Canvas_Dimension.width=1264
+internal.skin.name=HIGH_GP_Skin_A
+SkinSkinModelVersion=MS29.319.18
+SkinSEVersion=LSEV
