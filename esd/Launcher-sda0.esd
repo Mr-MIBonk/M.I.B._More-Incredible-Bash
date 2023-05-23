@@ -1420,6 +1420,7 @@ BIOSCtrl
 	entry	"France" 32788
 	entry	"Australia" 1024
 	entry	"China" 32782
+	entry	"Custom - Russia" 666
 	entry	"Russia" 32785
 	poll	1000
 
