@@ -1416,11 +1416,10 @@ BIOSCtrl
 	value	int per 28442848 520
 	label	"Set TMC"
 	entry	"none" 0
-	entry	"DE - TMCPro" 32771
+	entry	"Germany" 32771
 	entry	"France" 32788
 	entry	"Australia" 1024
 	entry	"China" 32782
-	entry	"Custom - Russia" 666
 	entry	"Russia" 32785
 	poll	1000
 
@@ -3039,6 +3038,61 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> Multimedia System -> VW
+#
+###########################################################################################
+screen VW multimedia_system
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"Functions within are only useable on VW units"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Multimedia System -> VW -> Install Image MOD
+#
+###########################################################################################
+screen VWG13_Image_MOD VW
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"ONLY working on VW MIB2.5 units with Train MHI2_ER_VWG13_P4521"
+	poll    0
+
+keyValue
+    value   String per 30 1966084
+    label   "Unit train"
+
+script
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod_SK.sh"
+	label    "QR code link to MOD images on Git"
+
+keyValue
+	value   String sys 0x00000000 0
+	label	""
+	poll    0
+
+script #/apps/ImageMod -m
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ImageMod.sh"
+	label   "Install MOD"
+
+script #/apps/ImageMod -b
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/ImageRestore.sh"
+	label   "Remove MOD"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	""
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Multimedia System -> SKODA
 #
 ###########################################################################################
@@ -3141,7 +3195,7 @@ keyValue
     label   "Unit train"
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod.sh"
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod_SK.sh"
 	label    "QR code link to MOD images on Git"
 
 keyValue
