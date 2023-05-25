@@ -144,7 +144,7 @@ if [[ "$TRAINVERSION" = *$SKG13_P4526* ]]; then
 	if [ -f $IMGDIR/skin0/images.bck ];then
 		mv -f $IMGDIR/skin0/images.bck $IMGDIR/skin0/images.mcf 2>&1 | $TEE -a $LOG
 	else
-		echo -e "Image backup not exists!" 2>&1 | $TEE -a $LOG
+		echo -e "Image backup did not exist!" 2>&1 | $TEE -a $LOG
 	fi
 	rm -rf $IMGDIR/skin3 2>> $LOG
 elif [[ "$TRAINVERSION" = *$VWG13_P4521* ]]; then
