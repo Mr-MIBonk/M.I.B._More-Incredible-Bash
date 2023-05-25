@@ -3065,7 +3065,7 @@ keyValue
     label   "Unit train"
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod_SK.sh"
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr_image_mod_VW.sh"
 	label    "QR code link to MOD images on Git"
 
 keyValue
