@@ -84,7 +84,7 @@ if [[ "$TRAINVERSION" = *SKG13_P4526* ]]; then
 	echo -e "\n ---> image mod done, be happy ;-)\n" 2>&1 | $TEE -a $LOG
 	. $thisdir/reboot -t 10
 # ----------------------------------------------------------------------------------------------------------------
-elif [[ "$TRAINVERSION" = *VWG13_P4521* ]]; then
+elif [[ "$TRAINVERSION" = *VWG13_P452* ]]; then
 	UnitVersion="VWG13_P4521"
 	echo -e "\nInstall image MOD on "$UnitVersion"\n"
 	mount -uw /net/mmx/mnt/app
