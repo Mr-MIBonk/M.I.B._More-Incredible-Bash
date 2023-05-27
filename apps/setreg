@@ -29,176 +29,173 @@ fi
 # Get Train from EEPROM (AIO EU conversion)
 TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 
-	case $1 in
-
+case $1 in
 	-eu) {
-
-trap '' 2
-
-echo -ne "1-Click EU Coding\n"
-mount -uw /net/rcc/mnt/efs-persist
+	trap '' 2
+	echo -ne "Converting unit to EU\n"
+	mount -uw /net/rcc/mnt/efs-persist
 	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "EU train found\n" | $TEE -a $LOG
-		echo -ne "--------\n"
-		
+		echo -ne "Unit has EU train. Writing language datasets to 5F...\n" | $TEE -a $LOG
 		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
 		
-		sleep 1
 		echo -ne "\n--- summertime algo.\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:503 2
-					#  "none" 0
-					#  "manual" 1
-					#  "MESZ" 2
-					#  "USA" 3
-					sleep 1
+		# 0=none, 1=manual, 2=MESZ, 3=USA
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:503 2
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 503 2
+		fi
+		
 		echo -ne "--- FM Bandsetting\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x5018240F 1
-					# 0:		BAND_FM_NO_SETTING
-					# 1:		BAND_FM_EU_RDW
-					# 2:		BAND_FM_NAR
-					# 3:		BAND_FM_JP
-					# 4:		BAND_FM_KOR
-					sleep 1
-		echo -ne "--- AM Bandsetting\n"
-		on -f mmx $PC i:0:0x501824F0 1 | $TEE -a $LOG
-					# 0:		BAND_AM_NO_SETTING
-					# 1:		BAND_AM_EU_RDW
-					# 2:		BAND_AM_NAR
-					# 3:		BAND_AM_JP
-					# 4:		BAND_AM_EU
-					# 5:		BAND_AM_AUS	
-					sleep 1			
+		# 0=BAND_FM_NO_SETTING, 1=BAND_FM_EU_RDW, 2=BAND_FM_NAR, 3=BAND_FM_JP, 4=BAND_FM_KOR
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x5018240F 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343759375 1
+		fi
+		
+		echo -ne "--- AM Bandsetting\n" | $TEE -a $LOG
+		# 0=BAND_AM_NO_SETTING, 1=BAND_AM_EU_RDW, 2=BAND_AM_NAR, 3=BAND_AM_JP, 4=BAND_AM_EU, 5=BAND_AM_AUS
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x501824F0 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343759600 1
+		fi
+		
 		#echo -ne "--- DAB Bandsetting 1\n"
+		# 0=BAND_DAB1_OFF, 1=BAND_DAB1_EU_BAND_III-N, 2=BAND_DAB1_EU_BAND_III (EU default), 3=BAND_DAB1_CANADA_L_BAND
+		# 4=BAND_DAB1_KOREA_BAND_III, 5=BAND_DAB1_CHINA_BAND_III, 6=BAND_DAB1_DOWNLOAD_TABLE_1, 7=BAND_DAB1_NEW_ZEALAND_BAND_III
 		#on -f mmx $PC i:0:0x5018280F 0
-					# 0:		BAND_DAB1_OFF
-					# 1:		BAND_DAB1_EU_BAND_III-N
-					# 2:		BAND_DAB1_EU_BAND_III (EU default)
-					# 3:		BAND_DAB1_CANADA_L_BAND
-					# 4:		BAND_DAB1_KOREA_BAND_III
-					# 5:		BAND_DAB1_CHINA_BAND_III
-					# 6:		BAND_DAB1_DOWNLOAD_TABLE_1
-					# 7:		BAND_DAB1_NEW_ZEALAND_BAND_III
-					sleep 1			
+
 		#echo -ne "--- DAB Bandsetting 2\n"
+		# 0=BAND_DAB2_OFF, 1=BAND_DAB2_L_BAND (EU default), 2=BAND_DAB2_DOWNLOAD_TABLE_2
 		#on -f mmx $PC i:0:0x501828F0 0
-					# 0:		BAND_DAB2_OFF
-					# 1:		BAND_DAB2_L_BAND (EU default)
-					# 2:		BAND_DAB2_DOWNLOAD_TABLE_2
-					sleep 1
+
 		echo -ne "--- Radiotext+ off/on\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50183408 1
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x50183408 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343763464 1
+		fi
+
 		echo -ne "--- Navigation Country\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50180CFF 1
-					#  "EU" 1
-					#  "NAR" 2
-					#  "MSA" 3
-					#  "Korea" 4
-					#  "China" 5
-					#  "Japan" 6
-					#  "AsiaPacific" 7
-					#  "Australia" 8
-					#  "South Africa" 9
-					#  "NEAST" 10
-					#  "NMAfrica" 11
-					#  "MEAST" 12
-					#  "CentralAsia" 13
-					#  "India" 14
-					#  "Israel" 15
-					#  "Taiwan" 16
-					#  "MSA 2 (Chile)" 17
-				sleep 1
+		# 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
+		# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile)
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x50180CFF 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343753471 1
+		fi
+
 		echo -ne "--- Import media\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50186010 1
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x50186010 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343774736 1
+		fi
+
 		echo -ne "--- Media Ripping\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50186020 1
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0:0x50186020 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343774752 1
+		fi
+
 		echo -ne "--- Regionalcodes DVD\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:515 2
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:515 2
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 515 2
+		fi
+
 		echo -ne "--- Regionalcodes Blueray\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:516 2
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:516 2
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 516 2
+		fi
+
 		echo -ne "--- R. Codes DVD Counter\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:517 5
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:517 5
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 517 5
+		fi
+
 		echo -ne "--- R. Codes Blueray Counter\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:518 5
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:518 5
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 518 5
+		fi
+		
 		echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:520 32783
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:28442848:520 32783
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 520 32783
+		fi
+
 		echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:1.6 1
-		on -f mmx $PC b:0:3221356628:1.7 1
-		sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC b:0:3221356628:1.6 1
+			on -f mmx $PC b:0:3221356628:1.7 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 1 -O 9 0 3221356628 F
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 1 -O 8 0 3221356628 F
+		fi
+
 		echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:6 1
-			#	"none" 0
-			#	"EU" 1
-			#	"Taiwan" EA
-			#	"Korea" CD
-			#	"Hongkong" 66
-			#	"China" 28
-			#	"Macao" 67
-			sleep 1
+		#	0=none, 1=EU, 28=China, 66=Hongkong, Macao=67, CD=Korea, EA=Taiwan
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC b:0:3221356628:6 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 8 -O 48 0 3221356628 01
+		fi
+		
 		echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:9 1
-			#	"no region" 0
-			#	"EU" 1
-			#	"NAR" 2
-			#	"MSA" 3
-			#	"Korea" 4
-			#	"China" 5
-			#	"Japan" 6
-			#	"AsiaPacific" 7
-			#	"Australia" 8
-			#	"South Africa" 9
-			#	"NEAST" 10
-			#	"NMAfrica" 11
-			#	"MEAST" 12
-			#	"CentralAsia" 13
-			#	"India" 14
-			#	"Israel" 15
-			#	"Taiwan" 16
-			#	"MSA 2 (Chile)" 17
-			#	"China 2" 18
-			#	"China 3" 19
-			sleep 1
+		# 0=no region, 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
+		# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile), 18=China 2, 19=China 3
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC b:0:3221356628:9 1
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 8 -O 54 0 3221356628 01
+		fi
+
 		echo -ne "--- variant region\n" | $TEE -a $LOG
-		on -f mmx $PC i:0x286f058c:9 2
-			#   "Europe/ROW" 1
-			#   "Europe" 2  
-			#   "NAR" 3
-			#   "ROW" 4 
-			#   "China" 5
-			#   "Japan" 6   
-			#   "Korea" 7
-			#   "Asia" 8
-			#   "Taiwan" 9
-			sleep 1
+		# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0x286f058c:9 2
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 9 2
+		fi
+
 		#echo -ne "switch variant feature byte type to High\n"
 		#on -f mmx $PC i:0x286f058c:4 1
-		#	sleep 1
+
 		echo -ne "--- disable variant feature byte sirius\n"
-		on -f mmx $PC i:0x286f058c:8 0
-			sleep 1
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC i:0x286f058c:8 0
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 8 0
+		fi
+
 		echo -ne "--- store changes to persistence\n\n"
-		on -f mmx $PC b:0:1 0
-			sleep 2
+		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			on -f mmx $PC b:0:1 0
+		else
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 00
+		fi
+
 		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 	else
-		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
+		echo -ne "Aborted! Unit has non EU train!\n" | $TEE -a $LOG
 		exit 1
 	fi
 
-# return 2> /dev/null
-
-trap 2
-
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
-
+	# return 2> /dev/null
+	trap 2
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 	};;
 
 	# help or unknown parameter ------------------------------

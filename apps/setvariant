@@ -32,126 +32,138 @@ fi
 
 trap '' 2
 
-VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
-
-echo -ne "Variant_1 will be generated from Variant_2 coding on unit\n"
+if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
+	VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+else
+	VARIANT=$(sed -n "s#Variant = \s*'\(.*\)'#\1#p" /net/rcc/dev/shmem/version.txt)
+fi
 echo -ne "Variant_2: $VARIANT\n"
-echo -ne "Result will be written to eeprom\n\n"
+echo -ne "Variant_1 will be generated from Variant_2\n"
+echo -ne "and written into EEPROM\n\n"
+echo -ne "Logging current Variant_1\n" | $TEE -i -a $LOG
+on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
 
-#Type
-VARTYPE="$(on -f mmx $PC i:0x286f058c:4)"
-#Telephone 0/1
-#VARTEL="$(on -f mmx $PC i:0x286f058c:5)"
-#Navigation EU
-VARNAV="$(on -f mmx $PC i:0x286f058c:6)"
-#DAB 0/1
-VARDAB="$(on -f mmx $PC i:0x286f058c:7)"
-#sirius 0/1
-VARSIR="$(on -f mmx $PC i:0x286f058c:8)"
-# LTE 0/1
-VARLTE="$(on -f mmx $PC i:0x286f058c:17)"
-# region EU
-VARREG="$(on -f mmx $PC i:0x286f058c:9)"
-#error handler for variant_1
 VARERROR=0
+if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
+	echo -ne "Reading persistence...\n" | $TEE -i -a $LOG
+	#Type
+	VARTYPE="$(on -f mmx $PC i:0x286f058c:4)"
+	#Telephone 0/1
+	#VARTEL="$(on -f mmx $PC i:0x286f058c:5)"
+	#Navigation EU
+	VARNAV="$(on -f mmx $PC i:0x286f058c:6)"
+	#DAB 0/1
+	VARDAB="$(on -f mmx $PC i:0x286f058c:7)"
+	#sirius 0/1
+	VARSIR="$(on -f mmx $PC i:0x286f058c:8)"
+	# LTE 0/1
+	VARLTE="$(on -f mmx $PC i:0x286f058c:17)"
+	# region EU
+	VARREG="$(on -f mmx $PC i:0x286f058c:9)"
+	#error handler for variant_1
 
-if [ $VARTYPE = 1 ]; then #High
-	VARTYPE="48 "
-elif [ $VARTYPE = 4 ]; then #Premium
-	VARTYPE="50 "
-else
-	echo -ne "Type unknown\n" | $TEE -i -a $LOG
-	VARTYPE=""
-	VARERROR=1
-fi
+	if [ $VARTYPE = 1 ]; then #High
+		VARTYPE="48 "
+	elif [ $VARTYPE = 4 ]; then #Premium
+		VARTYPE="50 "
+	else
+		echo -ne "Type unknown\n" | $TEE -i -a $LOG
+		VARTYPE=""
+		VARERROR=1
+	fi
 
-#if [ $VARTEL = 1 ]; then #ENABLED
-#	VARTEL="54 "
-#elif [ $VARTEL = 0 ]; then #OFF
-#	VARTEL=""
-#else
-#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
-#	VARTEL=""
-#	VARERROR=1
-#fi
+	#if [ $VARTEL = 1 ]; then #ENABLED
+	#	VARTEL="54 "
+	#elif [ $VARTEL = 0 ]; then #OFF
+	#	VARTEL=""
+	#else
+	#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
+	#	VARTEL=""
+	#	VARERROR=1
+	#fi
 
-if [ $VARNAV = 1 ]; then #ENABLED
-	VARNAV="4e "
-elif [ $VARNAV = 0 ]; then #OFF
-	VARNAV=""
-else
-	echo -ne "Navigation status unknown\n" | $TEE -i -a $LOG
-	VARNAV=""
-	VARERROR=1
-fi
+	if [ $VARNAV = 1 ]; then #ENABLED
+		VARNAV="4e "
+	elif [ $VARNAV = 0 ]; then #OFF
+		VARNAV=""
+	else
+		echo -ne "Navigation status unknown\n" | $TEE -i -a $LOG
+		VARNAV=""
+		VARERROR=1
+	fi
 
-if [ $VARDAB = 1 ]; then #ENABLED
-	VARDAB="44 "
-elif [ $VARDAB = 0 ]; then #OFF
-	VARDAB=""
-else
-	echo -ne "DAB status unknown\n" | $TEE -i -a $LOG
-	VARDAB=""
-	VARERROR=1
-fi
+	if [ $VARDAB = 1 ]; then #ENABLED
+		VARDAB="44 "
+	elif [ $VARDAB = 0 ]; then #OFF
+		VARDAB=""
+	else
+		echo -ne "DAB status unknown\n" | $TEE -i -a $LOG
+		VARDAB=""
+		VARERROR=1
+	fi
 
-if [ $VARSIR = 1 ]; then #ENABLED
-	VARSIR="53 "
-elif [ $VARSIR = 0 ]; then #OFF
-	VARSIR=""
-else
-	echo -ne "Sirius status unknown\n" | $TEE -i -a $LOG
-	VARSIR=""
-	VARERROR=1
-fi
+	if [ $VARSIR = 1 ]; then #ENABLED
+		VARSIR="53 "
+	elif [ $VARSIR = 0 ]; then #OFF
+		VARSIR=""
+	else
+		echo -ne "Sirius status unknown\n" | $TEE -i -a $LOG
+		VARSIR=""
+		VARERROR=1
+	fi
 
-if [ $VARLTE = 1 ]; then #ENABLED
-	VARLTE="4c "
-elif [ $VARLTE = 0 ]; then #OFF
-	VARLTE=""
-else
-	echo -ne "LTE status unknown\n" | $TEE -i -a $LOG
-	VARLTE=""
-	VARERROR=1
-fi
+	if [ $VARLTE = 1 ]; then #ENABLED
+		VARLTE="4c "
+	elif [ $VARLTE = 0 ]; then #OFF
+		VARLTE=""
+	else
+		echo -ne "LTE status unknown\n" | $TEE -i -a $LOG
+		VARLTE=""
+		VARERROR=1
+	fi
 
 	case $VARREG in
-	1) VARREG="45 52 " ;; #ER
-	2) VARREG="45 55 " ;; #EU
-	3) VARREG="55 53 " ;; #US
-	4) VARREG="52 57 " ;; #RW
-	5) VARREG="43 4e " ;; #CN
-	6) VARREG="4a 50 " ;; #JP
-	7) VARREG="4B 52 " ;; #KR
-	8) VARREG=""		  #Asia?
-		echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
-		VARERROR=1 ;;
-	9) VARREG="54 57 " ;; #TW
-	*) VARREG=""
-		echo -ne "Region unknown\n" | $TEE -i -a $LOG
-		VARERROR=1 ;;
-		esac
-
-#build variant 1 string
-#TNDL in Variant_2 is LND in Variant_1 - no T and order is different
-EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
-
-#echo $EVAR
+		1) VARREG="45 52 " ;; #ER
+		2) VARREG="45 55 " ;; #EU
+		3) VARREG="55 53 " ;; #US
+		4) VARREG="52 57 " ;; #RW
+		5) VARREG="43 4e " ;; #CN
+		6) VARREG="4a 50 " ;; #JP
+		7) VARREG="4B 52 " ;; #KR
+		8) VARREG=""		  #Asia?
+			echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
+			VARERROR=1 ;;
+		9) VARREG="54 57 " ;; #TW
+		*) VARREG=""
+			echo -ne "Region unknown\n" | $TEE -i -a $LOG
+			VARERROR=1 ;;
+	esac
+else
+	VARTYPE=$(echo $VARIANT | awk -F'-' '{print $2}' 2>/dev/null)
+	VARLTE=$(echo $VARIANT | awk -F'-' '{print $3}' 2>/dev/null)
+	#TNDL in Variant_2 is LND in Variant_1, TNL>LN
+	VARLTE=$(echo $VARLTE | sed 's/TNDL/LND/')
+	VARLTE=$(echo $VARLTE | sed 's/TNL/LN/')
+	VARNAV=""
+	VARDAB=""
+	VARSIR=""
+	VARREG="45 55 " #EU
+fi
 
 if [ $VARERROR = 0 ]; then
-	echo -ne "--- Read original Variant_1 from unit\n" | $TEE -i -a $LOG
-	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
-	echo -ne "--- Clean Variant - 13 bytes 00\n" | $TEE -i -a $LOG
+	echo -ne "--- Cleaning Variant_1 (writing 13 zero bytes into EEPROM)\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w ba 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
-	echo -ne "--- Write Variant_1\n" | $TEE -i -a $LOG
-	on -f rcc /usr/apps/modifyE2P w ba $EVAR >> $LOG
-	echo -ne "--- Read Variant_1 back for log\n" >> $LOG
-	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
+	echo -ne "--- Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
+	#Build Variant_1 string 
+	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
+	on -f rcc /usr/apps/modifyE2P w ba $EVAR >> $LOG
 	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
 	AVAR=$(echo "$EVAR" | $XXD -r -p)
-	echo -ne "\nNew Variant_1: "$AVAR"\n" | $TEE -i -a $LOG
-	echo -ne "\nReboot unit to apply changes\n"
+	echo -ne "\nNew (generated) Variant_1: "$AVAR"\n" | $TEE -i -a $LOG
+	echo -ne "--- Logging current Variant_1 from EEPROM\n" >> $LOG
+	on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
+	echo -ne "\nReboot the unit to apply changes\n"
 else
 	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
 	echo -ne "Check messages above\n"
