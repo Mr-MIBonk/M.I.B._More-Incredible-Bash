@@ -36,7 +36,7 @@ case $1 in
 	if [[ "$TRAINVERSION" = *ER* ]]; then
 		echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
 		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
-		echo -ne "Changing coding and adaptations to EU:"
+		echo -ne "\nChanging coding and adaptations to EU:"
 		echo -ne "\n--- Summertime algo.\n" | $TEE -a $LOG
 		# 0=none, 1=manual, 2=MESZ, 3=USA
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then

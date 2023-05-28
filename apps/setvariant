@@ -33,11 +33,11 @@ fi
 trap '' 2
 
 if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
-	VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
+	VARIANT2="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 else
-	VARIANT="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt)"
-	VARTYPE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $2}' 2>/dev/null)"
-	VARLTE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $3}' 2>/dev/null)"
+	VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g'))"
+	VARTYPE="$(echo "$VARIANT2" | awk -F '-' '{print $2}' 2>/dev/null)"
+	VARLTE="$(echo "$VARIANT2" | awk -F '-' '{print $3}' 2>/dev/null)"
 	#TNDL in Variant_2 is LND in Variant_1, TNL>LN
 	VARLTE="$(echo "$VARLTE" | $SED 's/TNDL/LND/')"
 	VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/')"
@@ -46,7 +46,7 @@ else
 	VARSIR=""
 	VARREG="45 55 " #EU
 fi
-echo -ne "Variant_2: $VARIANT\n"
+echo -ne "Variant_2: $VARIANT2\n"
 COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
 
@@ -148,14 +148,14 @@ if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
 fi
 
 if [ $VARERROR = 0 ]; then
-	echo -ne "--- Cleaning Variant_1 (writing 13 zero bytes into EEPROM)\n" | $TEE -i -a $LOG
+	echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
 	#Build Variant_1 string 
 	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
 	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
 	AVAR=$(echo "$EVAR" | $XXD -r -p)
-	echo -ne "\nVariant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
+	echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
 	echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w BA $EVAR >> $LOG
 	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"

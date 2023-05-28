@@ -42,7 +42,7 @@ function ctrl_c {
 }
 
 [ -z "$GEM" ] && echo -ne "\033[31m"
-echo -ne "Reboot Unit..." | $TEE -a $LOG
+echo -ne "Reboot Unit..." 2>>$LOG
 [ -n "$GEM" ] && echo -ne "\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne " press CTRL-C to abort!!!\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n\033[00;00m"

@@ -35,7 +35,7 @@ fi
 	echo -ne "Current train: $TRAINVERSION\n"
 	echo -ne ""
 	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "Aborted. Your train is already EU!\n"  | $TEE -i -a $LOG
+		echo -ne "Skipping. Your train is already EU!\n"  | $TEE -i -a $LOG
 	else
 		echo -ne "Non EU train found, the train will be changed to EU\n\nCreating backup...\n" | $TEE -i -a $LOG
 		
