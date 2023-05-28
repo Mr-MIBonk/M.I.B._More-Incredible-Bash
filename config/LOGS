@@ -17,28 +17,25 @@
 # set logs...
 LOG="$thisdir/../backup/logs/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
-	if [ ! -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-		echo -ne "LEGACY MODE enabled\n\n"  >> $LOG
-	fi
 	mkdir -p $thisdir/../backup/logs
 	cat $thisdir/../config/LOGO > $LOG
-	echo $VERSION >> $LOG
-	if [ -z $MODELID ]; then
-		. $thisdir/../config/LOCALS > /dev/null
-	fi
-	echo -ne "______________________________________________________________________\n" >> $LOG
-	echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
-	echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
-	echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
-	echo -ne "Variant: $VARIANT\n" >> $LOG	
-	echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
-	echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
-	echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
-	echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
-    echo -ne "\n ls --> " >> $LOG
-    ls -als $thisdir/.. >> $LOG
-    echo -ne "\n"
 fi
+echo $VERSION >> $LOG
+if [ -z $MODELID ]; then
+. $thisdir/../config/LOCALS > /dev/null
+fi
+echo -ne "______________________________________________________________________\n" >> $LOG
+echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
+echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
+echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
+echo -ne "Variant: $VARIANT\n" >> $LOG	
+echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
+echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
+echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
+echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
+echo -ne "\n ls --> " >> $LOG
+ls -als $thisdir/.. >> $LOG
+echo -ne "\n"
 
 ERROR() {
 RESULT=$?
