@@ -132,7 +132,9 @@ elif [[ $FIRST_TIER_SUPPLIER == "DELPHI" ]] && [ $REGION = "CN" -o $REGION = "JP
 	cat /mnt/app/navigation/Navigation_version.txt | grep -i 'name =' | cut -d '=' -f 2
 else
 	echo -n 'Navigation: '
-	use -i /mnt/app/navigation/navStartup | grep VERSION | cut -d= -f 2
+	if [[ -e /mnt/app/navigation/navStartup ]]; then
+		use -i /mnt/app/navigation/navStartup | grep VERSION | cut -d= -f 2
+	fi
 fi
 
 #get Navigation database
@@ -178,7 +180,9 @@ if [[ -d /mnt/app/navigation/resources/app ]]; then
 	echo '-----------'
 fi
 
-/scripts/getEggnogDBVersionInfo.sh
+if [[ -e /scripts/getEggnogDBVersionInfo.sh ]]; then
+	/scripts/getEggnogDBVersionInfo.sh
+fi
 
 #get Truffles database information
 if [[ -e /mnt/navdb/truffles/db/common/version.txt ]]; then
@@ -285,7 +289,9 @@ if [[ ! -z ${GCT_VERSION_PATH} ]] && [[ -e ${GCT_VERSION_PATH}/version.txt ]]; t
 fi
 #get voice_encoder_app
 echo -n 'VoiceEncoderApp: '
-use -i /mnt/app/eso/bin/apps/voice_encoder_app | grep VERSION | cut -d= -f 2
+if [[ -e /mnt/app/eso/bin/apps/voice_encoder_app ]]; then
+	use -i /mnt/app/eso/bin/apps/voice_encoder_app | grep VERSION | cut -d= -f 2
+fi
 #get Gracenote database
 if [[ -e /mnt/gracenotedb/database.fileinfo ]]; then
 	echo -n 'GracenoteDB:'
@@ -447,8 +453,10 @@ cat /dev/nvsku/rev
 echo -n '\nserial number: '
 cat /dev/nvsku/serial_num
 
-echo "\n" 
-cat /mnt/app/detailed_changelists_info.txt
+echo "\n"
+if [[ -e /mnt/app/detailed_changelists_info.txt ]]; then
+	cat /mnt/app/detailed_changelists_info.txt
+fi
 
 trap 2
 

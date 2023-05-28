@@ -262,7 +262,9 @@ fi
 if [ -z $AB ]; then
 	echo -ne "HMI folders......" | $TEE -i -a $LOG
 	if [ ! -d $BACKUPFOLDER/HMI ]; then
-		on -f mmx cp -rc /net/mmx/mnt/ols/rhmi/* $BACKUPFOLDER/HMI/rhmi 2>> $LOG
+		if [[ -e /net/mmx/mnt/ols/rhmi ]];then
+			on -f mmx cp -rc /net/mmx/mnt/ols/rhmi/* $BACKUPFOLDER/HMI/rhmi 2>> $LOG
+		fi
 		if [[ -f /net/mmx/ramdisk/credentials ]]; then
 			on -f mmx cp -c /net/mmx/ramdisk/credentials $BACKUPFOLDER/HMI/credentials 2>> $LOG
 		fi
@@ -350,7 +352,9 @@ fi
 if [ -z $AB ]; then
 	echo -ne "RCC Flashlock...." | $TEE -i -a $LOG
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log ]; then
-		on -f rcc /usr/bin/flashlock > $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log 2>> $LOG
+		if [[ -e /net/rcc/usr/bin/flashlock ]]; then
+			on -f rcc /usr/bin/flashlock > $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log 2>> $LOG
+		fi
 		ERROR
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
