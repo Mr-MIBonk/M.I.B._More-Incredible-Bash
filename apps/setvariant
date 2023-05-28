@@ -166,8 +166,8 @@ else
 fi
 
 trap 2
-[ -z "$noboot" ] && echo -ne "\nAll done!\n"
-echo -ne "\nTo apply changes unit will autoreboot in 10seconds\n"
+[ -z "$noboot" ] && echo -ne ""
+echo -ne "\nAll done! To apply changes unit will autoreboot in 10 seconds\n"
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 return 2> /dev/null
