@@ -35,11 +35,20 @@ trap '' 2
 if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
 	VARIANT="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 else
-	VARIANT="$($SED -rn 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt)"
+	VARIANT="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt)"
+	VARTYPE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $2}' 2>/dev/null)"
+	VARLTE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $3}' 2>/dev/null)"
+	#TNDL in Variant_2 is LND in Variant_1, TNL>LN
+	VARLTE="$(echo "$VARLTE" | $SED 's/TNDL/LND/')"
+	VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/')"
+	VARNAV=""
+	VARDAB=""
+	VARSIR=""
+	VARREG="45 55 " #EU
 fi
 echo -ne "Variant_2: $VARIANT\n"
 echo -ne "Logging current Variant_1\n" | $TEE -i -a $LOG
-on -f rcc /usr/apps/modifyE2P r ba 0d >> $LOG
+on -f rcc /usr/apps/modifyE2P r BA 0D >> $LOG
 
 VARERROR=0
 if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
@@ -136,16 +145,6 @@ if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
 			echo -ne "Region unknown\n" | $TEE -i -a $LOG
 			VARERROR=1 ;;
 	esac
-else
-	VARTYPE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $2}' 2>/dev/null)"
-	VARLTE="$(echo "$VARIANT" | on -f mmx /mnt/app/armle/usr/bin/awk -F'-' '{print $3}' 2>/dev/null)"
-	#TNDL in Variant_2 is LND in Variant_1, TNL>LN
-	VARLTE="$(echo "$VARLTE" | $SED 's/TNDL/LND/')"
-	VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/')"
-	VARNAV=""
-	VARDAB=""
-	VARSIR=""
-	VARREG="45 55 " #EU
 fi
 
 if [ $VARERROR = 0 ]; then
@@ -157,11 +156,10 @@ if [ $VARERROR = 0 ]; then
 	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
 	AVAR=$(echo "$EVAR" | $XXD -r -p)
 	echo -ne "\nVariant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
-	echo -ne "--- Writing Variant_1 generated from Variant_2 into EEPROM\n" | $TEE -i -a $LOG
+	echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w BA $EVAR >> $LOG
-	echo -ne "--- Logging current Variant_1 from EEPROM\n" >> $LOG
+	echo -ne "Reading Variant_1 from EEPROM\n" >> $LOG
 	on -f rcc /usr/apps/modifyE2P r BA 0D >> $LOG
-	echo -ne "\nReboot the unit to apply changes\n"
 else
 	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
 	echo -ne "Check messages above\n"
@@ -171,6 +169,7 @@ fi
 
 trap 2
 [ -z "$noboot" ] && echo -ne "\nAll done!\n"
+echo -ne "\nTo apply changes unit will autoreboot in 10seconds\n"
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 
 return 2> /dev/null

@@ -179,16 +179,16 @@ case $1 in
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 8 0
 		fi
 
-		echo -ne "--- Store changes to persistence\n\n"
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+			echo -ne "--- Store changes to persistence\n\n"
 			on -f mmx $PC b:0:1 0
-		else
-			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 0
+		#else
+		#	on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 0
 		fi
 
 		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 	else
-		echo -ne "Aborted! Unit has non EU train!\n" | $TEE -a $LOG
+		echo -ne "Skipped as unit has non EU train.\n" | $TEE -a $LOG
 		exit 1
 	fi
 

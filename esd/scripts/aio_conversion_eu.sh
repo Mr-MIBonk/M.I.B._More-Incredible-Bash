@@ -16,14 +16,11 @@ echo "NOTE: NEVER interrupt the process with -Back- button or removing SD Card!!
 echo "CAUTION: Ensure that a external power is connected to the car on during any"
 echo "flash or programming process! Power failure during flasing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
-echo ""
 
 # EU conversion
 /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
 /net/mmx/fs/sda0/apps/setreg -eu -noboot && \
 /net/mmx/fs/sda0/apps/setvariant -var
-
-sleep 3
 
 trap 2
 

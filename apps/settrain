@@ -16,7 +16,7 @@ fi
 echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
-	echo -ne "Reboot running...\n"
+	echo -ne "Aborted because the reboot is running...\n"
 	return 2> /dev/null
 fi
 
@@ -34,31 +34,27 @@ fi
 
 	echo -ne "Current train: $TRAINVERSION\n"
 	echo -ne ""
-	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-	if [[ "$TRAINVERSION" = *ER* ]] && [[ "$COMPONENT" = *EU* ]] || [[ "$COMPONENT" = *ER* ]]; then
-		echo -ne "Aborted. Your train and variant are already EU!\n"  | $TEE -i -a $LOG
-		echo -ne "You can go back now...\n"
+	if [[ "$TRAINVERSION" = *ER* ]]; then
+		echo -ne "Aborted. Your train is already EU!\n"  | $TEE -i -a $LOG
 	else
-		echo -ne "Non EU train found - will proceed with train change\n\nCreating backup...\n" | $TEE -i -a $LOG
+		echo -ne "Non EU train found, the train will be changed to EU\n\nCreating backup...\n" | $TEE -i -a $LOG
 		
 		# Do the backup before conversion
 		. $thisdir/backup -a
-		
+		TARGETTRAIN=""
 		if [[ "$TRAINVERSION" = *MHI2Q* ]] && [[ "$TRAINVERSION" = *AUG22* ]]; then
-			echo -ne "MHI2Q_ER_AUG22 found will change train now\n"
-			echo -ne "MHI2Q_ER_AUG22_P5092\n"
-			sleep 3
+			TARGETTRAIN="MHI2Q_ER_AUG22_P5092"
+			echo -ne "MHI2Q_ER_AUG22 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 51 5f 45 52 5f 41 55 47 32 32 5f 50 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 35 30 39 32 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *SKG13* ]]; then
-			echo -ne "SKG13 found will change train now\n"
-			echo -ne "MHI2_ER_SKG13_P4526\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_SKG13_P4526"
+			echo -ne "SKG13 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 53 4b 47 31 33 5f 50 34 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 35 32 36 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?06* ]]; then
-			echo -ne "VWG11, CN_VW48x_?06 or JP_VW48x_?06 train found.\n"
-			echo -ne "The train will be changed to MHI2_ER_VWG11_K3342\n"
+			TARGETTRAIN="MHI2_ER_VWG11_K3342"
+			echo -ne "VWG11 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 32 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || \
@@ -67,67 +63,55 @@ fi
 		[[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]] || \
 		[[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]] || \
 		[[ "$TRAINVERSION" = *CN_VW511_?10* ]]; then
-			echo -ne "VWG13 found will change train now\n"
-			echo -ne "MHI2_ER_VWG13_P4521\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_VWG13_P4521"
+			echo -ne "VWG13 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 33 5f 50 34 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 35 32 31 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *POG11* ]]; then
-			echo -ne "POG11 found will change train now\n"
-			echo -ne "MHI2_ER_POG11_K5126\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_POG11_K5126"
+			echo -ne "POG11 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 50 4f 47 31 31 5f 4b 35 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 31 32 36 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *POG24* ]]; then
-			echo -ne "POG24 found will change train now\n"
-			echo -ne "MHI2_ER_POG24_K4224\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_POG24_K4224"
+			echo -ne "POG24 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 50 4f 47 32 34 5f 4b 34 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 32 32 34 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AU37x* ]]; then
-			echo -ne "AU37x found will change train now\n"
-			echo -ne "MHI2_ER_AU37x_P5089\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AU37x_P5089"
+			echo -ne "AU37x train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4D 48 49 32 5F 45 52 5F 41 55 33 37 78 5F 50 35 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 30 38 39 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AU43x* ]]; then
-			echo -ne "AU43x found will change train now\n"
-			echo -ne "MHI2_ER_AU43x_P5098\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AU43x_P5098"
+			echo -ne "AU43x train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4D 48 49 32 5F 45 52 5F 41 55 34 33 78 5F 50 35 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 30 39 38 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AU57x* ]] || [[ "$TRAINVERSION" = *AUG11* ]]; then
-			echo -ne "AU57x found will change train now\n"
-			echo -ne "MHI2_ER_AU57x_K3663\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AU57x_K3663"
+			echo -ne "AU57x train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 35 37 78 5f 4b 33 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 36 36 33 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AU62x* ]]; then
-			echo -ne "AU62x found will change train now\n"
-			echo -ne "MHI2_ER_AU62x_P5099\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AU62x_P5099"
+			echo -ne "AU62x train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 36 32 78 5f 50 35 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 30 39 39 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AU276* ]]; then
-			echo -ne "AU276 found will change train now\n"
-			echo -ne "MHI2_ER_AU276_P5088\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AU276_P5088"
+			echo -ne "AU276 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 32 37 36 5f 50 35 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 30 38 38 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *AUG22* ]]; then
-			echo -ne "AUG22 found will change train now\n"
-			echo -ne "MHI2_ER_AUG22_K3346\n"
-			sleep 3
+			TARGETTRAIN="MHI2_ER_AUG22_K3346"
+			echo -ne "AUG22 train found. Changing to $TARGETTRAIN\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 47 32 32 5f 4b 33 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 36 00 00 >> $LOG
 		else
-				echo -ne "\n\nTrain not found in conversion list\nShare your backup with M.I.B team\nThey can add support for your FW\n" | $TEE -i -a $LOG
-				echo -ne "Nothing happend!\n"
-				exit 1
-				
+			echo -ne "\n\nAborted. Unknown train\nTo add support, upload backup to https://mibsolution.one M.I.B_Backup\n" | $TEE -i -a $LOG
+			exit 1
 		fi
-	
-	echo -ne "\nThe train written above is your target FW.\nDownload and install it after the reboot of the unit\n"
+	echo -ne "\nNow you can reboot the unit and install $TARGETTRAIN\n"
 	[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 
 	fi
