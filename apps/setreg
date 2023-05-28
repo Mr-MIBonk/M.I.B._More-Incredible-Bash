@@ -32,13 +32,12 @@ TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x
 case $1 in
 	-eu) {
 	trap '' 2
-	echo -ne "Converting unit to EU\n"
 	mount -uw /net/rcc/mnt/efs-persist
 	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "Unit has EU train. Writing language datasets to 5F...\n" | $TEE -a $LOG
+		echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
 		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
-		
-		echo -ne "\n--- summertime algo.\n" | $TEE -a $LOG
+		echo -ne "Changing coding and adaptations to EU:"
+		echo -ne "\n--- Summertime algo.\n" | $TEE -a $LOG
 		# 0=none, 1=manual, 2=MESZ, 3=USA
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:28442848:503 2
@@ -101,28 +100,28 @@ case $1 in
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343774752 1
 		fi
 
-		echo -ne "--- Regionalcodes DVD\n" | $TEE -a $LOG
+		echo -ne "--- Regional Codes DVD\n" | $TEE -a $LOG
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:28442848:515 2
 		else
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 515 2
 		fi
 
-		echo -ne "--- Regionalcodes Blueray\n" | $TEE -a $LOG
+		echo -ne "--- Regional Codes Blueray\n" | $TEE -a $LOG
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:28442848:516 2
 		else
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 516 2
 		fi
 
-		echo -ne "--- R. Codes DVD Counter\n" | $TEE -a $LOG
+		echo -ne "--- Regional Codes DVD Counter\n" | $TEE -a $LOG
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:28442848:517 5
 		else
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 517 5
 		fi
 
-		echo -ne "--- R. Codes Blueray Counter\n" | $TEE -a $LOG
+		echo -ne "--- Regional Codes Blueray Counter\n" | $TEE -a $LOG
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:28442848:518 5
 		else
@@ -162,7 +161,7 @@ case $1 in
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 8 -O 54 0 3221356628 01
 		fi
 
-		echo -ne "--- variant region\n" | $TEE -a $LOG
+		echo -ne "--- Variant region\n" | $TEE -a $LOG
 		# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:0x286f058c:9 2
@@ -173,18 +172,18 @@ case $1 in
 		#echo -ne "switch variant feature byte type to High\n"
 		#on -f mmx $PC i:0x286f058c:4 1
 
-		echo -ne "--- disable variant feature byte sirius\n"
+		echo -ne "--- Disable variant feature byte sirius\n"
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC i:0x286f058c:8 0
 		else
 			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 8 0
 		fi
 
-		echo -ne "--- store changes to persistence\n\n"
+		echo -ne "--- Store changes to persistence\n\n"
 		if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 			on -f mmx $PC b:0:1 0
 		else
-			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 00
+			on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 0
 		fi
 
 		[ -z "$noboot" ] && echo -ne "\nAll done!\n"

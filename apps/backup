@@ -16,7 +16,7 @@ fi
 echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ]; then
-	echo "Backup or reboot is already running..."
+	echo "Backup skipped as backup or reboot is already running!"
 	return 2> /dev/null
 fi
 
@@ -34,7 +34,6 @@ if [ "$1" = "-a" ] && [ "$TEST" = "1" ]; then
 		echo -ne "\n---------------- Running some tests ----------------\n"
 		$thisdir/beta > /dev/null
 		echo -ne "----------------- Backup continues -----------------\n"
-		sleep 2
 	fi
 fi
 # ------------------------
@@ -114,7 +113,6 @@ if [ -d $BACKUPFOLDER ]; then
 	[ -z "$GEM" ] && echo -ne "\n"
 else
 	mkdir -p $BACKUPFOLDER
-	sleep 1
 fi
 
 [ -z "$GEM" ] && echo -ne "\033[31m"
@@ -126,7 +124,6 @@ else
 fi
 echo -ne "Backup will require ~5 minutes to complete!\n" | $TEE -i -a $LOG
 echo -ne "Wait until All done message on screen!\n"
-sleep 4
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[36m"
 
@@ -144,7 +141,6 @@ if [ -z $AB ]; then
 			on -f mmx df -k >> $BACKUPFOLDER/$MUVERSION-Partition.txt 2>> $LOG
 		fi
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -155,7 +151,6 @@ if [ -z $AB ]; then
 	if [ ! -d $BACKUPFOLDER/SWDL ]; then
 		cp -rc /net/rcc/mnt/efs-persist/SWDL/* $BACKUPFOLDER/SWDL/ 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -167,7 +162,6 @@ echo -ne "Version info....." | $TEE -i -a $LOG
 		on -f mmx cp /net/mmx/mnt/app/eso/hmi/splashscreen/StartupImageConfig.txt $BACKUPFOLDER/$MUVERSION-StartupImageConfig.txt 2>> $LOG
 		on -f mmx $VOLUME/apps/allversions -p > $BACKUPFOLDER/$MUVERSION-allversions.txt 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -189,7 +183,6 @@ echo -ne "GEM info........" | $TEE -i -a $LOG
 			fi
 		fi
 		ERROR
-		sleep 1
 	fi
 fi
 
@@ -252,7 +245,6 @@ if [ -z $AB ]; then
 		df -h /net/rcc/usr/apps  >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 		ls -alv /net/rcc/usr/apps/ >> $BACKUPFOLDER/$MUVERSION-folders.txt 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -263,7 +255,6 @@ if [ ! -d $BACKUPFOLDER/FEC ]; then
 	cp -rc /net/rcc/mnt/efs-persist/FEC/* $BACKUPFOLDER/FEC/ 2>> $LOG
 	cp -rc /net/rcc/mnt/efs-system/backup/FEC/* $BACKUPFOLDER/FEC/backup/ 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -276,7 +267,6 @@ if [ -z $AB ]; then
 			on -f mmx cp -c /net/mmx/ramdisk/credentials $BACKUPFOLDER/HMI/credentials 2>> $LOG
 		fi
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -287,7 +277,6 @@ if [ ! -f $BACKUPFOLDER/$MUVERSION-shadow ] || [ ! -f $BACKUPFOLDER/$MUVERSION-s
 	cp -r /net/rcc/etc/shadow_rcc $BACKUPFOLDER/$MUVERSION-shadow_rcc 2>> $LOG
 	cp -r /net/rcc/etc/shadow $BACKUPFOLDER/$MUVERSION-shadow 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -297,7 +286,6 @@ if [ -z $AB ]; then
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-lsd.jxe ]; then
 		on -f mmx cp -r /net/mmx/ifs/lsd.jxe $BACKUPFOLDER/$MUVERSION-lsd.jxe 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -330,7 +318,6 @@ if [ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv ]; then
 	echo -ne "Adaptions-3\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 	. $VOLUME/apps/pers -r 28442848 104 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -340,7 +327,6 @@ if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.bin ]; then
 	on -f rcc /usr/apps/modifyE2P r 0 8000 > $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
 	on -f mmx sh $VOLUME/apps/eeprom2bin -bin $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -349,7 +335,6 @@ echo -ne "storage1........." | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/$MUVERSION-storage1.raw ]; then
 	cp -r /net/rcc/mnt/efs-persist/storage1.raw $BACKUPFOLDER/$MUVERSION-storage1.raw 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -358,7 +343,6 @@ echo -ne "storage2........." | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/$MUVERSION-storage2.raw ]; then
 	cp -r /net/rcc/mnt/efs-persist/storage2.raw $BACKUPFOLDER/$MUVERSION-storage2.raw 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -368,7 +352,6 @@ if [ -z $AB ]; then
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log ]; then
 		on -f rcc /usr/bin/flashlock > $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -379,7 +362,6 @@ if [ -z $AB ]; then
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 		cat /net/rcc/dev/fs0 > $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -391,7 +373,6 @@ if [ -z $AB ]; then
 		if [ ! -f $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin ]; then
 			on -f mmx cat /net/mmx/dev/fs0 > $BACKUPFOLDER/$MUVERSION-MMX_fs0.bin 2>> $LOG
 			ERROR
-			sleep 1
 		else
 			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 		fi
@@ -411,7 +392,6 @@ if [ -z $AB ]; then
 		else
 			echo -ne "OFFSET unkown, aborted!\n" | $TEE -i -a $LOG
 		fi
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -422,7 +402,6 @@ if [ -z $AB ]; then
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt ]; then
 		echo -ne "OFFSET: 0x00"$OFFSETPART2"-"$STAGE2SIZE"\n" > $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -455,7 +434,6 @@ if [ -z $AB ]; then
 	if [ ! -d $BACKUPFOLDER/Keys ]; then
 		cp -rc /net/rcc/mnt/efs-persist/Keys/* $BACKUPFOLDER/Keys/ 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -476,7 +454,6 @@ echo -ne "Profile............" | $TEE -i -a $LOG
 if [ ! -f $BACKUPFOLDER/profile ]; then
 	cp -r /net/rcc/etc/profile $BACKUPFOLDER/profile 2>> $LOG
 	ERROR
-	sleep 1
 else
 	echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 fi
@@ -498,7 +475,6 @@ if [ -z $AB ]; then
 		mkdir -p $BACKUPFOLDER/engdefs
 		cp -r /net/mmx/mnt/app/eso/hmi/engdefs/* $BACKUPFOLDER/engdefs/ 2>> $LOG
 		ERROR
-		sleep 1
 	else 
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -519,7 +495,6 @@ if [ -z $AB ]; then
 	if [ ! -f $BACKUPFOLDER/$MUVERSION-MIBRoot ]; then
 		cp -r /net/rcc/usr/apps/MIBRoot $BACKUPFOLDER/$MUVERSION-MIBRoot 2>> $LOG
 		ERROR
-		sleep 1
 	else
 		echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 	fi
@@ -554,7 +529,6 @@ echo -ne "recover backup from unit......\n" | $TEE -i -a $LOG
 		on -f mmx cp -cr $NAND/* $BACKUPFOLDER/NAND-backup
 		echo -ne "Files are located in folder: "$BACKUPFOLDER"/NAND-backup\n"
 		ERROR
-		sleep 3		
 	else
 		echo -ne " -> No backup folder found on unit :-(\n" | $TEE -i -a $LOG
 	fi
@@ -574,7 +548,6 @@ if [ -d $BACKUPFOLDER ]; then
 	echo -ne "Backup removed from /backup/ folder on SD...\n" | $TEE -i -a $LOG
 else
 	echo -ne "Backup not found on SD card\n" | $TEE -i -a $LOG
-	sleep 1
 fi
 	
 trap 2

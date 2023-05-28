@@ -30,21 +30,20 @@ fi
 
 	-eu) {
 
-trap '' 2
+	trap '' 2
 
-echo -ne "Set train to EU\n"
-echo -ne "Your current train: $TRAINVERSION\n"
-echo -ne ""
-	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "EU train found - will stop here\n"  | $TEE -i -a $LOG
-		echo -ne "you can go back now...\n"
+	echo -ne "Current train: $TRAINVERSION\n"
+	echo -ne ""
+	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	if [[ "$TRAINVERSION" = *ER* ]] && [[ "$COMPONENT" = *EU* ]] || [[ "$COMPONENT" = *ER* ]]; then
+		echo -ne "Aborted. Your train and variant are already EU!\n"  | $TEE -i -a $LOG
+		echo -ne "You can go back now...\n"
 	else
-		echo -ne "no EU train found - will proceed with train change\n\nBackup will be created now\n\n" | $TEE -i -a $LOG
+		echo -ne "Non EU train found - will proceed with train change\n\nCreating backup...\n" | $TEE -i -a $LOG
 		
-		# Get backup before conversion
+		# Do the backup before conversion
 		. $thisdir/backup -a
 		
-		sleep 1
 		if [[ "$TRAINVERSION" = *MHI2Q* ]] && [[ "$TRAINVERSION" = *AUG22* ]]; then
 			echo -ne "MHI2Q_ER_AUG22 found will change train now\n"
 			echo -ne "MHI2Q_ER_AUG22_P5092\n"
@@ -58,9 +57,8 @@ echo -ne ""
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 53 4b 47 31 33 5f 50 34 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 35 32 36 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?06* ]]; then
-			echo -ne "VWG11 found will change train now\n"
-			echo -ne "MHI2_ER_VWG11_K3342\n"
-			sleep 3
+			echo -ne "VWG11, CN_VW48x_?06 or JP_VW48x_?06 train found.\n"
+			echo -ne "The train will be changed to MHI2_ER_VWG11_K3342\n"
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 33 34 32 00 00 >> $LOG
 		elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || \
@@ -129,8 +127,7 @@ echo -ne ""
 				
 		fi
 	
-	echo -ne "\nTrain written above is your target FW.\nDownload the FW update file and install it to unit after reboot\n"
-	sleep 5
+	echo -ne "\nThe train written above is your target FW.\nDownload and install it after the reboot of the unit\n"
 	[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 
 	fi

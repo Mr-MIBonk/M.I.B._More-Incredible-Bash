@@ -35,7 +35,6 @@ case $1 in
 
 trap '' 2
 
-	echo -ne "This  will enable maximum language support for each FW\n"
 	if [[ "$TRAINVERSION" = *ER_VWG* ]] || [[ "$TRAINVERSION" = *ER_SKG* ]] || [[ "$TRAINVERSION" = *ER_SEG* ]]; then
 		echo -ne "Writing EU dataset 0x2D00 (visible_MMI_language_dataset):\n" | $TEE -a $LOG
 		echo -ne "de_DE,en_GB,fr_FR,it_IT,es_ES,nl_NL,cs_CZ,pt_PT,sv_SE,tr_TR,ru_RU,pl_PL,no_NO,en_US,es_MX,pt_BR,ar_SA,bs_BA,ro_RO,sk_SK,sl_SI,sr_RS,da_DK,el_GR,hr_HR,hu_HU,fi_FI,bg_BG,lv_LV,et_EE,lt_LT,uk_UA\n"
