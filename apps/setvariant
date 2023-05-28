@@ -47,8 +47,8 @@ else
 	VARREG="45 55 " #EU
 fi
 echo -ne "Variant_2: $VARIANT\n"
-echo -ne "Logging current Variant_1\n" | $TEE -i -a $LOG
-on -f rcc /usr/apps/modifyE2P r BA 0D >> $LOG
+COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
 
 VARERROR=0
 if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then #non legacy mode
@@ -149,7 +149,7 @@ fi
 
 if [ $VARERROR = 0 ]; then
 	echo -ne "--- Cleaning Variant_1 (writing 13 zero bytes into EEPROM)\n" | $TEE -i -a $LOG
-	on -f rcc /usr/apps/modifyE2P w ba 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
+	on -f rcc /usr/apps/modifyE2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
 	#Build Variant_1 string 
 	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
@@ -158,12 +158,10 @@ if [ $VARERROR = 0 ]; then
 	echo -ne "\nVariant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
 	echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
 	on -f rcc /usr/apps/modifyE2P w BA $EVAR >> $LOG
-	echo -ne "Reading Variant_1 from EEPROM\n" >> $LOG
-	on -f rcc /usr/apps/modifyE2P r BA 0D >> $LOG
+	COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	echo -ne "Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
 else
-	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
-	echo -ne "Check messages above\n"
-	echo -ne "No changes to Variant_1 will be applied\n\n" | $TEE -i -a $LOG
+	echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG
 	exit 1
 fi
 
