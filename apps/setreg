@@ -26,9 +26,6 @@ else
 	noboot=""
 fi
 
-# Get Train from EEPROM (AIO EU conversion)
-TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-
 case $1 in
 	-eu) {
 		trap '' 2
@@ -42,7 +39,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:503 2
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 503 2
+				$PERSW -t int 28442848 503 2
 			fi
 			
 			echo -ne "--- FM Bandsetting\n" | $TEE -a $LOG
@@ -50,7 +47,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x5018240F 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343759375 1
+				$PERSW -t int 0 1343759375 1
 			fi
 			
 			echo -ne "--- AM Bandsetting\n" | $TEE -a $LOG
@@ -58,7 +55,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x501824F0 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343759600 1
+				$PERSW -t int 0 1343759600 1
 			fi
 			
 			#echo -ne "--- DAB Bandsetting 1\n"
@@ -74,7 +71,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x50183408 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343763464 1
+				$PERSW -t int 0 1343763464 1
 			fi
 
 			echo -ne "--- Navigation Country\n" | $TEE -a $LOG
@@ -83,56 +80,56 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x50180CFF 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343753471 1
+				$PERSW -t int 0 1343753471 1
 			fi
 
 			echo -ne "--- Import media\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x50186010 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343774736 1
+				$PERSW -t int 0 1343774736 1
 			fi
 
 			echo -ne "--- Media Ripping\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0:0x50186020 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 0 1343774752 1
+				$PERSW -t int 0 1343774752 1
 			fi
 
 			echo -ne "--- Regional Codes DVD\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:515 2
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 515 2
+				$PERSW -t int 28442848 515 2
 			fi
 
 			echo -ne "--- Regional Codes Blueray\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:516 2
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 516 2
+				$PERSW -t int 28442848 516 2
 			fi
 
 			echo -ne "--- Regional Codes DVD Counter\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:517 5
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 517 5
+				$PERSW -t int 28442848 517 5
 			fi
 
 			echo -ne "--- Regional Codes Blueray Counter\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:518 5
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 518 5
+				$PERSW -t int 28442848 518 5
 			fi
 			
 			echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:28442848:520 32783
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 28442848 520 32783
+				$PERSW -t int 28442848 520 32783
 			fi
 
 			echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
@@ -140,8 +137,8 @@ case $1 in
 				on -f mmx $PC b:0:3221356628:1.6 1
 				on -f mmx $PC b:0:3221356628:1.7 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 1 -O 9 0 3221356628 F
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 1 -O 8 0 3221356628 F
+				$PERSW -P -L 1 -O 9 0 3221356628 F
+				$PERSW -P -L 1 -O 8 0 3221356628 F
 			fi
 
 			echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
@@ -149,7 +146,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC b:0:3221356628:6 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 8 -O 48 0 3221356628 01
+				$PERSW -P -L 8 -O 48 0 3221356628 01
 			fi
 			
 			echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
@@ -158,7 +155,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC b:0:3221356628:9 1
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P -L 8 -O 54 0 3221356628 01
+				$PERSW -P -L 8 -O 54 0 3221356628 01
 			fi
 
 			echo -ne "--- Variant region\n" | $TEE -a $LOG
@@ -166,7 +163,7 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0x286f058c:9 2
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 9 2
+				$PERSW -t int 678364556 9 2
 			fi
 
 			#echo -ne "switch variant feature byte type to High\n"
@@ -176,24 +173,18 @@ case $1 in
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 				on -f mmx $PC i:0x286f058c:8 0
 			else
-				on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -t int 678364556 8 0
+				$PERSW -t int 678364556 8 0
 			fi
 
 			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-				echo -ne "--- Store changes to persistence\n\n"
+				echo -ne "--- Store changes to persistence\n"
 				on -f mmx $PC b:0:1 0
-			#else
-			#	on -f mmx /net/mmx/eso/bin/dumb_persistence_writer -P 0 1 0
 			fi
-
-			[ -z "$noboot" ] && echo -ne "\nAll done!\n"
+			echo -ne "\nAll done! Reboot of the unit is a must!\n"
 		else
 			echo -ne "Skipped as unit has non EU train.\n" | $TEE -a $LOG
 			exit 1
 		fi
-
-		trap 2
-		[ -z "$noboot" ] && . $thisdir/reboot -t 10
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -225,4 +216,7 @@ case $1 in
 		echo ""
 	};;
 esac
+
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 exit 0
