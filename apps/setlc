@@ -26,67 +26,49 @@ else
 	noboot=""
 fi
 
-# Get Train from EEPROM (AIO EU conversion)
-TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-
-	case $1 in
-
+case $1 in
 	-eu) {
-
-trap '' 2
-
-SCREEN=$(on -f mmx $PC i:0:0x501844FF)
-SKIN=$(on -f mmx $PC i:0:0x501848FF)
-
-echo -ne "\n----coding on unit-----\n"\
-"    Skin  : $SKIN \n"\
-"    Screen: $SCREEN \n"\
-"-----------------------\n\n" | $TEE -i -a $LOG
-
-	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "--- EU train found\n\n" | $TEE -a $LOG
-		echo -ne "--- setting screening/skinning in LC byte 17/18 to avoid black screen after conversion\n"\
-"--- You have to adjust these bytes to fit your car model after conversion\n"\
-"--- Default values will be applied now\n"
-		sleep 3
-		if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
-			on -f mmx $PC i:0:0x501844FF 1 >> $LOG #skinning LC byte 17 - 1
-		else
-			on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skinning LC byte 17 - 0
-		fi
-		on -f mmx $PC i:0:0x501848FF 0 >> $LOG #screening LC byte 18 - 0
-		sleep 1
+		trap '' 2
 
 		SCREEN=$(on -f mmx $PC i:0:0x501844FF)
 		SKIN=$(on -f mmx $PC i:0:0x501848FF)
+                    
+		echo -ne "\nCurrent values of byte 17 and 18 of 5F coding:\n"\
+				"    Skin  : $SKIN\n"\
+				"    Screen: $SCREEN\n"\
+				"----------------------------------------------\n" | $TEE -i -a $LOG
 
-		echo -ne "\n-------new coding------\n"\
-"    Skin  : $SKIN \n"\
-"    Screen: $SCREEN \n"\
-"-----------------------\n\n" | $TEE -i -a $LOG
+		if [[ "$TRAINVERSION" = *ER* ]]; then
+			echo -ne "--- Changing to safe values to avoid boot stuck after conversion\n" | $TEE -a $LOG
+			if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+				on -f mmx $PC i:0:0x501844FF 1 >> $LOG #skin=1 (byte 17 of 5F coding)
+			else
+				on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+			fi
+			on -f mmx $PC i:0:0x501848FF 0 >> $LOG #screen=0 (byte 18 of 5F coding)
 
-		echo -ne "--- store changes to persistence\n\n"
-		on -f mmx $PC b:0:1 0 >> $LOG
-		sleep 2
+			SCREEN=$(on -f mmx $PC i:0:0x501844FF)
+			SKIN=$(on -f mmx $PC i:0:0x501848FF)
 
-		echo -ne "!!! Do NOT reboot unit !!!\n"\
-"1. Exit GEM\n"\
-"2. Insert SD card with EU FW - $TRAINVERSION\n"\
-"3. Start installation\n"
-		sleep 5
+			echo -ne "\nNew values of byte 17 and 18 of 5F coding:\n"\
+				"    Skin  : $SKIN\n"\
+				"    Screen: $SCREEN\n"\
+				"----------------------------------------------\n" | $TEE -i -a $LOG
 
-		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
-	else
-		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
-		exit 1
-	fi
+			echo -ne "Storing changes to persistence...\n"
+			on -f mmx $PC b:0:1 0 >> $LOG
+			
+			[ -z "$noboot" ] && echo -ne "\nAll done!\n"
 
-# return 2> /dev/null
-
-trap 2
-
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
-
+			echo -ne "!!! Do NOT reboot unit !!!\n"\
+				"1. Insert FAT32 formatted SD card with FW $TRAINVERSION\n"\
+				"2. Exit GEM\n"\
+				"3. Long press MENU and Start Update\n"
+				"4. After new firmware is installed, properly set byte 17 and 18\n"
+		else
+			echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
+			exit 1
+		fi
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -116,9 +98,8 @@ trap 2
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-
 	};;
-
-	esac
-
+esac
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 exit 0
