@@ -106,7 +106,7 @@ if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
 	on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
 	on -f mmx $VOLUME/apps/sbin/pc b:0:1 0 2>> $LOG
 else
-	on -f mmx /eso/bin/dumb_persistence_writer -P 0 3221356557 01 2>> $LOG
+	$PERSW -f -P 0 3221356557 01 2>> $LOG
 fi
 
 # install sshd when it is on SD
