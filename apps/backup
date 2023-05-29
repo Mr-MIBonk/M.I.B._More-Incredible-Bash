@@ -101,11 +101,11 @@ case $1 in
 		if [[ "$TRAINVERSION" = *MHIG* ]]; then
 			echo -ne "\nRCC offset function not supported on MHIG\n" | $TEE -i -a $LOG
 		else
-		. $thisdir/offset -log
+			. $thisdir/offset -log
 		fi
 
 		if [ -d $BACKUPFOLDER ]; then
-			echo -ne "Found $FAZIT Backup, will check if all complete...\n" | $TEE -i -a $LOG
+			echo -ne "Found $FAZIT backup, will check if all complete...\n" | $TEE -i -a $LOG
 			[ -z "$GEM" ] && echo -ne "\n"
 		else
 			mkdir -p $BACKUPFOLDER

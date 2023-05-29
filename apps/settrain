@@ -52,17 +52,18 @@ case $1 in
 				echo -ne "SKG13 train found. Changing to $TARGETTRAIN\n" | $TEE -i -a $LOG
 				on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 53 4b 47 31 33 5f 50 34 >> $LOG
 				on -f rcc /usr/apps/modifyE2P w 3b0 35 32 36 00 00 >> $LOG
-			elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?06* ]]; then
+			elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *JP_VW270_?12* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || \
+				[[ "$TRAINVERSION" = *JP_VW48x_?06* ]]; then
 				TARGETTRAIN="MHI2_ER_VWG11_K3342"
 				echo -ne "VWG11 train found. Changing to $TARGETTRAIN\n" | $TEE -i -a $LOG
 				on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 >> $LOG
 				on -f rcc /usr/apps/modifyE2P w 3b0 33 34 32 00 00 >> $LOG
 			elif [[ "$TRAINVERSION" = *VWG13* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?07* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?08* ]] || \
-			[[ "$TRAINVERSION" = *CN_VW48x_?09* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?10* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?11* ]] || \
-			[[ "$TRAINVERSION" = *CN_VW48x_?12* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || \
-			[[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]] || \
-			[[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]] || \
-			[[ "$TRAINVERSION" = *CN_VW511_?10* ]]; then
+				[[ "$TRAINVERSION" = *CN_VW48x_?09* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?10* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?11* ]] || \
+				[[ "$TRAINVERSION" = *CN_VW48x_?12* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?08* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?09* ]] || \
+				[[ "$TRAINVERSION" = *JP_VW48x_?10* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?11* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?12* ]] || \
+				[[ "$TRAINVERSION" = *TW_VW48x_?07* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?09* ]] || [[ "$TRAINVERSION" = *TW_VW48x_?11* ]] || \
+				[[ "$TRAINVERSION" = *CN_VW511_?10* ]]; then
 				TARGETTRAIN="MHI2_ER_VWG13_P4521"
 				echo -ne "VWG13 train found. Changing to $TARGETTRAIN\n" | $TEE -i -a $LOG
 				on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 33 5f 50 34 >> $LOG
