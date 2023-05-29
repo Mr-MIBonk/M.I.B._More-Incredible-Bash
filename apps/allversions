@@ -484,5 +484,6 @@ case $1 in
 		echo ""
 	};;
 esac
+
 trap 2
-return 2> /dev/null
+exit 0
