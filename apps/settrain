@@ -16,7 +16,7 @@ fi
 echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
-	echo -ne "Aborted because the reboot is running...\n"
+	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
 	return 2> /dev/null
 fi
 
@@ -110,6 +110,7 @@ case $1 in
 			fi
 			echo -ne "\nAll done! Now you can reboot the unit and install $TARGETTRAIN\n" | $TEE -i -a $LOG
 		fi
+		
 		trap 2
 		[ -z "$noboot" ] && . $thisdir/reboot -t 10
 	};;
