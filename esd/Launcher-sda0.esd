@@ -1322,46 +1322,27 @@ keyValue
 screen eu_conversion advanced_settings
 
 keyValue
+    value   String per 30 1966084
+    label   "Your current train"
+
+keyValue
     value   String sys 0x00000000 0
     label	"This WILL mess up your unit, if you do not know what you are doing!"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"!!! Only use this to start converting units to EU region !!!"
+    label	"!!! Only use this to start converting unit to EU region !!!"
 	poll    0
 
 keyValue
-    value   String per 30 1966084
-    label   "Your current train"
-
-keyValue
     value   String sys 0x00000000 0
-    label	"Train, variant, coding, adaption & language will be converted to EU:"
+    label	"Train, variant, coding, adaption & language will be converted to EU."
 	poll    0
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
-    label   "1. EU Conversion"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"2. AFTER reboot confirm new train (e.g. in this menu), download FW and and prepare SD"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Directly before installation of EU FW run this script:"
-	poll    0
-
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/conversion_fix_eu.sh"
-    label   "3. FIX Skin/Screen bug"
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"4. DO NOT reboot unit - Directly install EU FW"
-	poll    0
+    label   "Convert unit to EU"
 
 keyValue
     value   String sys 0x00000000 0

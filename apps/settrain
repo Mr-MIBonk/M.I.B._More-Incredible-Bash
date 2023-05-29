@@ -31,6 +31,7 @@ case $1 in
 		trap '' 2
 		echo -ne "Current train: $TRAINVERSION\n" | $TEE -i -a $LOG
 		echo -ne ""
+		TARGETTRAIN=""
 		if [[ "$TRAINVERSION" = *ER* ]]; then
 			echo -ne "Skipping. Your train is already EU!\n" | $TEE -i -a $LOG
 		else
@@ -38,7 +39,6 @@ case $1 in
 			
 			# Do the backup before conversion
 			. $thisdir/backup -a
-			TARGETTRAIN=""
 			if [[ "$TRAINVERSION" = *MHI2Q* ]] && [[ "$TRAINVERSION" = *AUG22* ]]; then
 				TARGETTRAIN="MHI2Q_ER_AUG22_P5092"
 				echo -ne "MHI2Q_ER_AUG22 train found. Changing to $TARGETTRAIN\n" | $TEE -i -a $LOG
@@ -108,11 +108,24 @@ case $1 in
 				echo -ne "\n\nAborted. Unknown train\nTo add support, upload backup to https://mibsolution.one M.I.B_Backup\n" | $TEE -i -a $LOG
 				exit 1
 			fi
-			echo -ne "\nAll done! Now you can reboot the unit and install $TARGETTRAIN\n" | $TEE -i -a $LOG
+			echo -ne "Zeroing bytes 17 and 18 of 5F coding to avoid hang on the logo in EU fw\n" | $TEE -a $LOG
+			if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+				SCREEN=$(on -f mmx $PC i:0:0x501844FF)
+				SKIN=$(on -f mmx $PC i:0:0x501848FF)
+				echo -ne "\nCurrent values of byte 17 and 18 of 5F coding:\n"\
+						"    Skin  : $SKIN\n"\
+						"    Screen: $SCREEN\n"\
+						"----------------------------------------------\n" | $TEE -i -a $LOG
+				on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				on -f mmx $PC i:0:0x501848FF 0 >> $LOG #screen=0 (byte 18 of 5F coding)
+				echo -ne "Storing changes to persistence...\n" | $TEE -i -a $LOG
+				on -f mmx $PC b:0:1 0 >> $LOG
+			else
+				$PERSW -f -t int 0 1343767807 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				$PERSW -f -t int 0 1343768831 0 >> $LOG #screen=0 (byte 18 of 5F coding)
+			fi
+			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 		fi
-		
-		trap 2
-		[ -z "$noboot" ] && . $thisdir/reboot -t 10
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -144,4 +157,7 @@ case $1 in
 		echo ""
 	};;
 esac
+
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 exit 0

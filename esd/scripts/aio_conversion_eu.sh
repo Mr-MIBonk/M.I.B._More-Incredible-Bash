@@ -18,10 +18,14 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 
 # EU conversion
-/net/mmx/fs/sda0/apps/settrain -eu -noboot && \
+. /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
 /net/mmx/fs/sda0/apps/setreg -eu -noboot && \
-/net/mmx/fs/sda0/apps/setvariant -var
+/net/mmx/fs/sda0/apps/setvariant -var -noboot
+
+if [[ ! -z "$TARGETTRAIN" ]]; then
+	echo -ne "\nNow you can download fw TARGETTRAIN onto FAT32 formatted SD card and update.\n" | $TEE -i -a $LOG
+	echo -ne "Good luck!\n"
+fi
 
 trap 2
-
 exit 0
