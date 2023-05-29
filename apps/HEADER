@@ -1,0 +1,29 @@
+#!/bin/sh
+# HEADER v0.1.0 (2023-05-29 by MIB-Wiki)
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+fi
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
+
+if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
+	echo -ne "Backup, flash or reboot are already running...\nWill stop here!"
+	return 2> /dev/null
+fi
+
+if [ $MIBCAP -ge $MIBMO ]; then
+	echo -ne "Script supports this MIB model\n" >> $LOG
+else
+	echo -ne "Script does not support this MIB model\n" | $TEE -a $LOG
+	echo -ne "MIB model: $MIBMO\n" >> $LOG
+	echo -ne "Script capability: $MIBCAP\n" >> $LOG
+	echo -ne "Will stope here\nYou can go back now\n"
+	exit 0
+fi

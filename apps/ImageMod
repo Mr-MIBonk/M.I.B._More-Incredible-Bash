@@ -1,25 +1,16 @@
 #!/bin/sh
 
-revision="ImageMod v0.1.4 (2023-05-23 MIBonk & MIB-Wiki)"
+revision="ImageMod v0.1.5 (2023-05-29 MIBonk & MIB-Wiki)"
 # use --help for more info
 
-export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
-export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
-export IPL_CONFIG_DIR=/etc/eso/production
+MIBCAP=1 
+# MIB mode(s) supported by this script
+# 1 = MHI2 only, 2 = ... and legacy (old) FW, 3 = ... and MHIG
 
-thisname="$(basename $0)"
-thisdir="$(dirname $0)"
+# load script header
+. HEADER
 
-if [ -z $LOG ]; then
-	. $thisdir/../config/GLOBALS
-fi
-echo -ne "\n$ME-$thisname---->\n" >> $LOG
-
-if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
-	echo "Backup or reboot is already running..."
-	return 2> /dev/null
-fi
-
+# script variables
 IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
 
 case $1 in
@@ -85,7 +76,7 @@ if [[ "$TRAINVERSION" = *SKG13_P4526* ]]; then
 	. $thisdir/reboot -t 10
 # ----------------------------------------------------------------------------------------------------------------
 elif [[ "$TRAINVERSION" = *VWG13_?452* ]]; then
-	UnitVersion="VWG13_P4521"
+	UnitVersion="VWG13_x452x"
 	echo -e "\nInstall image MOD on "$UnitVersion"\n"
 	mount -uw /net/mmx/mnt/app
 	# copy files from skin1 to skin5
