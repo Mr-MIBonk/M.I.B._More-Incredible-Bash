@@ -29,6 +29,10 @@ else
 	VOLUME="."
 fi
 
+if [ -f $VOLUME/Swdlautorun.txt ]; then
+	[ -z "$SWDLAUTORUN" ] && echo "Swdlautorun.txt - autorun found in SD root\nScript will be stopped\nDelete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again." && sleep 4 && exit 0
+fi
+
 if [ -f $VOLUME/metainfo2.txt ] && [ -f $VOLUME/esd/Launcher-sda0.esd ]; then
 	return 2> /dev/null
 else
@@ -36,7 +40,5 @@ else
 	exit 0
 fi
 
-if [ -f $VOLUME/Swdlautorun.txt ]; then
-	[ -z "$SWDLAUTORUN" ] && echo "Swdlautorun.txt - autorun found in SD root\nScript will be stopped\nDelete or rename Swdlautorun.txt -> _Swdlautorun.txt and try again." && sleep 4 && exit 0
-fi
+
 
