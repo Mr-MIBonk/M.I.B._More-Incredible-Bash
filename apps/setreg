@@ -13,7 +13,7 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+echo -ne "$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
@@ -35,7 +35,7 @@ case $1 in
 		mount -uw /net/rcc/mnt/efs-persist
 		if [[ "$TRAINVERSION" = *ER* ]]; then
 			echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
-			. /net/mmx/fs/sda0/apps/setlang -eu -noboot
+			/net/mmx/fs/sda0/apps/setlang -eu -noboot
 			echo -ne "\nChanging coding and adaptations to EU:" | $TEE -a $LOG
 			echo -ne "\n--- Summertime algo.\n" | $TEE -a $LOG
 			# 0=none, 1=manual, 2=MESZ, 3=USA

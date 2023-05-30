@@ -13,7 +13,7 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+echo -ne "$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG

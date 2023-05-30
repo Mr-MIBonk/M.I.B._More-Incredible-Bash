@@ -13,7 +13,7 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+echo -ne "$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
@@ -33,11 +33,11 @@ case $1 in
 			VARIANT2="$(on -f mmx $PC s:678364556:12 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 		else
 			VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')"
-			VARTYPE="$(echo "$VARIANT2" | awk -F'-' '{print $2}' 2>/dev/null) | $XXD"
+			VARTYPE="$(echo "$VARIANT2" | awk -F'-' '{print $2}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"
 			VARLTE="$(echo "$VARIANT2" | awk -F'-' '{print $3}' 2>/dev/null)"
 			#TNDL in Variant_2 is LND in Variant_1, TNL>LN
 			VARLTE="$(echo "$VARLTE" | $SED 's/TNDL/LND/')"
-			VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/') | $XXD"
+			VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/' | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"
 			VARNAV=""
 			VARDAB=""
 			VARSIR=""
