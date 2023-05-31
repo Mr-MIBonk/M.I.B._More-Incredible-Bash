@@ -1351,38 +1351,6 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Advanced Settings -> EU Conversion -> What is the Skin/Screen Bug
-#
-###########################################################################################
-screen What_is_skin_screen_bug eu_conversion
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"Some - not all - international FW use Skin and Screening ID, which are not known to EU FW"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"After installation the unit will get stuck in a black screen and bootloop"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"D-Link and shell access will be required to fix this"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"This can in most cases be avoided by running the FIX script immediatly before EU FW install"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
-
-###########################################################################################
-#
 # Main -> M.I.B. -> Advanced Settings -> TMC settings
 #
 ###########################################################################################
