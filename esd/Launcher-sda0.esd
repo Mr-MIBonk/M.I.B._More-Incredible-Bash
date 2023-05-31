@@ -1322,12 +1322,13 @@ keyValue
 screen eu_conversion advanced_settings
 
 keyValue
-    value   String per 30 1966084
-    label   "Your current train"
+    value   String sys 0x00000000 0
+    label	"This WILL mess up your unit, if you do not know what you are doing!"
+	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"This WILL mess up your unit, if you do not know what you are doing!"
+    label	"Train, variant, coding, adaptaion & language will be converted to EU."
 	poll    0
 
 keyValue
@@ -1337,17 +1338,16 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Train, variant, coding, adaption & language will be converted to EU."
+	label	"_________________________________________________________________"
 	poll    0
+
+keyValue
+    value   String per 30 1966084
+    label   "Your current train"
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
     label   "Convert unit to EU"
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
 
 ###########################################################################################
 #
