@@ -120,12 +120,20 @@ case $1 in
 						"    Skin  : $SKIN\n"\
 						"    Screen: $SCREEN\n"\
 						"----------------------------------------------\n" | $TEE -i -a $LOG
-				on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+					on -f mmx $PC i:0:0x501844FF 1 >> $LOG #skin=1 (byte 17 of 5F coding)
+				else
+					on -f mmx $PC i:0:0x501844FF 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				fi
 				on -f mmx $PC i:0:0x501848FF 0 >> $LOG #screen=0 (byte 18 of 5F coding)
 				echo -ne "Storing changes to persistence...\n" | $TEE -i -a $LOG
 				on -f mmx $PC b:0:1 0 >> $LOG
 			else
-				$PERSW -f -t int 0 1343767807 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+					$PERSW -f -t int 0 1343767807 1 >> $LOG #skin=0 (byte 17 of 5F coding)
+				else
+					$PERSW -f -t int 0 1343767807 0 >> $LOG #skin=0 (byte 17 of 5F coding)
+				fi
 				$PERSW -f -t int 0 1343768831 0 >> $LOG #screen=0 (byte 18 of 5F coding)
 			fi
 			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
