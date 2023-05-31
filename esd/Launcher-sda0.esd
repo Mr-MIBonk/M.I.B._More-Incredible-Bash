@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			17-05-2023
+# Date:			26-05-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -3057,7 +3057,7 @@ screen VWG13_Image_MOD VW
 
 keyValue
     value   String sys 0x00000000 0
-	label	"ONLY working on VW MIB2.5 units with Train MHI2_ER_VWG13_P4521"
+	label	"ONLY working on VW MIB2.5 units with Train MHI2_ER_VWG13_P4521/K4525"
 	poll    0
 
 keyValue
