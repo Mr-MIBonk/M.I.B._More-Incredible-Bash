@@ -61,10 +61,16 @@ else
 		TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 		MUVERSION="MU$(on -f mmx $PC s:30:1966083 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
 		FAZIT="$($PERSR 0 3221291024 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
+		MIBMO=1 # MHI2 only
 	else
 		TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 		MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 		FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+		if [[ "$TRAINVERSION" = *MHI2* ]]; then
+			MIBMO=2 # MHI2 with old FW 
+		elif [[ "$TRAINVERSION" = *MHIG* ]]; then
+			MIBMO=3 # MHIG
+		fi
 	fi
 	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
 	NAND=$MNT/$MUVERSION/
