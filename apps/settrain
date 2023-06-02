@@ -77,7 +77,7 @@ case $1 in
 			$E2P w 3a0 "$(echo $TARGETTRAIN | awk '{print substr($1,1,16)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')" >> $LOG
 			$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 00 >> $LOG
 			echo -ne "Zeroing bytes 17 and 18 of 5F coding to avoid hang on the logo in EU fw\n" | $TEE -a $LOG
-			if [[ "$TRAINVERSION" = *VW*|*SE*|*SK* ]]; then
+			if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
 				$PERSW -f -t int 0 1343767807 1 >> $LOG #skin=0 (byte 17 of 5F coding)
 			else
 				$PERSW -f -t int 0 1343767807 0 >> $LOG #skin=0 (byte 17 of 5F coding)
