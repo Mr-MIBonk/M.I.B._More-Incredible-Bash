@@ -104,7 +104,6 @@ case $1 in
 			echo -ne "--- Variant region\n" | $TEE -a $LOG
 			# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
 			$PERSW -f -t int 678364556 9 2
-			fi
 
 			#echo -ne "switch variant feature byte type to High\n"
 			#on -f mmx $PC i:0x286f058c:4 1
