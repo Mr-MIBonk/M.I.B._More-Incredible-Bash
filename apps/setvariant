@@ -44,7 +44,7 @@ case $1 in
 			VARREG="45 55 " #EU
 		fi
 		echo -ne "Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
-		COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+		COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 		echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
 
 		VARERROR=0
@@ -146,7 +146,7 @@ case $1 in
 
 		if [ $VARERROR = 0 ]; then
 			echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
-			on -f rcc /usr/apps/modifyE2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
+			$E2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
 			#Build Variant_1 string 
 			EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 			#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
@@ -154,8 +154,8 @@ case $1 in
 			AVAR=$(echo "$EVAR" | $XXD -r -p)
 			echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
 			echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
-			on -f rcc /usr/apps/modifyE2P w BA $EVAR >> $LOG
-			COMPONENT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+			$E2P w BA $EVAR >> $LOG
+			COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 			echo -ne "Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
 		else
 			echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG
@@ -163,7 +163,7 @@ case $1 in
 		fi
 		echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 		#Get the real train not from GLOBALS but from EEPROM as it can be changed already
-		TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+		TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 		echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n"
 		echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
 		echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
