@@ -195,15 +195,8 @@ case $1 in
 esac
 
 if [[ ! -z "$DATASET_280" ]]; then
-	if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-		on -f mmx $PC b:10:0xC0030006 $DATASET_2D00 >> $LOG
-		on -f mmx $PC b:10:0xC0030005 $DATASET_280 >> $LOG
-		echo -ne "Storing changes to persistence...\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:1 0
-	else #legacy mode
-		$PERSW -f -P 10 3221422086 $DATASET_2D00 >> $LOG
-		$PERSW -f -P 10 3221422085 $DATASET_280 >> $LOG
-	fi
+	$PERSW -f -P 10 3221422086 $DATASET_2D00 >> $LOG
+	$PERSW -f -P 10 3221422085 $DATASET_280 >> $LOG
 	echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 fi
 
