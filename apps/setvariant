@@ -35,8 +35,9 @@ case $1 in
 			VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')"
 			VARTYPE="$(echo "$VARIANT2" | awk -F'-' '{print $2}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"
 			VARLTE="$(echo "$VARIANT2" | awk -F'-' '{print $3}' 2>/dev/null)"
-			#TNDL in Variant_2 is LND in Variant_1, TNL>LN
+			#TNDL/TNSL in Variant_2 is LND/LNS in Variant_1, TNL>LN
 			VARLTE="$(echo "$VARLTE" | $SED 's/TNDL/LND/')"
+			VARLTE="$(echo "$VARLTE" | $SED 's/TNSL/LNS/')"
 			VARLTE="$(echo "$VARLTE" | $SED 's/TNL/LN/' | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"
 			VARNAV=""
 			VARDAB=""
