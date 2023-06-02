@@ -42,7 +42,7 @@ case $1 in
 			echo -ne "Non EU train found, trying to find an EU match...\n" | $TEE -i -a $LOG
 			. $thisdir/backup -a
 			case $TRAINVERSION in
-				MHI2Q_?_AUG22*)
+				MHI2Q_??_AUG22*)
 					TARGETTRAIN="MHI2Q_ER_AUG22_P5092" ;;
 				*SKG13*)
 					TARGETTRAIN="MHI2_ER_SKG13_P4526" ;;
@@ -66,7 +66,7 @@ case $1 in
 					TARGETTRAIN="MHI2_ER_AU62x_P5099" ;;
 				*AU276*)
 					TARGETTRAIN="MHI2_ER_AU276_P5088" ;;
-				MHI2_?_AUG22*)
+				MHI2_??_AUG22*)
 					TARGETTRAIN="MHI2_ER_AUG22_K3346" ;;
 				*)
 					echo -ne "\nAborted. Unknown train!\nTo add support, upload backup to https://mibsolution.one M.I.B_Backup\n" | $TEE -i -a $LOG
