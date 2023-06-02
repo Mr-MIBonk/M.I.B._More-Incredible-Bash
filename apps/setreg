@@ -65,7 +65,6 @@ case $1 in
 			# 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
 			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile)
 			$PERSW -f -t int 0 1343753471 1
-			fi
 
 			echo -ne "--- Import media\n" | $TEE -a $LOG
 			$PERSW -f -t int 0 1343774736 1
