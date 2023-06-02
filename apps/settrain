@@ -44,40 +44,72 @@ case $1 in
 			case $TRAINVERSION in
 				MHI2Q_??_AUG22*)
 					TARGETTRAIN="MHI2Q_ER_AUG22_P5092"
-					echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
 					$E2P w 3a0 4d 48 49 32 51 5f 45 52 5f 41 55 47 32 32 5f 50 >> $LOG
 					$E2P w 3b0 35 30 39 32 00 >> $LOG
 					;;
 				MHI2_??_AUG22*)
-					TARGETTRAIN="MHI2_ER_AUG22_K3346" ;;
+					TARGETTRAIN="MHI2_ER_AUG22_K3346"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 47 32 32 5f 4b 33 >> $LOG
+					$E2P w 3b0 33 34 36 00 00 >> $LOG
+					;;
 				*AU276*)
-					TARGETTRAIN="MHI2_ER_AU276_P5088" ;;
+					TARGETTRAIN="MHI2_ER_AU276_P5088"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 32 37 36 5f 50 35 >> $LOG
+					$E2P w 3b0 30 38 38 00 00 >> $LOG
+					;;
 				*AU37x*)
-					TARGETTRAIN="MHI2_ER_AU37x_P5089" ;;
+					TARGETTRAIN="MHI2_ER_AU37x_P5089"
+					$E2P w 3a0 4D 48 49 32 5F 45 52 5F 41 55 33 37 78 5F 50 35 >> $LOG
+					$E2P w 3b0 30 38 39 00 00 >> $LOG
+					;;
 				*AU43x*)
-					TARGETTRAIN="MHI2_ER_AU43x_P5098" ;;
+					TARGETTRAIN="MHI2_ER_AU43x_P5098"
+					$E2P w 3a0 4D 48 49 32 5F 45 52 5F 41 55 34 33 78 5F 50 35 >> $LOG
+					$E2P w 3b0 30 39 38 00 00 >> $LOG
+					;;
 				*AUG11*|*AU57x*)
-					TARGETTRAIN="MHI2_ER_AU57x_K3663" ;;
+					TARGETTRAIN="MHI2_ER_AU57x_K3663"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 35 37 78 5f 4b 33 >> $LOG
+					$E2P w 3b0 36 36 33 00 00 >> $LOG
+					;;
 				*AU62x*)
-					TARGETTRAIN="MHI2_ER_AU62x_P5099" ;;
+					TARGETTRAIN="MHI2_ER_AU62x_P5099"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 41 55 36 32 78 5f 50 35 >> $LOG
+					$E2P w 3b0 30 39 39 00 00 >> $LOG
+					;;
 				*POG11*)
-					TARGETTRAIN="MHI2_ER_POG11_K5126" ;;
+					TARGETTRAIN="MHI2_ER_POG11_K5126"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 50 4f 47 31 31 5f 4b 35 >> $LOG
+					$E2P w 3b0 31 32 36 00 00 >> $LOG
+					;;
 				*POG24*)
-					TARGETTRAIN="MHI2_ER_POG24_K4224" ;;
+					TARGETTRAIN="MHI2_ER_POG24_K4224"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 50 4f 47 32 34 5f 4b 34 >> $LOG
+					$E2P w 3b0 32 32 34 00 00 >> $LOG
+					;;
 				*SKG13*)
-					TARGETTRAIN="MHI2_ER_SKG13_P4526" ;;
+					TARGETTRAIN="MHI2_ER_SKG13_P4526"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 53 4b 47 31 33 5f 50 34 >> $LOG
+					$E2P w 3b0 35 32 36 00 00 >> $LOG
+					;;
 				*VWG11*|*JP_VW270_?12*|*CN_VW48x_?06*|*JP_VW48x_?06*)
-					TARGETTRAIN="MHI2_ER_VWG11_K3342" ;;
+					TARGETTRAIN="MHI2_ER_VWG11_K3342"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 31 5f 4b 33 >> $LOG
+					$E2P w 3b0 33 34 32 00 00 >> $LOG
+					;;
 				*VWG13*|*JP_VW48x_?07*|*CN_VW48x_?08*|*CN_VW48x_?09*|*CN_VW48x_?10*|*CN_VW48x_?11*|\
 				*CN_VW48x_?12*|*JP_VW48x_?08*|*JP_VW48x_?09*|*JP_VW48x_?10*|*JP_VW48x_?11*|*JP_VW48x_?12*|\
 				*TW_VW48x_?07*|*TW_VW48x_?09*|*TW_VW48x_?11*|*CN_VW511_?10*)
-					TARGETTRAIN="MHI2_ER_VWG13_P4521" ;;
+					TARGETTRAIN="MHI2_ER_VWG13_P4521"
+					$E2P w 3a0 4d 48 49 32 5f 45 52 5f 56 57 47 31 33 5f 50 34 >> $LOG
+					$E2P w 3b0 35 32 31 00 00 >> $LOG
+					;;
 				*)
 					echo -ne "\nAborted. Unknown train!\nTo add support, upload backup to https://mibsolution.one M.I.B_Backup\n" | $TEE -i -a $LOG
 					exit 1 ;;
 			esac
 
-			#echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
+			echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
 			#$E2P w 3a0 "$(echo $TARGETTRAIN | awk '{print substr($1,1,16)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')" >> $LOG
 			#if [[ "$TARGETTRAIN" = *MHI2Q* ]]; then
 			#	$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,20)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 >> $LOG
