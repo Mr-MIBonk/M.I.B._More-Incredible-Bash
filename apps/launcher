@@ -102,12 +102,12 @@ echo "-- M.I.B GEM link installed" | $TEE -a $LOG
 # GEM ON
 echo "-- activating Development Mode (GEM)..." | $TEE -a $LOG
 mount -uw /net/mmx/mnt/app
-if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-	on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
-	on -f mmx $VOLUME/apps/sbin/pc b:0:1 0 2>> $LOG
-else
-	$PERSW -f -P 0 3221356557 01 2>> $LOG
-fi
+#if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+#	on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
+#	on -f mmx $VOLUME/apps/sbin/pc b:0:1 0 2>> $LOG
+#else
+$PERSW -f -P 0 3221356557 01 2>> $LOG
+#fi
 
 # install sshd when it is on SD
 if [ -d $VOLUME/Toolbox/ ]; then
@@ -154,8 +154,5 @@ return 2> /dev/null
 		echo ""
 		
 	};;
-	
 	esac
-
 exit 0
-

@@ -350,6 +350,8 @@ case $1 in
 			if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log ]; then
 				if [[ -e /net/rcc/usr/bin/flashlock ]]; then
 					on -f rcc /usr/bin/flashlock > $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log 2>> $LOG
+				else
+					echo -ne "flashlock not found on unit\n" >> $LOG
 				fi
 				ERROR
 			else
