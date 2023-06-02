@@ -43,7 +43,11 @@ case $1 in
 			. $thisdir/backup -a
 			case $TRAINVERSION in
 				MHI2Q_??_AUG22*)
-					TARGETTRAIN="MHI2Q_ER_AUG22_P5092" ;;
+					TARGETTRAIN="MHI2Q_ER_AUG22_P5092"
+					echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
+					$E2P w 3a0 4d 48 49 32 51 5f 45 52 5f 41 55 47 32 32 5f 50 >> $LOG
+					$E2P w 3b0 35 30 39 32 00 >> $LOG
+					;;
 				MHI2_??_AUG22*)
 					TARGETTRAIN="MHI2_ER_AUG22_K3346" ;;
 				*AU276*)
@@ -73,13 +77,13 @@ case $1 in
 					exit 1 ;;
 			esac
 
-			echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
-			$E2P w 3a0 "$(echo $TARGETTRAIN | awk '{print substr($1,1,16)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')" >> $LOG
-			if [[ "$TARGETTRAIN" = *MHI2Q* ]]; then
-				$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,20)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 >> $LOG
-			else
-				$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 00 >> $LOG
-			fi
+			#echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
+			#$E2P w 3a0 "$(echo $TARGETTRAIN | awk '{print substr($1,1,16)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')" >> $LOG
+			#if [[ "$TARGETTRAIN" = *MHI2Q* ]]; then
+			#	$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,20)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 >> $LOG
+			#else
+			#	$E2P w 3b0 "$(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')"00 00 >> $LOG
+			#fi
 			echo -ne "Zeroing bytes 17 and 18 of 5F coding to avoid hang on the logo in EU fw\n" | $TEE -a $LOG
 			if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
 				$PERSW -f -t int 0 1343767807 1 >> $LOG #skin=0 (byte 17 of 5F coding)
