@@ -33,7 +33,7 @@ else
 	VARIANT="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' $VERSIONS)"
 	DATASETV="$($E2P r 12E B | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g')"
 	VINCAR=""
-	VINMIB=""
+	VINMIB="$($DD if=/net/rcc/mnt/efs-persist/FEC/FecContainer.fec ibs=1 skip=20 count=17 2>/dev/null)"
 	HWNO="$($E2P r 96 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p)"
 fi
 
