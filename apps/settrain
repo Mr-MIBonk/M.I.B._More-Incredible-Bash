@@ -80,10 +80,12 @@ case $1 in
 			else
 				$E2P w 3b0 $(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //')00 00 >> $LOG
 			fi
-			echo -ne "Zeroing bytes 17 and 18 of 5F coding to avoid hang on the logo in EU fw\n" | $TEE -a $LOG
 			if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SE* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+				echo -ne "Setting byte17(skin)=1 and byte18(screen)=0 of 5F coding\n" | $TEE -a $LOG
+				echo -ne "to avoid hang on the logo after update to EU fw\n" | $TEE -a $LOG
 				$PERSW -f -t int 0 1343767807 1 >> $LOG #skin=0 (byte 17 of 5F coding)
 			else
+				echo -ne "Zeroing bytes 17 and 18 of 5F coding to avoid hang on the logo in EU fw\n" | $TEE -a $LOG
 				$PERSW -f -t int 0 1343767807 0 >> $LOG #skin=0 (byte 17 of 5F coding)
 			fi
 			$PERSW -f -t int 0 1343768831 0 >> $LOG #screen=0 (byte 18 of 5F coding)
