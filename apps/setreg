@@ -58,8 +58,26 @@ case $1 in
 			# 0=BAND_DAB2_OFF, 1=BAND_DAB2_L_BAND (EU default), 2=BAND_DAB2_DOWNLOAD_TABLE_2
 			#on -f mmx $PC i:0:0x501828F0 0
 
-			echo -ne "--- Radiotext+ off/on\n" | $TEE -a $LOG
+			echo -ne "--- RDS switch off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763457 0
+
+			echo -ne "--- AF functionality on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763458 1
+			
+			echo -ne "--- Radiotext+ on\n" | $TEE -a $LOG
 			$PERSW -f -t int 0 1343763464 1
+
+			echo -ne "--- PI Ignore off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763472 0
+
+			echo -ne "--- AM disable on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764482 1
+
+			echo -ne "--- RDS deactivation off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764496 0
+
+			echo -ne "--- AF deactivation off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764512 0
 
 			echo -ne "--- Navigation Country\n" | $TEE -a $LOG
 			# 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
