@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="settrain v0.1.9 (2023-05-16 by MIB-Wiki)"
+revision="settrain v0.2.0 (2023-06-06 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -57,7 +57,8 @@ echo -ne ""
 			sleep 3
 			on -f rcc /usr/apps/modifyE2P w 3a0 4d 48 49 32 5f 45 52 5f 53 4b 47 31 33 5f 50 34 >> $LOG
 			on -f rcc /usr/apps/modifyE2P w 3b0 35 32 36 00 00 >> $LOG
-		elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?06* ]]; then
+		elif [[ "$TRAINVERSION" = *VWG11* ]] || [[ "$TRAINVERSION" = *CN_VW48x_?06* ]] || [[ "$TRAINVERSION" = *JP_VW48x_?06* ]]  || \
+		[[ "$TRAINVERSION" = *JP_VW270_?10* ]] || [[ "$TRAINVERSION" = *JP_VW270_?12* ]]; then
 			echo -ne "VWG11 found will change train now\n"
 			echo -ne "MHI2_ER_VWG11_K3342\n"
 			sleep 3
