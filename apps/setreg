@@ -13,10 +13,10 @@ thisdir="$(dirname $0)"
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 fi
-echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
+echo -ne "$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/reboot.mib ]; then
-	echo "Reboot running..."
+	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
 	return 2> /dev/null
 fi
 
@@ -26,179 +26,113 @@ else
 	noboot=""
 fi
 
-# Get Train from EEPROM (AIO EU conversion)
-TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 13 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+#Get the real train not from GLOBALS but from EEPROM as it can be changed already
+TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 
-	case $1 in
-
+case $1 in
 	-eu) {
+		trap '' 2
+		mount -uw /net/rcc/mnt/efs-persist
+		if [[ "$TRAINVERSION" = *ER* ]]; then
+			echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
+			/net/mmx/fs/sda0/apps/setlang -eu -noboot
+			echo -ne "\nChanging coding and adaptations to EU:" | $TEE -a $LOG
+			echo -ne "\n--- Summertime algo.\n" | $TEE -a $LOG
+			# 0=none, 1=manual, 2=MESZ, 3=USA
+			$PERSW -f -t int 28442848 503 2
+			
+			echo -ne "--- FM Bandsetting\n" | $TEE -a $LOG
+			# 0=BAND_FM_NO_SETTING, 1=BAND_FM_EU_RDW, 2=BAND_FM_NAR, 3=BAND_FM_JP, 4=BAND_FM_KOR
+			$PERSW -f -t int 0 1343759375 1
+			
+			echo -ne "--- AM Bandsetting\n" | $TEE -a $LOG
+			# 0=BAND_AM_NO_SETTING, 1=BAND_AM_EU_RDW, 2=BAND_AM_NAR, 3=BAND_AM_JP, 4=BAND_AM_EU, 5=BAND_AM_AUS
+			$PERSW -f -t int 0 1343759600 1
+			
+			#echo -ne "--- DAB Bandsetting 1\n"
+			# 0=BAND_DAB1_OFF, 1=BAND_DAB1_EU_BAND_III-N, 2=BAND_DAB1_EU_BAND_III (EU default), 3=BAND_DAB1_CANADA_L_BAND
+			# 4=BAND_DAB1_KOREA_BAND_III, 5=BAND_DAB1_CHINA_BAND_III, 6=BAND_DAB1_DOWNLOAD_TABLE_1, 7=BAND_DAB1_NEW_ZEALAND_BAND_III
+			#on -f mmx $PC i:0:0x5018280F 0
 
-trap '' 2
+			#echo -ne "--- DAB Bandsetting 2\n"
+			# 0=BAND_DAB2_OFF, 1=BAND_DAB2_L_BAND (EU default), 2=BAND_DAB2_DOWNLOAD_TABLE_2
+			#on -f mmx $PC i:0:0x501828F0 0
 
-echo -ne "1-Click EU Coding\n"
-mount -uw /net/rcc/mnt/efs-persist
-	if [[ "$TRAINVERSION" = *ER* ]]; then
-		echo -ne "EU train found\n" | $TEE -a $LOG
-		echo -ne "--------\n"
-		
-		. /net/mmx/fs/sda0/apps/setlang -eu -noboot
-		
-		sleep 1
-		echo -ne "\n--- summertime algo.\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:503 2
-					#  "none" 0
-					#  "manual" 1
-					#  "MESZ" 2
-					#  "USA" 3
-					sleep 1
-		echo -ne "--- FM Bandsetting\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x5018240F 1
-					# 0:		BAND_FM_NO_SETTING
-					# 1:		BAND_FM_EU_RDW
-					# 2:		BAND_FM_NAR
-					# 3:		BAND_FM_JP
-					# 4:		BAND_FM_KOR
-					sleep 1
-		echo -ne "--- AM Bandsetting\n"
-		on -f mmx $PC i:0:0x501824F0 1 | $TEE -a $LOG
-					# 0:		BAND_AM_NO_SETTING
-					# 1:		BAND_AM_EU_RDW
-					# 2:		BAND_AM_NAR
-					# 3:		BAND_AM_JP
-					# 4:		BAND_AM_EU
-					# 5:		BAND_AM_AUS	
-					sleep 1			
-		#echo -ne "--- DAB Bandsetting 1\n"
-		#on -f mmx $PC i:0:0x5018280F 0
-					# 0:		BAND_DAB1_OFF
-					# 1:		BAND_DAB1_EU_BAND_III-N
-					# 2:		BAND_DAB1_EU_BAND_III (EU default)
-					# 3:		BAND_DAB1_CANADA_L_BAND
-					# 4:		BAND_DAB1_KOREA_BAND_III
-					# 5:		BAND_DAB1_CHINA_BAND_III
-					# 6:		BAND_DAB1_DOWNLOAD_TABLE_1
-					# 7:		BAND_DAB1_NEW_ZEALAND_BAND_III
-					sleep 1			
-		#echo -ne "--- DAB Bandsetting 2\n"
-		#on -f mmx $PC i:0:0x501828F0 0
-					# 0:		BAND_DAB2_OFF
-					# 1:		BAND_DAB2_L_BAND (EU default)
-					# 2:		BAND_DAB2_DOWNLOAD_TABLE_2
-					sleep 1
-		echo -ne "--- Radiotext+ off/on\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50183408 1
-		sleep 1
-		echo -ne "--- Navigation Country\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50180CFF 1
-					#  "EU" 1
-					#  "NAR" 2
-					#  "MSA" 3
-					#  "Korea" 4
-					#  "China" 5
-					#  "Japan" 6
-					#  "AsiaPacific" 7
-					#  "Australia" 8
-					#  "South Africa" 9
-					#  "NEAST" 10
-					#  "NMAfrica" 11
-					#  "MEAST" 12
-					#  "CentralAsia" 13
-					#  "India" 14
-					#  "Israel" 15
-					#  "Taiwan" 16
-					#  "MSA 2 (Chile)" 17
-				sleep 1
-		echo -ne "--- Import media\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50186010 1
-		sleep 1
-		echo -ne "--- Media Ripping\n" | $TEE -a $LOG
-		on -f mmx $PC i:0:0x50186020 1
-		sleep 1
-		echo -ne "--- Regionalcodes DVD\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:515 2
-		sleep 1
-		echo -ne "--- Regionalcodes Blueray\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:516 2
-		sleep 1
-		echo -ne "--- R. Codes DVD Counter\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:517 5
-		sleep 1
-		echo -ne "--- R. Codes Blueray Counter\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:518 5
-		sleep 1
-		echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
-		on -f mmx $PC i:28442848:520 32783
-		sleep 1
-		echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:1.6 1
-		on -f mmx $PC b:0:3221356628:1.7 1
-		sleep 1
-		echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:6 1
-			#	"none" 0
-			#	"EU" 1
-			#	"Taiwan" EA
-			#	"Korea" CD
-			#	"Hongkong" 66
-			#	"China" 28
-			#	"Macao" 67
-			sleep 1
-		echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221356628:9 1
-			#	"no region" 0
-			#	"EU" 1
-			#	"NAR" 2
-			#	"MSA" 3
-			#	"Korea" 4
-			#	"China" 5
-			#	"Japan" 6
-			#	"AsiaPacific" 7
-			#	"Australia" 8
-			#	"South Africa" 9
-			#	"NEAST" 10
-			#	"NMAfrica" 11
-			#	"MEAST" 12
-			#	"CentralAsia" 13
-			#	"India" 14
-			#	"Israel" 15
-			#	"Taiwan" 16
-			#	"MSA 2 (Chile)" 17
-			#	"China 2" 18
-			#	"China 3" 19
-			sleep 1
-		echo -ne "--- variant region\n" | $TEE -a $LOG
-		on -f mmx $PC i:0x286f058c:9 2
-			#   "Europe/ROW" 1
-			#   "Europe" 2  
-			#   "NAR" 3
-			#   "ROW" 4 
-			#   "China" 5
-			#   "Japan" 6   
-			#   "Korea" 7
-			#   "Asia" 8
-			#   "Taiwan" 9
-			sleep 1
-		#echo -ne "switch variant feature byte type to High\n"
-		#on -f mmx $PC i:0x286f058c:4 1
-		#	sleep 1
-		echo -ne "--- disable variant feature byte sirius\n"
-		on -f mmx $PC i:0x286f058c:8 0
-			sleep 1
-		echo -ne "--- store changes to persistence\n\n"
-		on -f mmx $PC b:0:1 0
-			sleep 2
-		[ -z "$noboot" ] && echo -ne "\nAll done!\n"
-	else
-		echo -ne "no EU train found - will stop here\n" | $TEE -a $LOG
-		exit 1
-	fi
+			echo -ne "--- RDS switch off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763457 0
 
-# return 2> /dev/null
+			echo -ne "--- AF functionality on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763458 1
+			
+			echo -ne "--- Radiotext+ on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763464 1
 
-trap 2
+			echo -ne "--- PI Ignore off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343763472 0
 
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
+			echo -ne "--- AM disable on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764482 1
 
+			echo -ne "--- RDS deactivation off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764496 0
+
+			echo -ne "--- AF deactivation off\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343764512 0
+
+			echo -ne "--- Navigation Country\n" | $TEE -a $LOG
+			# 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
+			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile)
+			$PERSW -f -t int 0 1343753471 1
+
+			echo -ne "--- Import media\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343774736 1
+
+			echo -ne "--- Media Ripping\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343774752 1
+
+			echo -ne "--- Regional Codes DVD\n" | $TEE -a $LOG
+			$PERSW -f -t int 28442848 515 2
+
+			echo -ne "--- Regional Codes Blueray\n" | $TEE -a $LOG
+			$PERSW -f -t int 28442848 516 2
+
+			echo -ne "--- Regional Codes DVD Counter\n" | $TEE -a $LOG
+			$PERSW -f -t int 28442848 517 5
+
+			echo -ne "--- Regional Codes Blueray Counter\n" | $TEE -a $LOG
+			$PERSW -f -t int 28442848 518 5
+			
+			echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
+			$PERSW -f -t int 28442848 520 32783
+
+			echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
+			$PERSW -f -P -L 1 -O 9 0 3221356628 F
+			$PERSW -f -P -L 1 -O 8 0 3221356628 F
+
+			echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
+			#	0=none, 1=EU, 28=China, 66=Hongkong, Macao=67, CD=Korea, EA=Taiwan
+			$PERSW -f -P -L 8 -O 48 0 3221356628 01
+			
+			echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
+			# 0=no region, 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
+			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile), 18=China 2, 19=China 3
+			$PERSW -f -P -L 8 -O 54 0 3221356628 01
+
+			echo -ne "--- Variant region\n" | $TEE -a $LOG
+			# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
+			$PERSW -f -t int 678364556 9 2
+
+			#echo -ne "switch variant feature byte type to High\n"
+			#on -f mmx $PC i:0x286f058c:4 1
+
+			echo -ne "--- Disable variant feature byte sirius\n"
+			$PERSW -f -t int 678364556 8 0
+
+			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
+		else
+			echo -ne "Skipped as unit has non EU train.\n" | $TEE -a $LOG
+			exit 1
+		fi
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -209,8 +143,8 @@ trap 2
 		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
-		echo "        -eu			set Region to EU"
-		echo "        --help		show this help"
+		echo "        -eu           set Region to EU"
+		echo "        --help        show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"
 		echo ""
@@ -228,9 +162,9 @@ trap 2
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-
 	};;
+esac
 
-	esac
-
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
 exit 0

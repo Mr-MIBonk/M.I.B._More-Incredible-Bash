@@ -17,16 +17,14 @@ export GEM=1
 echo -ne "M.I.B. - More Incredible Bash "
 cat /net/mmx/fs/sda0/VERSION
 echo ""
-echo "NOTE: NEVER interrupt the process with -Back- button or removing SD Card!!!"
-echo "CAUTION: Ensure that a external power is connected to the car on during any"
+echo "WARNING! NEVER interrupt the process with -Back- button and don't remove SD Card!!!"
+echo "CAUTION! Ensure that a external power is connected to the car during any"
 echo "flash or programming process! Power failure during flasing/programming will"
-echo "brick your unit! - All you do and use at your own risk!"
+echo "brick your unit! - All you do and use is at your own risk!"
 echo ""
 
 # Set Train to EU
 /net/mmx/fs/sda0/apps/settrain -eu
-
-echo "All done! now you can go back..."
 
 trap 2
 

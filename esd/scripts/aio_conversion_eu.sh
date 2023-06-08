@@ -12,19 +12,15 @@ export GEM=1
 echo -ne "M.I.B. - More Incredible Bash "
 cat /net/mmx/fs/sda0/VERSION
 echo ""
-echo "NOTE: NEVER interrupt the process with -Back- button or removing SD Card!!!"
-echo "CAUTION: Ensure that a external power is connected to the car on during any"
+echo "WARNING! NEVER interrupt the process with -Back- button or remove SD card!!!"
+echo "CAUTION: Make sure the external power is connected to the car during any"
 echo "flash or programming process! Power failure during flasing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
-echo ""
 
 # EU conversion
 /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
 /net/mmx/fs/sda0/apps/setreg -eu -noboot && \
-/net/mmx/fs/sda0/apps/setvariant -var
-
-sleep 3
+/net/mmx/fs/sda0/apps/setvariant -var -noboot
 
 trap 2
-
 exit 0

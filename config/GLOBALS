@@ -37,6 +37,7 @@ UDP="on -f rcc $VOLUME/apps/sbin/updatePersistence" # from FW update
 TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
 SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
 RDIFF="$VOLUME/apps/sbin/rdiff" # not on any unit
+E2P="on -f rcc /usr/apps/modifyE2P"
 
 # Set temp
 TMP="/net/rcc/dev/shmem"
@@ -57,30 +58,19 @@ if [ -f $thisdir/../../devconfig/GLOBALS ]; then
 else
 	# Set globals
 	if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-		TRAINVERSION="$(on -f mmx $PC s:30:1966084 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
-		MUVERSION="MU$(on -f mmx $PC s:30:1966083 2> /dev/null | $SED 's/[^a-zA-Z0-9_-]//g')"
-		FAZIT="$($PERSR 0 3221291024 2> /dev/null | $XXD -r -p 2> /dev/null | $SED 's/[^a-zA-Z0-9._-]//g')"
-		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
-		NAND=$MNT/$MUVERSION/
 		MIBMO=1 # MHI2 only
 	else
-		echo -ne "GLOBALS - LEGACY MODE enabled\n"
-		echo -ne "M.I.B running on an old FW with missing persistence binary\n\n"
-		echo -ne "Backup and some functions might work in this mode, but not all M.I.B functions are available\n"
-		echo -ne "Many scripts will throw errors\n"
-		echo -ne "Update to newer FW!\n"
-		sleep 3
-		MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-		TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-		FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
-		MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
-		NAND=$MNT/$MUVERSION/
 		if [[ "$TRAINVERSION" = *MHI2* ]]; then
 			MIBMO=2 # MHI2 with old FW 
 		elif [[ "$TRAINVERSION" = *MHIG* ]]; then
 			MIBMO=3 # MHIG
 		fi
 	fi
+	TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
+	NAND=$MNT/$MUVERSION/
 fi
 
 # internals...
