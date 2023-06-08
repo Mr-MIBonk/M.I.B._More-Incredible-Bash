@@ -290,7 +290,7 @@ case $1 in
 		fi
 
 		echo -ne "Dataset's........" | $TEE -i -a $LOG
-		if [ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv ]; then
+		if [[ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv && $MIBMO = 1 ]]; then
 			echo -ne "Dataset list\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			. $VOLUME/apps/pers -r 0 3221291030 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			echo -ne "Datasets\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
@@ -317,7 +317,7 @@ case $1 in
 			. $VOLUME/apps/pers -r 28442848 104 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			ERROR
 		else
-			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
+			echo -ne " -> Backup is already there or FW is too old!\n" | $TEE -i -a $LOG
 		fi
 
 		echo -ne "EEPROM..........." | $TEE -i -a $LOG
