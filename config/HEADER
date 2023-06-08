@@ -1,0 +1,12 @@
+#!/bin/sh
+# HEADER v0.1.0 (2023-05-29 by MIB-Wiki)
+
+if [ $MIBCAP -ge $MIBMO ]; then
+	echo -ne "Script supports this MIB model\n" >> $LOG
+else
+	echo -ne "Script does not support this MIB model\n" | $TEE -a $LOG
+	echo -ne "MIB model: $MIBMO\n" >> $LOG
+	echo -ne "Script capability: $MIBCAP\n" >> $LOG
+	echo -ne "Will stope here\nYou can go back now\n"
+	exit 0
+fi
