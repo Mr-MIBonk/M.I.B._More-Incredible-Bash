@@ -42,7 +42,7 @@ OUTFILE=$BACKUPFOLDER/$MUVERSION-EEProm.bin
 
 export LC_ALL=C
 HEX=$($SED -rn 's/^0x\S+\W+(.*?)$/\1/p' "${INFILE}" | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p') 2>> $LOG
-echo "${HEX}" | awk '{printf("%c",strtonum($0))}' > "${OUTFILE}"
+echo "${HEX}" | awk '{printf("%c",strtonum($0))}' > "${OUTFILE}" 2>> $LOG
 
 return 2> /dev/null
 	};;
