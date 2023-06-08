@@ -1,4 +1,4 @@
-# GLOBALS v0.3.6 (2023-06-04 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.7 (2023-06-08 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -66,9 +66,9 @@ else
 			MIBMO=3 # MHIG
 		fi
 	fi
-	TRAINVERSION="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-	MUVERSION="MU$(on -f rcc /net/rcc/usr/apps/modifyE2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
-	FAZIT="$(on -f rcc /net/rcc/usr/apps/modifyE2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
+	TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	MUVERSION="MU$($E2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	FAZIT="$($E2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
 	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
 	NAND=$MNT/$MUVERSION/
 fi

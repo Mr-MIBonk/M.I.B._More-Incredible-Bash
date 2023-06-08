@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="read out GEM Version v0.1.1 (2023-05-23 by MIB-Wiki)"
+revision="read out GEM Version v0.1.2 (2023-06-08 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin

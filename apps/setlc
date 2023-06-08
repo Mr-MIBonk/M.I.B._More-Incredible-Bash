@@ -32,7 +32,7 @@ case $1 in
 
 		SCREEN=$(on -f mmx $PC i:0:0x501844FF)
 		SKIN=$(on -f mmx $PC i:0:0x501848FF)
-                    
+
 		echo -ne "\nCurrent values of byte 17 and 18 of 5F coding:\n"\
 				"    Skin  : $SKIN\n"\
 				"    Screen: $SCREEN\n"\
