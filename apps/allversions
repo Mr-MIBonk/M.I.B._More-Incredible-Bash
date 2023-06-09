@@ -40,7 +40,7 @@ case $1 in
 		echo -ne "Variant = "$VARIANT"\n" >> $LOG
 		echo -ne "VIN car = "$VINCAR"\n" >> $LOG
 		echo -ne "VIN MIB = "$VINMIB"\n" >> $LOG
-		echo -ne "Car model ID = "$MODELID"\n" >> $LOG
+		echo -ne "Coding = "$CODING"\n" >> $LOG
 		echo -ne "Car model = "$MODEL"\n" >> $LOG
 		echo -ne "______________________________________________________________________\n" >> $LOG
 		#get Gracenote database

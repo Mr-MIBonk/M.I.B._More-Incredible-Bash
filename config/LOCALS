@@ -29,5 +29,6 @@ COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\
 VARIANT="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' $VERSIONS)"
 DATASETV="$($E2P r 12E B | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g')"
 HWNO="$($E2P r 96 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p)"
+CODING="$($E2P r F1 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g')"
 
 return 2> /dev/null

@@ -31,6 +31,7 @@ echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
 echo -ne "Variant: $VARIANT\n" >> $LOG	
 echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
 echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
+echo -ne "Coding: $CODING\n" >> $LOG
 echo -ne "Model ID: $MODELID - Car Model: $MODEL\n" >> $LOG
 echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
 echo -ne "\n ls --> " >> $LOG
