@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="launcher v0.1.2 (2023-05-20 MIB-Wiki)"
+revision="launcher v0.1.3 (2023-06-10 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -102,12 +102,7 @@ echo "-- M.I.B GEM link installed" | $TEE -a $LOG
 # GEM ON
 echo "-- activating Development Mode (GEM)..." | $TEE -a $LOG
 mount -uw /net/mmx/mnt/app
-#if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-#	on -f mmx $VOLUME/apps/sbin/pc b:0:3221356557:0 1 2>> $LOG
-#	on -f mmx $VOLUME/apps/sbin/pc b:0:1 0 2>> $LOG
-#else
 $PERSW -f -P 0 3221356557 01 2>> $LOG
-#fi
 
 # install sshd when it is on SD
 if [ -d $VOLUME/Toolbox/ ]; then

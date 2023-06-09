@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="reboot Unit v0.1.2 (2021-02-25 by MIBonk)"
+revision="reboot Unit v0.1.4 (2021-06-09 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,8 +12,9 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/flash.mib ] || [ -f $TMP/backup.mib ] || [ -f $TMP/rccd.mib ] || [ -f $TMP/svm.mib ] || [ -f /$TMP/vim.mib ] || [ -f $TMP/ambient.mib ]; then
 	echo "Reboot not possible because some other process is already running!" | $TEE -a $LOG
@@ -39,6 +40,7 @@ case $1 in
 			exit 0
 		}
 
+		echo -ne "Reboot Unit..." | $TEE -a $LOG
 		[ -z "$GEM" ] && echo -ne "\033[31m"
 		[ -n "$GEM" ] && echo -ne "\n" | $TEE -a $LOG
 		[ -z "$GEM" ] && echo -ne " press CTRL-C to abort!!!\n" | $TEE -a $LOG

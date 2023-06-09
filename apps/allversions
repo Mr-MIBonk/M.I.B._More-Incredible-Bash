@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="read out GEM Version v0.1.1 (2023-05-23 by MIB-Wiki)"
+revision="read out GEM Version v0.1.2 (2023-06-08 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -12,8 +12,9 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS > /dev/null
-	#echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+#echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
@@ -28,21 +29,22 @@ case $1 in
 	-p) {
 		trap '' 2
 
-		cat $thisdir/../config/LOGO > $LOG
-		echo $VERSION >> $LOG
-		echo -ne "______________________________________________________________________\n" >> $LOG
-		echo -ne "Train = "$TRAINVERSION"\n" >> $LOG
-		echo -ne "MU = "$MUVERSION"\n" >> $LOG
-		echo -ne "Hardware version = "$HWNO"\n" >> $LOG
-		echo -ne "Fazit = "$FAZIT"\n" >> $LOG
-		echo -ne "Part number = "$PARTNO"\n" >> $LOG
-		echo -ne "EEPROM Variant = "$COMPONENT"\n" >> $LOG
-		echo -ne "Variant = "$VARIANT"\n" >> $LOG
-		echo -ne "VIN car = "$VINCAR"\n" >> $LOG
-		echo -ne "VIN MIB = "$VINMIB"\n" >> $LOG
-		echo -ne "Coding = "$CODING"\n" >> $LOG
-		echo -ne "Car model = "$MODEL"\n" >> $LOG
-		echo -ne "______________________________________________________________________\n" >> $LOG
+		cat $thisdir/../config/LOGO | $TEE -a $LOG
+		echo $VERSION | $TEE -a $LOG
+		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
+		echo -ne "Train = "$TRAINVERSION"\n" | $TEE -a $LOG
+		echo -ne "MU = "$MUVERSION"\n" | $TEE -a $LOG
+		echo -ne "Hardware version = "$HWNO"\n" | $TEE -a $LOG
+		echo -ne "Fazit = "$FAZIT"\n" | $TEE -a $LOG
+		echo -ne "Part number = "$PARTNO"\n" | $TEE -a $LOG
+		echo -ne "EEPROM Variant = "$COMPONENT"\n" | $TEE -a $LOG
+		echo -ne "Variant = "$VARIANT"\n" | $TEE -a $LOG
+		echo -ne "VIN car = "$VINCAR"\n" | $TEE -a $LOG
+		echo -ne "VIN MIB = "$VINMIB"\n" | $TEE -a $LOG
+		echo -ne "Car model ID = "$MODELID"\n" | $TEE -a $LOG
+		echo -ne "Car model = "$MODEL"\n" | $TEE -a $LOG
+		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
+
 		#get Gracenote database
 		if [[ -e /mnt/gracenotedb/database.fileinfo ]]; then
 			echo -n 'GracenoteDB ='
