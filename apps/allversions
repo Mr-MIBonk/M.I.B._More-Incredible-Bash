@@ -44,6 +44,7 @@ case $1 in
 		echo -ne "Car model ID = "$MODELID"\n" | $TEE -a $LOG
 		echo -ne "Car model = "$MODEL"\n" | $TEE -a $LOG
 		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
+
 		#get Gracenote database
 		if [[ -e /mnt/gracenotedb/database.fileinfo ]]; then
 			echo -n 'GracenoteDB ='
