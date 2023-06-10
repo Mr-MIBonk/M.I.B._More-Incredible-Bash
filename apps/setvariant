@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setvariant v0.1.2 (2023-06-10 by MIB-Wiki)"
+revision="setvariant v0.1.3 (2023-06-10 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -30,19 +30,19 @@ case $1 in
 -var) {
 	trap '' 2
 
-	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
 	echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
-	VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')"
+	VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
 	echo -ne "Current Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
 
 	echo -ne "Reading Variant_2 from EEPROM...\n" | $TEE -i -a $LOG
 	echo -ne "Reading Unit Class from EEPROM...\n" | $TEE -i -a $LOG
-	VARTYPE=$($E2P r DE 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') #Unit class: 01=High 04=Premium
+	VARTYPE=$($E2P r DE 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Unit class: 01=High 04=Premium
 	#echo $VARTYPE
 	echo -ne "Reading Feature bits from EEPROM...\n" | $TEE -i -a $LOG
-	feature_byte=$($E2P r DF 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p')
-	binary_value=$(echo "ibase=16; obase=2; $feature_byte" | bc )
-	binary_value=$(echo "00000000"${binary_value} | tail -c9)
+	feature_byte=$($E2P r DF 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG
+	binary_value=$(echo "ibase=16; obase=2; $feature_byte" | bc ) 2>> $LOG
+	binary_value=$(echo "00000000"${binary_value} | tail -c9) 2>> $LOG
 	#echo $binary_value
 	#feature bits
 		VARTEL="$(echo -ne $binary_value | cut -c8)" #Telephone
@@ -54,7 +54,7 @@ case $1 in
 		VARMMIRADIO="$(echo -ne $binary_value | cut -c2)" #MMI Radio
 		#echo 0$VARMMIRADIO$VAR2DNAV$VARLTE$VARSIR$VARDAB$VARNAV$VARTEL
 	echo -ne "Reading Region from EEPROM...\n" | $TEE -i -a $LOG
-	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') #Region: 02=EU
+	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Region: 02=EU
 	#echo $VARREG
 
 	#error handler for variant_1
@@ -148,7 +148,7 @@ case $1 in
 		echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
 		echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
 		$E2P w BA $EVAR >> $LOG
-		COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
+		COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
 		echo -ne "New Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
 	else
 		echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG

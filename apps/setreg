@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setregeu v0.1.3 (2023-06-10 by MIB-Wiki)"
+revision="setregeu v0.1.4 (2023-06-10 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -59,74 +59,74 @@ case $1 in
 			#$PC i:0:0x501828F0 0
 
 			echo -ne "--- RDS switch off\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343763457 0
+			$PERSW -f -t int 0 1343763457 0 2>> $LOG
 
 			echo -ne "--- AF functionality on\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343763458 1
+			$PERSW -f -t int 0 1343763458 1 2>> $LOG
 			
 			echo -ne "--- Radiotext+ on\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343763464 1
+			$PERSW -f -t int 0 1343763464 1 2>> $LOG
 
 			echo -ne "--- PI Ignore off\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343763472 0
+			$PERSW -f -t int 0 1343763472 0 2>> $LOG
 
 			echo -ne "--- AM disable on\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343764482 1
+			$PERSW -f -t int 0 1343764482 1 2>> $LOG
 
 			echo -ne "--- RDS deactivation off\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343764496 0
+			$PERSW -f -t int 0 1343764496 0 2>> $LOG
 
 			echo -ne "--- AF deactivation off\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343764512 0
+			$PERSW -f -t int 0 1343764512 0 2>> $LOG
 
 			echo -ne "--- Navigation Country\n" | $TEE -a $LOG
 			# 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
 			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile)
-			$PERSW -f -t int 0 1343753471 1
+			$PERSW -f -t int 0 1343753471 1 2>> $LOG
 
 			echo -ne "--- Import media\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343774736 1
+			$PERSW -f -t int 0 1343774736 1 2>> $LOG
 
 			echo -ne "--- Media Ripping\n" | $TEE -a $LOG
-			$PERSW -f -t int 0 1343774752 1
+			$PERSW -f -t int 0 1343774752 1 2>> $LOG
 
 			echo -ne "--- Regional Codes DVD\n" | $TEE -a $LOG
-			$PERSW -f -t int 28442848 515 2
+			$PERSW -f -t int 28442848 515 2 2>> $LOG
 
 			echo -ne "--- Regional Codes Blueray\n" | $TEE -a $LOG
-			$PERSW -f -t int 28442848 516 2
+			$PERSW -f -t int 28442848 516 2 2>> $LOG
 
 			echo -ne "--- Regional Codes DVD Counter\n" | $TEE -a $LOG
-			$PERSW -f -t int 28442848 517 5
+			$PERSW -f -t int 28442848 517 5 2>> $LOG
 
 			echo -ne "--- Regional Codes Blueray Counter\n" | $TEE -a $LOG
-			$PERSW -f -t int 28442848 518 5
+			$PERSW -f -t int 28442848 518 5 2>> $LOG
 			
 			echo -ne "--- TMCPro EU\n" | $TEE -a $LOG
-			$PERSW -f -t int 28442848 520 32783
+			$PERSW -f -t int 28442848 520 32783 2>> $LOG
 
 			echo -ne "--- Gracenote local ON\n" | $TEE -a $LOG
-			$PERSW -f -P -L 1 -O 9 0 3221356628 F
-			$PERSW -f -P -L 1 -O 8 0 3221356628 F
+			$PERSW -f -P -L 1 -O 9 0 3221356628 F 2>> $LOG
+			$PERSW -f -P -L 1 -O 8 0 3221356628 F 2>> $LOG
 
 			echo -ne "--- Radio stationlogo DB\n" | $TEE -a $LOG
 			#	0=none, 1=EU, 28=China, 66=Hongkong, Macao=67, CD=Korea, EA=Taiwan
-			$PERSW -f -P -L 8 -O 48 0 3221356628 01
+			$PERSW -f -P -L 8 -O 48 0 3221356628 01 2>> $LOG
 			
 			echo -ne "--- SDS region Flag\n" | $TEE -a $LOG
 			# 0=no region, 1=EU, 2=NAR, 3=MSA, 4=Korea, 5=China, 6=Japan, 7=AsiaPacific, 8=Australia, 9=South Africa, 10=NEAST,
 			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile), 18=China 2, 19=China 3
-			$PERSW -f -P -L 8 -O 72 0 3221356628 01
+			$PERSW -f -P -L 8 -O 72 0 3221356628 01 2>> $LOG
 
 			echo -ne "--- Variant region\n" | $TEE -a $LOG
 			# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
-			$PERSW -f -t int 678364556 9 2
+			$PERSW -f -t int 678364556 9 2 2>> $LOG
 
 			#echo -ne "switch variant feature byte type to High\n"
 			#$PC i:678364556:4 1
 
 			echo -ne "--- Disable variant feature byte sirius\n"
-			$PERSW -f -t int 678364556 8 0
+			$PERSW -f -t int 678364556 8 0 2>> $LOG
 
 			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 		else
