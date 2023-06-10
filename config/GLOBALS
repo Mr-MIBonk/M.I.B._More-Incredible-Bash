@@ -1,4 +1,4 @@
-# GLOBALS v0.3.7 (2023-06-08 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.8 (2023-06-10 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 PERSW="on -f mmx /net/mmx/eso/bin/dumb_persistence_writer" # has to be located in folder on unit to have access to libaries
 UDP="on -f rcc $VOLUME/apps/sbin/updatePersistence" # from FW update
-TIMESTAMP=$(/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S)
+TIMESTAMP="/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S"
 SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
 RDIFF="$VOLUME/apps/sbin/rdiff" # not on any unit
 E2P="on -f rcc /net/rcc/usr/apps/modifyE2P"
@@ -83,6 +83,6 @@ BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
 . $thisdir/../config/LOGS
 
 # add timestamp to log
-echo -ne "\n-----------\ntimestamp: $TIMESTAMP\n" >> $LOG
+echo -ne "\n-----------\ntimestamp: $(TIMESTAMP)\n" >> $LOG
 
 return 2> /dev/null
