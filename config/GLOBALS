@@ -83,6 +83,6 @@ BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
 . $thisdir/../config/LOGS
 
 # add timestamp to log
-echo -ne "\n-----------\ntimestamp: $(TIMESTAMP)\n" >> $LOG
+echo -ne "\n-----------\ntimestamp: $($TIMESTAMP)\n" >> $LOG
 
 return 2> /dev/null
