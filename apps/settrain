@@ -91,6 +91,13 @@ case $1 in
 
 			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 		fi
+
+trap 2
+
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+return 2> /dev/null
+
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -123,6 +130,4 @@ case $1 in
 	};;
 esac
 
-trap 2
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
 exit 0

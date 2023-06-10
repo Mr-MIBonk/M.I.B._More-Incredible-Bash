@@ -21,7 +21,7 @@ if [ -f $TMP/reboot.mib ]; then
 fi
 
 if [ "$2" = "-noboot" ]; then
-	noboot=1
+	noboot=$2
 else
 	noboot=""
 fi
@@ -203,3 +203,4 @@ return 2> /dev/null
 	esac
 
 exit 0
+

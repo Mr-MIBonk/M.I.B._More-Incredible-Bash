@@ -206,4 +206,5 @@ fi
 
 trap 2
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
+return 2> /dev/null
 exit 0
