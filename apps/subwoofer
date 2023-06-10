@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.0 (2023-02-18 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.1 (2023-06-10 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -64,9 +64,9 @@ BACKUP()
 	echo -ne "\nREAD sound datasets ---\n" | $TEE -i -a $LOG
 	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
 	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
-	DS3000_6=$(on -f mmx $PC b:0:3221422100:6) #0x3000 Byte hex 06
-	DS3000_31=$(on -f mmx $PC b:0:3221422100:31) #0x3000 Byte hex 1F
-	DS3000_684=$(on -f mmx $PC b:0:3221422100:684) #0x3000 Byte 684
+	DS3000_6=$($PC b:0:3221422100:6) #0x3000 Byte hex 06
+	DS3000_31=$($PC b:0:3221422100:31) #0x3000 Byte hex 1F
+	DS3000_684=$($PC b:0:3221422100:684) #0x3000 Byte 684
 
 	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
 	if [ ! -f $NAND/0x3B00 ]; then
@@ -141,13 +141,13 @@ else
 	return 2> /dev/null
 fi
 
-AMP="$(on -f mmx $PC i:0:0x50182CFF)" # long coding byte 11
+AMP="$($PC i:0:0x50182CFF)" # long coding byte 11
 echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 # echo -ne "$(on -f mmx /eso/bin/dumb_persistence_reader 0 4101)\n" # longcoding output for debugging
 
 if [ "$AMP" = 1 ]; then
 	echo -ne "Internal sound system coding found!\n" | $TEE -a $LOG
-	SOUND="$(on -f mmx $PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
+	SOUND="$($PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
 	echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
 	if [ $SOUND -ge 30 ]; then
 		echo -ne "Sound system is supported\n\n" | $TEE -a $LOG
@@ -180,7 +180,7 @@ trap '' 2
 	DS3000=$(echo $DS3000 | cut -c1-$LENGTH) # DS with crc bytes removed
 	echo -ne "0x3000 dataset without crc:\n$DS3000\n\n" >> $LOG
 	
-	#SUBGAIN="$(on -f mmx $PC b:0:3221422100:684)" # 0x3000 byte 00 - type of sound system
+	#SUBGAIN="$($PC b:0:3221422100:684)" # 0x3000 byte 00 - type of sound system
 	SUBGAIN=$DS3000_684
 	#echo -ne "Gain found in dataset $SUBGAIN in hex\n"
 	SUBGAINDEC="$(echo "ibase=16; $SUBGAIN" | $BC)"
@@ -220,9 +220,9 @@ trap '' 2
 	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
 	echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
+	$PC b:0:3221422100 $DS3000 2>> $LOG
 	sleep 1
-	on -f mmx $PC b:0:1 0 2>> $LOG
+	$PC b:0:1 0 2>> $LOG
 	echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)"\n\n" >> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
@@ -303,8 +303,8 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "Patched dataset with CRC:\n"$DS3B00"\n\n" >> $LOG
 	
 	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422112 $DS3B00 2>> $LOG
-	on -f mmx $PC b:0:1 0 2>> $LOG
+	$PC b:0:3221422112 $DS3B00 2>> $LOG
+	$PC b:0:1 0 2>> $LOG
 	echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)"\n\n" >> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
@@ -332,8 +332,8 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 		echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
-		on -f mmx $PC b:0:3221422100 $DS3000 2>> $LOG
-		on -f mmx $PC b:0:1 0 2>> $LOG
+		$PC b:0:3221422100 $DS3000 2>> $LOG
+		$PC b:0:1 0 2>> $LOG
 		echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)"\n\n" >> $LOG
 		echo -ne "DONE\n\n" | $TEE -a $LOG
 	else
@@ -361,15 +361,15 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 		echo -ne "Dataset backups found\n" | $TEE -i -a $LOG
 		echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
-		on -f mmx $PC b:0:3221422112 $(cat $BACKUPFOLDER/0x3B00) 2>> $LOG
-		on -f mmx $PC b:0:1 0 2>> $LOG
+		$PC b:0:3221422112 $(cat $BACKUPFOLDER/0x3B00) 2>> $LOG
+		$PC b:0:1 0 2>> $LOG
 		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
 		echo -ne "0x3B00 DONE\n\n" | $TEE -a $LOG
 		
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
-		on -f mmx $PC b:0:3221422100 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
-		on -f mmx $PC b:0:1 0 2>> $LOG
+		$PC b:0:3221422100 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
+		$PC b:0:1 0 2>> $LOG
 		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
 		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG
 	else

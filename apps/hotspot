@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="WLAN hotspot activation v0.1.0 (2021-03-07 by @MIB-Wiki)"
+revision="WLAN hotspot activation v0.1.1 (2023-06-10 by @MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -35,8 +35,8 @@ echo -ne "WLAN  hotspot is activated now\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-on -f mmx $PC b:0:3221356628:0.6 $VALUE >> $LOG
-on -f mmx $PC b:0:1 0 >> $LOG
+$PC b:0:3221356628:0.6 $VALUE >> $LOG
+$PC b:0:1 0 >> $LOG
 
 . $thisdir/reboot -t 10
 

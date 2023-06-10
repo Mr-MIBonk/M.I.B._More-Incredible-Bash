@@ -1,4 +1,4 @@
-# LOCALS v0.1.2 (2023-06-08 by MIB-Wiki)
+# LOCALS v0.1.3 (2023-06-10 by MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -16,8 +16,8 @@
 
 # set locals
 if [ "$MIBMO" = 1 ]; then
-	VINCAR="$(on -f mmx $PC s:1501:30 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
-	VINMIB="$(on -f mmx $PC s:1501:5 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
+	VINCAR="$($PC s:1501:30 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
+	VINMIB="$($PC s:1501:5 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
 else
 	VINCAR="-----------------"
 	VINMIB="$($DD if=/net/rcc/mnt/efs-persist/FEC/FecContainer.fec ibs=1 skip=20 count=17 2>/dev/null)"

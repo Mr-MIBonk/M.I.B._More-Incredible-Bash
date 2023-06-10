@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="dev menu v0.1.0 (2020-11-16 by MIBonk)"
+revision="dev menu v0.1.1 (2023-06-10 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -35,8 +35,8 @@ fi
 [ -z "$GEM" ] && echo -ne "\033[36m"
 echo -ne "Developer menu now "$CODEVAR"\n\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
-on -f mmx $PC b:0:3221356557:0 $CODE 2>> $LOG
-on -f mmx $PC b:0:1 0 2>> $LOG
+$PC b:0:3221356557:0 $CODE 2>> $LOG
+$PC b:0:1 0 2>> $LOG
 
 . $thisdir/reboot -t 10
 

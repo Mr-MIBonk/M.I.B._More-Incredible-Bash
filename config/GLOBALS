@@ -1,4 +1,4 @@
-# GLOBALS v0.3.8 (2023-06-10 by MIBonk & MIB-Wiki)
+# GLOBALS v0.3.9 (2023-06-10 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ BC="$VOLUME/apps/sbin/bc" # /net/mmx/mnt/app/armle/usr/bin
 SED="$VOLUME/apps/sbin/sed" # /net/mmx/mnt/app/armle/usr/bin
 DD="$VOLUME/apps/sbin/dd" # /net/mmx/bin
 CUT="$VOLUME/apps/sbin/cut" # /net/mmx/usr/bin
-PC="$VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
+PC="on -f mmx $VOLUME/apps/sbin/pc" # /net/mmx/mnt/app/eso/bin/apps/pc
 PERSR="on -f mmx $VOLUME/apps/sbin/dumb_persistence_reader" # /net/mmx/mnt/app/eso/bin/
 PERSW="on -f mmx /net/mmx/eso/bin/dumb_persistence_writer" # has to be located in folder on unit to have access to libaries
 UDP="on -f rcc $VOLUME/apps/sbin/updatePersistence" # from FW update

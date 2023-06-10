@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Skoda Canton Amp v0.1.1 (2021-11-15 by MIBonk & Mib-Wiki)"
+revision="Skoda Canton Amp v0.1.2 (2023-06-10 by MIBonk & Mib-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -15,7 +15,7 @@ if [ -z $LOG ]; then
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
 
-AMP="$(on -f mmx $PC i:0:0x50182CFF)"
+AMP="$($PC i:0:0x50182CFF)"
 DSPERS="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)"
 DSMIB1="004064f70009f70009f70009000000f70009000000f700090000000003070100001e262e373f474f5764707d8995a6b6c7dbf03331a57f"
 DSMIB2="004073f70009f70009f70009000000f70009000000f70009f700090003070000001e262e373f474f5764707d8995a6b6c7dbf03831c894"
@@ -55,8 +55,8 @@ echo -ne "Install CANTON dataset for old MIB1 system\n" | $TEE -a $LOG
   if [ "$DSPERS" = "$DSMIB2" ]; then
 	echo -ne "MIB2 CANTON dataset found on unit\n" | $TEE -a $LOG
 	echo -ne "Installing MIB1 CANTON dataset\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422112 $DSMIB1 2>> $LOG
-	on -f mmx $PC b:0:1 0 2>> $LOG
+	$PC b:0:3221422112 $DSMIB1 2>> $LOG
+	$PC b:0:1 0 2>> $LOG
 	echo -ne "DONE\n" | $TEE -a $LOG
 	trap 2
 	. $thisdir/reboot -t 10
@@ -81,8 +81,8 @@ echo -ne "Install CANTON dataset for new MIB2 system\n" | $TEE -a $LOG
   if [ "$DSPERS" = "$DSMIB1" ]; then
 	echo -ne "MIB1 CANTON dataset found on unit\n" | $TEE -a $LOG
 	echo -ne "Installing MIB2 CANTON dataset\n" | $TEE -a $LOG
-	on -f mmx $PC b:0:3221422112 $DSMIB2 2>> $LOG
-	on -f mmx $PC b:0:1 0 2>> $LOG
+	$PC b:0:3221422112 $DSMIB2 2>> $LOG
+	$PC b:0:1 0 2>> $LOG
 	echo -ne "DONE\n" | $TEE -a $LOG
 	trap 2
 	. $thisdir/reboot -t 10
@@ -104,9 +104,9 @@ trap '' 2
 echo -ne "Force install CANTON dataset from MIB1\n" | $TEE -a $LOG
 echo -ne "enable external sound system coding\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
-on -f mmx $PC b:0:3221422112 $DSMIB1 2>> $LOG
-on -f mmx $PC i:0:0x50182CFF 2 2>> $LOG
-on -f mmx $PC b:0:1 0 2>> $LOG
+$PC b:0:3221422112 $DSMIB1 2>> $LOG
+$PC i:0:0x50182CFF 2 2>> $LOG
+$PC b:0:1 0 2>> $LOG
 echo -ne "DONE\n" | $TEE -a $LOG
 trap 2
 
@@ -124,9 +124,9 @@ trap '' 2
 echo -ne "Force install CANTON dataset from MIB2\n" | $TEE -a $LOG
 echo -ne "enable external sound system coding\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
-on -f mmx $PC b:0:3221422112 $DSMIB2 2>> $LOG
-on -f mmx $PC i:0:0x50182CFF 2 2>> $LOG
-on -f mmx $PC b:0:1 0 2>> $LOG
+$PC b:0:3221422112 $DSMIB2 2>> $LOG
+$PC i:0:0x50182CFF 2 2>> $LOG
+$PC b:0:1 0 2>> $LOG
 echo -ne "DONE\n" | $TEE -a $LOG
 trap 2
 
