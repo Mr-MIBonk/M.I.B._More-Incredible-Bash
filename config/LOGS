@@ -1,4 +1,4 @@
-# LOGS settings v0.1.4 (2023-06-08 by MIBonk)
+# LOGS settings v0.1.5 (2023-06-10 by MIBonk)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -19,24 +19,26 @@ LOG="$thisdir/../backup/logs/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
 	mkdir -p $thisdir/../backup/logs
 	cat $thisdir/../config/LOGO > $LOG
+	echo $VERSION >> $LOG
+	if [ -z $MODELID ]; then
+	. $thisdir/../config/LOCALS > /dev/null
+	fi
+	echo -ne "______________________________________________________________________\n" >> $LOG
+	echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
+	echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
+	echo -ne "PN: $PARTNO - HW Number: $HWNO\n" >> $LOG
+	echo -ne "Metainfo2 Variant (Variant2): $VARIANT\n" >> $LOG
+	echo -ne "EEPROM Variant (Variant1): $COMPONENT\n" >> $LOG
+	echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
+	echo -ne "Coding: $CODING\n" >> $LOG
+	echo -ne "Car Model: $MODEL\n" >> $LOG
+	echo -ne "VIN MIB: $VINMIB - VIN car: $VINCAR\n" >> $LOG
+	echo -ne "______________________________________________________________________\n" >> $LOG
+	echo -ne "\n ls --> \n" >> $LOG
+	ls -als $thisdir/.. >> $LOG
+	echo -ne "\n" >> $LOG
+	echo -ne "______________________________________________________________________\n" >> $LOG
 fi
-echo $VERSION >> $LOG
-if [ -z $MODELID ]; then
-. $thisdir/../config/LOCALS > /dev/null
-fi
-echo -ne "______________________________________________________________________\n" >> $LOG
-echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
-echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
-echo -ne "PN: $PARTNO - HW Number: $HWNO\n" >> $LOG
-echo -ne "Metainfo2 Variant (Variant2): $VARIANT\n" >> $LOG
-echo -ne "EEPROM Variant (Variant1): $COMPONENT\n" >> $LOG
-echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
-echo -ne "Coding: $CODING\n" >> $LOG
-echo -ne "Car Model: $MODEL\n" >> $LOG
-echo -ne "VIN MIB: $VINMIB - VIN car: $VINCAR\n" >> $LOG
-echo -ne "\n ls --> " >> $LOG
-ls -als $thisdir/.. >> $LOG
-echo -ne "\n"
 
 ERROR() {
 RESULT=$?
