@@ -27,9 +27,9 @@ fi
 echo -ne "______________________________________________________________________\n" >> $LOG
 echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
 echo -ne "Logging_$MUVERSION-$TRAINVERSION-$FAZIT:\n" >> $LOG
-echo -ne "HW Number: $HWNO - PN: $PARTNO\n" >> $LOG
-echo -ne "Variant: $VARIANT\n" >> $LOG
-echo -ne "EEPROM Variant: $COMPONENT\n" >> $LOG
+echo -ne "PN: $PARTNO - HW Number: $HWNO\n" >> $LOG
+echo -ne "Metainfo2 Variant (Variant2): $VARIANT\n" >> $LOG
+echo -ne "EEPROM Variant (Variant1): $COMPONENT\n" >> $LOG
 echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
 echo -ne "Coding: $CODING\n" >> $LOG
 echo -ne "Car Model: $MODEL\n" >> $LOG
