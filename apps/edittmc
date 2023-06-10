@@ -21,7 +21,7 @@ if [ -f $TMP/reboot.mib ]; then
 fi
 
 if [ "$2" = "-noboot" ]; then
-	noboot=$2
+	noboot=1
 else
 	noboot=""
 fi
@@ -68,7 +68,7 @@ PTAUSJSON="$VOLUME/mod/tmc/paytmc_aus.json"
 
 echo -ne "--- Backup tmc files to unit\n" | $TEE -a $LOG
 	if [ -f $NAVAPP/$BRAND/asia/tti/paytmc_bck.json ]; then
-		echo -ne "--- Backup does already exist\n--- Will be skipped\n\n" | $TEE -a $LOG
+		echo -ne "--- Backup does already exist\n--- Will be skipped\n" | $TEE -a $LOG
 	else
 		cp -f $NAVAPP/$BRAND/asia/tti/paytmc.json $NAVAPP/$BRAND/asia/tti/paytmc_bck.json 2>> $LOG
 		cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus.json $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json 2>> $LOG
@@ -110,17 +110,13 @@ cp -f $PTAUSJSON $NAVAPP/$BRAND/za/tti/paytmc_aus.json 2>> $LOG
 
 mount -ur /net/mmx/mnt/app
 
-[ -z "$noboot" ] && echo -ne "All done!\n"
-# echo -ne "\n--- After reboot apply the new TMC Setting via GEM\n"\
-# "    Custom EU\n"\
-# "    Custom Australien\n"\
-# "------------------------------------------\n"
-
-return 2> /dev/null
+[ ! -z "$noboot" ] && echo -ne "All done!\n"
 
 trap 2
 
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+return 2> /dev/null
 
 	};;
 
@@ -164,11 +160,11 @@ cp -f $NAVAPP/$BRAND/asia/tti/paytmc_aus_bck.json $NAVAPP/$BRAND/za/tti/paytmc_a
 
 mount -ur /net/mmx/mnt/app
 
-return 2> /dev/null
-
 trap 2
 
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
+
+return 2> /dev/null
 
 	};;
 
