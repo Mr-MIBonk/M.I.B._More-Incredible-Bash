@@ -55,7 +55,7 @@ case $1 in
 		#echo 0$VARMMIRADIO$VAR2DNAV$VARLTE$VARSIR$VARDAB$VARNAV$VARTEL
 	echo -ne "Reading Region from EEPROM...\n" | $TEE -i -a $LOG
 	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') #Region: 02=EU
-	echo $VARREG
+	#echo $VARREG
 
 	#error handler for variant_1
 	VARERROR=0
