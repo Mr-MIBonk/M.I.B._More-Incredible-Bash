@@ -164,6 +164,8 @@ case $1 in
 
 # help or unknown parameter ------------------------------
 	*) {
+		noboot=1
+		DATASET_280=""
 		echo ""
 		echo $revision
 		echo ""
@@ -198,13 +200,15 @@ case $1 in
 	};;
 esac
 
-if [[ ! -z "$DATASET_280" ]]; then
+if [ ! -z "$DATASET_280" ]; then
 	$PERSW -f -P 10 3221422086 $DATASET_2D00 >> $LOG
 	$PERSW -f -P 10 3221422085 $DATASET_280 >> $LOG
 	echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 fi
 
 trap 2
+
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 return 2> /dev/null
+
 exit 0
