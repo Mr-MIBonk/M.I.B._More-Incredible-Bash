@@ -33,7 +33,7 @@ echo -ne "EEPROM Variant (Variant1): $COMPONENT\n" >> $LOG
 echo -ne "Parameter set part number: $DATASETV\n" >> $LOG
 echo -ne "Coding: $CODING\n" >> $LOG
 echo -ne "Car Model: $MODEL\n" >> $LOG
-echo -ne "VIN -> CAR: $VINCAR - MIB: $VINMIB\n" >> $LOG
+echo -ne "VIN MIB: $VINMIB - VIN car: $VINCAR\n" >> $LOG
 echo -ne "\n ls --> " >> $LOG
 ls -als $thisdir/.. >> $LOG
 echo -ne "\n"
