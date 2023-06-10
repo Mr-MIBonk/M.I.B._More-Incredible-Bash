@@ -123,7 +123,7 @@ case $1 in
 			$PERSW -f -t int 678364556 9 2
 
 			#echo -ne "switch variant feature byte type to High\n"
-			#on -f mmx $PC i:0x286f058c:4 1
+			#on -f mmx $PC i:678364556:4 1
 
 			echo -ne "--- Disable variant feature byte sirius\n"
 			$PERSW -f -t int 678364556 8 0
@@ -133,6 +133,11 @@ case $1 in
 			echo -ne "Skipped as unit has non EU train.\n" | $TEE -a $LOG
 			exit 1
 		fi
+
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+return 2> /dev/null
+
 	};;
 
 	# help or unknown parameter ------------------------------
@@ -165,7 +170,4 @@ case $1 in
 	};;
 esac
 
-trap 2
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
-return 2> /dev/null
 exit 0
