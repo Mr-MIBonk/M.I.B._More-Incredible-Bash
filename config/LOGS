@@ -34,7 +34,7 @@ if [ ! -f $LOG ]; then
 	echo -ne "Car Model: $MODEL\n" >> $LOG
 	echo -ne "VIN MIB: $VINMIB - VIN car: $VINCAR\n" >> $LOG
 	echo -ne "______________________________________________________________________\n" >> $LOG
-	echo -ne "\n ls --> \n" >> $LOG
+	echo -ne "\nls -->\n" >> $LOG
 	ls -als $thisdir/.. >> $LOG
 	echo -ne "\n" >> $LOG
 	echo -ne "______________________________________________________________________\n" >> $LOG

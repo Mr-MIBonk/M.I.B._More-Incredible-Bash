@@ -12,9 +12,8 @@ thisdir="$(dirname $0)"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS > /dev/null
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
-
-#echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo -ne "Aborted because the reboot is running...\n" | $TEE -a $LOG
@@ -29,19 +28,19 @@ case $1 in
 	-p) {
 		trap '' 2
 
-		cat $thisdir/../config/LOGO | $TEE -a $LOG
-		echo $VERSION | $TEE -a $LOG
-		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
-		echo -ne "Train = "$TRAINVERSION" "$MUVERSION"\n" | $TEE -a $LOG
-		echo -ne "Part number (SW) = "$PARTNO" Hardware version = "$HWNO"\n" | $TEE -a $LOG
-		echo -ne "EEPROM Variant (Variant1) = "$COMPONENT"\n" | $TEE -a $LOG
-		echo -ne "Metainfo2 Variant (Variant2) = "$VARIANT"\n" | $TEE -a $LOG
-		echo -ne "Fazit = "$FAZIT"\n" | $TEE -a $LOG
-		echo -ne "Long coding = "$CODING"\n" | $TEE -a $LOG
-		echo -ne "Car model = "$MODEL"\n" | $TEE -a $LOG
-		echo -ne "VIN MIB = "$VINMIB"\n" | $TEE -a $LOG
-		echo -ne "VIN car = "$VINCAR"\n" | $TEE -a $LOG
-		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
+		cat $thisdir/../config/LOGO
+		echo $VERSION
+		echo -ne "______________________________________________________________________\n"
+		echo -ne "Train = "$TRAINVERSION" "$MUVERSION"\n"
+		echo -ne "Part number (SW) = "$PARTNO" Hardware version = "$HWNO"\n"
+		echo -ne "EEPROM Variant (Variant1) = "$COMPONENT"\n"
+		echo -ne "Metainfo2 Variant (Variant2) = "$VARIANT"\n"
+		echo -ne "Fazit = "$FAZIT"\n"
+		echo -ne "Long coding = "$CODING"\n"
+		echo -ne "Car model = "$MODEL"\n"
+		echo -ne "VIN MIB = "$VINMIB"\n"
+		echo -ne "VIN car = "$VINCAR"\n"
+		echo -ne "______________________________________________________________________\n\n"
 
 		#get Gracenote database
 		if [[ -e /net/mmx/mnt/gracenotedb/database.fileinfo ]]; then
@@ -78,8 +77,8 @@ case $1 in
 		fi
 
 		if [[ -e /net/mmx/mnt/boardbook/RSDB/Update.txt ]]; then
-			RSDB_NAME=$(basename /mnt/boardbook/RSDB/*.sqlite | sed 's/.sqlite//')
-			RSDB_VERSION=$(cat /mnt/boardbook/RSDB/Update.txt | grep "version.default" | sed 's/version.default=//')
+			RSDB_NAME=$(basename /net/mmx/mnt/boardbook/RSDB/*.sqlite | sed 's/.sqlite//')
+			RSDB_VERSION=$(cat /net/mmx/mnt/boardbook/RSDB/Update.txt | grep "version.default" | sed 's/version.default=//')
 			echo "Radiodata DB: $RSDB_NAME $RSDB_VERSION"
 		fi
 		echo -n "Languages supported = "
@@ -89,7 +88,7 @@ case $1 in
 		echo -n "Exceptionlist: "
 		cat /net/mmx/net/rcc/dev/shmem/version.txt | grep "ExceptionList|data|0|App|" | cut -d '|' -f 5
 
-		projectstring=`cat /etc/project.txt`
+		projectstring=`cat /net/mmx/mnt/system/etc/project.txt`
 
 		#get APP version
 		echo -n '\nAPP: '

@@ -20,8 +20,8 @@ fi
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
-echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
