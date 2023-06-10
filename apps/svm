@@ -65,7 +65,7 @@ if [ -f $VERSIONS ]; then
 	echo -ne "SvmInfo - " | $TEE -a $LOG
 	. $thisdir/zlib -c $SWDL/SvmInfo.bin
 	
-	echo -ne "CfgAckRand - " | $TEE -a $LOG
+	echo -ne "\nCfgAckRand - " | $TEE -a $LOG
 	. $thisdir/zlib -d $SWDL/CfgAckRand.z
 	 
 	INPUT="$(cat $SWDL/CfgAckRand.bin | $XXD -p | awk '{print toupper($0)}')"
@@ -84,7 +84,7 @@ if [ -f $VERSIONS ]; then
 	
 	/usr/apps/modifyE2P w 3f0 00 00 01 >> $LOG
 	
-	echo -ne "clear SVM done!\n\n" | $TEE -a $LOG
+	echo -ne "\nDone. Try to delete DTC 1555 with any OBD2 tool!\n\n" | $TEE -a $LOG
 	rm -rf $TMP/$thisname.mib 2>/dev/null
 	trap 2
 	. $thisdir/reboot -t 10

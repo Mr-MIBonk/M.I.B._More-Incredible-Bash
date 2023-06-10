@@ -19,7 +19,7 @@ if [ "$MIBMO" = 1 ]; then
 	VINCAR="$(on -f mmx $PC s:1501:30 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
 	VINMIB="$(on -f mmx $PC s:1501:5 2> /dev/null | $SED 's/[^a-zA-Z 0-9]//g')"
 else
-	VINCAR=""
+	VINCAR="-----------------"
 	VINMIB="$($DD if=/net/rcc/mnt/efs-persist/FEC/FecContainer.fec ibs=1 skip=20 count=17 2>/dev/null)"
 fi
 MODELID="$($E2P r F1 3 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g')"

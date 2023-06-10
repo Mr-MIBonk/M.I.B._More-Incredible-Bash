@@ -1328,7 +1328,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Train, variant, coding, adaptaion & language will be converted to EU."
+    label	"Train, variant, coding, adaptation & language will be converted to EU."
 	poll    0
 
 keyValue

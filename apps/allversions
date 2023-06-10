@@ -32,17 +32,15 @@ case $1 in
 		cat $thisdir/../config/LOGO | $TEE -a $LOG
 		echo $VERSION | $TEE -a $LOG
 		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
-		echo -ne "Train = "$TRAINVERSION"\n" | $TEE -a $LOG
-		echo -ne "MU = "$MUVERSION"\n" | $TEE -a $LOG
-		echo -ne "Hardware version = "$HWNO"\n" | $TEE -a $LOG
+		echo -ne "Train = "$TRAINVERSION" "$MUVERSION"\n" | $TEE -a $LOG
+		echo -ne "Part number (SW) = "$PARTNO" Hardware version = "$HWNO"\n" | $TEE -a $LOG
+		echo -ne "EEPROM Variant (Variant1) = "$COMPONENT"\n" | $TEE -a $LOG
+		echo -ne "Metainfo2 Variant (Variant2) = "$VARIANT"\n" | $TEE -a $LOG
 		echo -ne "Fazit = "$FAZIT"\n" | $TEE -a $LOG
-		echo -ne "Part number = "$PARTNO"\n" | $TEE -a $LOG
-		echo -ne "EEPROM Variant = "$COMPONENT"\n" | $TEE -a $LOG
-		echo -ne "Variant = "$VARIANT"\n" | $TEE -a $LOG
-		echo -ne "VIN car = "$VINCAR"\n" | $TEE -a $LOG
-		echo -ne "VIN MIB = "$VINMIB"\n" | $TEE -a $LOG
-		echo -ne "Car model ID = "$MODELID"\n" | $TEE -a $LOG
+		echo -ne "Long coding = "$CODING"\n" | $TEE -a $LOG
 		echo -ne "Car model = "$MODEL"\n" | $TEE -a $LOG
+		echo -ne "VIN MIB = "$VINMIB"\n" | $TEE -a $LOG
+		echo -ne "VIN car = "$VINCAR"\n" | $TEE -a $LOG
 		echo -ne "______________________________________________________________________\n" | $TEE -a $LOG
 
 		#get Gracenote database
