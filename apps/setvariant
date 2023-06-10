@@ -55,14 +55,14 @@ case $1 in
 		#echo 0$VARMMIRADIO$VAR2DNAV$VARLTE$VARSIR$VARDAB$VARNAV$VARTEL
 	echo -ne "Reading Region from EEPROM...\n" | $TEE -i -a $LOG
 	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') #Region: 02=EU
-	#echo $VARREG
+	echo $VARREG
 
 	#error handler for variant_1
 	VARERROR=0
 
-	if [ $VARTYPE = 1 ]; then #High
+	if [ $VARTYPE = 01 ]; then #High
 		VARTYPE="48 "
-	elif [ $VARTYPE = 4 ]; then #Premium
+	elif [ $VARTYPE = 04 ]; then #Premium
 		VARTYPE="50 "
 	else
 		echo -ne "Type unknown\n" | $TEE -i -a $LOG
@@ -70,9 +70,9 @@ case $1 in
 		VARERROR=1
 	fi
 
-	#if [ $VARTEL = 1 ]; then #ENABLED
+	#if [ $VARTEL = 01 ]; then #ENABLED
 	#	VARTEL="54 "
-	#elif [ $VARTEL = 0 ]; then #OFF
+	#elif [ $VARTEL = 00 ]; then #OFF
 	#	VARTEL=""
 	#else
 	#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
@@ -121,17 +121,17 @@ case $1 in
 	fi
 
 	case $VARREG in
-		1) VARREG="45 52 " ;; #ER
-		2) VARREG="45 55 " ;; #EU
-		3) VARREG="55 53 " ;; #US
-		4) VARREG="52 57 " ;; #RW
-		5) VARREG="43 4e " ;; #CN
-		6) VARREG="4a 50 " ;; #JP
-		7) VARREG="4B 52 " ;; #KR
-		8) VARREG=""		  #Asia?
+		01*) VARREG="45 52 " ;; #ER
+		02*) VARREG="45 55 " ;; #EU
+		03*) VARREG="55 53 " ;; #US
+		04*) VARREG="52 57 " ;; #RW
+		05*) VARREG="43 4e " ;; #CN
+		06*) VARREG="4a 50 " ;; #JP
+		07*) VARREG="4B 52 " ;; #KR
+		08*) VARREG=""		  #Asia?
 			echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
 			VARERROR=1 ;;
-		9) VARREG="54 57 " ;; #TW
+		09*) VARREG="54 57 " ;; #TW
 		*) VARREG=""
 			echo -ne "Region unknown\n" | $TEE -i -a $LOG
 			VARERROR=1 ;;
@@ -161,6 +161,11 @@ case $1 in
 	echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
 	echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
 	echo -ne "Good luck!\n"
+
+	trap 2
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
+	return 2> /dev/null
+
 };;
 
 	# help or unknown parameter ------------------------------
@@ -193,7 +198,4 @@ case $1 in
 	};;
 esac
 
-trap 2
-[ -z "$noboot" ] && . $thisdir/reboot -t 10
-return 2> /dev/null
 exit 0
