@@ -24,7 +24,7 @@ echo "brick your unit! - All you do and use at your own risk!"
 
 . /net/mmx/fs/sda0/config/BASICS
 
-if [[ "$TRAINVERSION" = *EU* ]]; then
+if [[ "$TRAINVERSION" = *ER* ]]; then
 	echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n" | $TEE -i -a $LOG
 	echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
 	echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
