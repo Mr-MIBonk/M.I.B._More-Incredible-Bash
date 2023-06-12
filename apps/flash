@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.2.2 (2023-05-07 by MIBonk & MIB-Wiki)"
+revision="flash v0.2.3 (2023-06-13 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -19,6 +19,9 @@ if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
 	echo $thisname" or reboot is already running..."
 	return 2> /dev/null
 fi
+
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
 function IFSstage2 {
 
@@ -45,34 +48,30 @@ if [ -f "$IFS2" ]; then
 	echo -ne "\nDO NOT INTERRUPT!\n\nDURATION: ~3 Minutes\n"
 	[ -z "$GEM" ] && echo -ne "\033[00;00m"
 	echo -ne "\n" >> $LOG
-	on -f rcc /net/rcc/usr/bin/flashunlock >> $LOG
+	[ -f /net/rcc/usr/bin/flashlock ] && $FLASHUNLOCK >> $LOG
 	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
 	[ -z "$GEM" ] && echo -ne "\n" >> $LOG
-	FLASHLOG="/net/rcc/tmp/flash.log"
-	echo "\n" > $FLASHLOG
+
 	trap '' 2
 	if [[ "$OFFSETPART2" = "ba0000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		/net/rcc/usr/bin/flashit -v -d -x -a ba0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	elif [[ "$OFFSETPART2" = "c20000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		/net/rcc/usr/bin/flashit -v -d -x -a c20000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	elif [[ "$OFFSETPART2" = "c00000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		/net/rcc/usr/bin/flashit -v -d -x -a c00000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	elif [[ "$OFFSETPART2" = "be0000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		/net/rcc/usr/bin/flashit -v -d -x -a be0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	elif [[ "$OFFSETPART2" = "bc0000" ]]; then
 		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		/net/rcc/usr/bin/flashit -v -d -x -a bc0000 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	else
-		/net/rcc/usr/bin/flashlock >> $LOG
-		echo -ne "\nFlash offset invalid, flashing aborted!\n\n" | $TEE -i -a $LOG
+		echo -ne "\nFlash offset unknown, flashing aborted!\nGet in contact with M.I.B team and share your backup\nSUpport will be added\n\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		exit 0
 	fi
 
+	FLASHLOG="/net/rcc/tmp/flash.log"
+	echo "\n" > $FLASHLOG
+	/net/rcc/usr/bin/flashit -v -d -x -a $OFFSETPART2 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
 	cat $FLASHLOG >> $LOG #append $FLASHLOG to $LOG
 
 	#validate flash
@@ -88,7 +87,7 @@ if [ -f "$IFS2" ]; then
 		sleep 2
 	else
 		echo -ne "\nATTENTION: Flash validation FAILED\n\nREBOOT will be CANCELED\n\n" | $TEE -i -a $LOG
-		echo -ne "DO NOT reboot or power down  unit - read next lines carefully\n\n" | $TEE -i -a $LOG
+		echo -ne "DO NOT reboot or power down  unit - read next lines carefully!!\n\n" | $TEE -i -a $LOG
 		echo -ne "Possible reasons:\n1. Read error from SD\n2. SD card faulty\n3. File on SD corrupted\n\n"
 		echo -ne "Actions:\n1. Copy patch file again to SD --> try to flash again\n   You can safely remove and insert SD now\n2. Still failing --> try with a FRESH SD card\n3. Still Failing --> get in contact with experts and share your log file\nAs long as you do not reboot or power down the unit the failed flash will not take effect.\nRecovery will be easier this way. However, even a rebooted unit can (most likely) be recovered with expert help and 20-50$ of hardware\n\n-- DO NOT PANIC - GET HELP --\n\n"
 		echo -ne "You can go back now...\n"
@@ -99,7 +98,7 @@ if [ -f "$IFS2" ]; then
 	trap 2
 	
 	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
-	on -f rcc /net/rcc/usr/bin/flashlock >> $LOG
+	[ -f /net/rcc/usr/bin/flashlock ] && $FLASHLOCK >> $LOG
 	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
 	
 else
@@ -120,12 +119,6 @@ rm -rf $TMP/$thisname.mib 2>/dev/null
 
 trap '' 2
 	[ -n "$GEM" ] && touch $TMP/$thisname.mib
-
-# if [ $ME != "RCC" ]; then
-	# echo -ne "\nBackup will only work in RCC bash!\n\n"
-	# rm -rf $TMP/$thisname.mib 2>/dev/null
-	# exit 0
-# fi
 
  . $thisdir/backup -a
 
@@ -159,7 +152,7 @@ else
 		STAGE2FILE_SD=$(find $PF -name $MUVERSION"*.ifs" -type f -printf "%f\n") # Stock ifs-root-stage2 file name
 		STAGE2FILE_SD_PATH=$(find $PF -name $MUVERSION"*.ifs") # Stock ifs-root-stage2 file name with path
 		# /net/mmx/fs/sda0/patches/MHI2_ER_SKG13_P4526_MU1440_PATCH/MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs
-		STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | /net/mmx/fs/sda0/apps/sbin/xxd -u -ps) # Patched ifs-root-stage2 header seize
+		STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | $XXD -u -ps) # Patched ifs-root-stage2 header seize
 		echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
 		echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" nedded to patch this unit\n" | $TEE -i -a $LOG
 		if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
@@ -184,7 +177,7 @@ IFSstage2
 . $thisdir/rccd -d
 . $thisdir/fecel -fec
 . $thisdir/fecel -el
-. $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
+[ $MIBMO = 1 ] && . $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
 . $thisdir/reboot -t 10
 
 return 2> /dev/null

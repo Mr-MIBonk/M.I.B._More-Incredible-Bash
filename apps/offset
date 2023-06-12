@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="offset v0.1.3 (2023-05-21 by MIBonk)"
+revision="offset v0.2.1 (2023-06-13 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -9,14 +9,6 @@ export IPL_CONFIG_DIR=/etc/eso/production
 
 thisname="$(basename $0)"
 thisdir="$(dirname $0)"
-
-if [ $1 = "-log" ];then
-	VALUE=LOG
-elif [ $1 = "-s" ] || [ $1 = "-S" ];then
-	VALUE=SHOW
-else
-	VALUE=""
-fi
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
@@ -28,81 +20,64 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
+
 IFS2OFFSET() {
-
-# file size ifs-root-part2 with fixed values and compare to flashlock output
-STAGE2SIZE="$($FLASHLOCK | grep $OFFSETPART2)"
-STAGE2SIZE=$(echo $STAGE2SIZE | awk -v FS="(" '{print $3}' | awk -v FS=")" '{print $1}') 
-STAGE2SIZE="00"$(echo "obase=16; $STAGE2SIZE" | $BC)
-# ENDIAN Convert...
-STAGE2SIZE=$(echo $STAGE2SIZE | $SED "s/.\{2\}/&:/g" | awk '{print toupper($0)}')
-BYTE1="$(echo $STAGE2SIZE | cut -d':' -f3)"
-BYTE2="$(echo $STAGE2SIZE | cut -d':' -f4)"
-BYTE3="$(echo $STAGE2SIZE | cut -d':' -f2)"
-BYTE4="$(echo $STAGE2SIZE | cut -d':' -f1)"
-STAGE2SIZE=$BYTE2$BYTE1$BYTE3$BYTE4
-
-if [ $VALUE = "SHOW" ];then
-echo -ne $MUVERSION" - "$TRAINVERSION" - "
-echo -ne "0x00"$OFFSETPART2" - "$STAGE2SIZE"\n\n" | $TEE -a $LOG
+if [[ -f /net/rcc/usr/bin/flashlock ]]; then
+	# file size ifs-root-part2 with fixed values and compare to flashlock output
+	STAGE2SIZE="$($FLASHLOCK | grep $OFFSETPART2)"
+	STAGE2SIZE=$(echo $STAGE2SIZE | awk -v FS="(" '{print $3}' | awk -v FS=")" '{print $1}') 2>> $LOG # get ifs-root-stage2 seize in bytes
+	STAGE2SIZE="00"$(echo "obase=16; $STAGE2SIZE" | $BC) 2>> $LOG
+	# ENDIAN Convert...
+	STAGE2SIZE=$(echo $STAGE2SIZE | $SED "s/.\{2\}/&:/g" | awk '{print toupper($0)}') 2>> $LOG
+	BYTE1="$(echo $STAGE2SIZE | cut -d':' -f3)"
+	BYTE2="$(echo $STAGE2SIZE | cut -d':' -f4)"
+	BYTE3="$(echo $STAGE2SIZE | cut -d':' -f2)"
+	BYTE4="$(echo $STAGE2SIZE | cut -d':' -f1)"
+	STAGE2SIZE=$BYTE2$BYTE1$BYTE3$BYTE4
+elif [[ -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt ]] && grep -q STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt; then
+	echo -ne "Getting STAGE2SIZE from backup\n" | $TEE -i -a $LOG
+	STAGE2SIZE=$(grep STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c13-20) 2>> $LOG
+elif [[ ! -f /net/rcc/usr/bin/flashlock ]]; then
+	echo -ne "\nSwitching to legacy mode to determine ifs-root-stage2 size\nThis will take about 1 Minutes, please be patient!\n" | $TEE -i -a $LOG
+	STAGE2SIZE=$($DD bs=4096 skip=$SKIPBLOCKS count=1 if=$fs0p0 2> /dev/null | $DD bs=4 skip=9 count=1 2> /dev/null | $XXD -u -ps ) 2>> $LOG
 else
-echo -ne "0x00"$OFFSETPART2" - "$STAGE2SIZE"\n\n" >> $LOG
+	echo -ne "\nThis should not happen\nContact M.I.B Team\n" | $TEE -i -a $LOG
+	exit 1
 fi
 
 }
 
-	case $VALUE in
+case $1 in
 
-	LOG|SHOW) {
-
-if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	echo -ne "\nRCC offset function not supported on MHIG\nWe will stop script here..." | $TEE -i -a $LOG
-	exit 0
-fi
-
-# determine ifs-root-part2 offset...
-BASE=0x540000
-OFFSET=$($DD bs=4096 skip=1344 count=1 if=$fs0p0 2> /dev/null | $DD bs=4 skip=21 count=1 2> /dev/null | $SED 's/\\/\\\\/g;s/\x0/\\x0/g' | $SED 's/\\x//g');
-echo -ne "ifs-root-part2 (ASCII): "$OFFSET"\n" >> $LOG
-
-# determine part2 offset with fixed values and compare to flashlock output
-OFFSET1="$($FLASHLOCK | grep "ba0000." | $TEE -a $LOG)"
-OFFSET2="$($FLASHLOCK | grep "c20000." | $TEE -a $LOG)"
-OFFSET3="$($FLASHLOCK | grep "c00000." | $TEE -a $LOG)"
-OFFSET4="$($FLASHLOCK | grep "be0000." | $TEE -a $LOG)"
-OFFSET5="$($FLASHLOCK | grep "bc0000." | $TEE -a $LOG)"
-
-if [[ "$OFFSET1" != "" && "$OFFSET2" = "" && "$OFFSET3" = "" && "$OFFSET4" = "" && "$OFFSET5" = "" ]]; then
-	OFFSETPART2=ba0000
-	SKIPBLOCKS=2976
-	IFS2OFFSET
-elif [[ "$OFFSET2" != "" && "$OFFSET1" = "" && "$OFFSET3" = "" && "$OFFSET4" = "" && "$OFFSET5" = "" ]]; then
-	OFFSETPART2=c20000
-	SKIPBLOCKS=3104
-	IFS2OFFSET
-elif [[ "$OFFSET3" != "" && "$OFFSET1" = "" && "$OFFSET2" = "" && "$OFFSET4" = "" && "$OFFSET5" = "" ]]; then
-	OFFSETPART2=c00000
-	SKIPBLOCKS=3072
-	IFS2OFFSET
-elif [[ "$OFFSET4" != "" && "$OFFSET1" = "" && "$OFFSET2" = "" && "$OFFSET3" = "" && "$OFFSET5" = "" ]]; then
-	OFFSETPART2=be0000
-	SKIPBLOCKS=3040
-	IFS2OFFSET
-elif [[ "$OFFSET5" != "" && "$OFFSET1" = "" && "$OFFSET2" = "" && "$OFFSET3" = "" && "$OFFSET4" = "" ]]; then
-	OFFSETPART2=bc0000
-	SKIPBLOCKS=3008
-	IFS2OFFSET
+-log) {
+if [[ -f /net/rcc/usr/bin/flashlock ]]; then
+	OFFSETPART2=$($FLASHLOCK | grep "3 image type=2(IFS     )" | $CUT -c27-32) 2>> $LOG #get ifs-root-stage2 offset
+	result=$(echo "ibase=16; $OFFSETPART2" | $BC) 2>> $LOG
+elif [[ -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt ]] && grep -q OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt; then
+	echo -ne "Getting OFFSETPART2 from backup\n" | $TEE -i -a $LOG
+	OFFSETPART2=$(grep OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c18-23) 2>> $LOG
+elif [[ ! -f /net/rcc/usr/bin/flashlock ]]; then
+	echo -ne "\nSwitching to legacy mode to determine ifs-root-stage2 offset\nThis will take about 2 Minutes, please be patient!\n" | $TEE -i -a $LOG
+	OFFSETPART2=$($DD bs=4096 skip=1344 count=6144 if=$fs0p0 2> /dev/null | $XXD -u | grep 'EB7E FF00 0100 08' | $CUT -c 3-8) 2>> $LOG
+	hex_value1="$OFFSETPART2"
+	hex_value2="540000" #start offset of ifs-root on rcc / skip=1344
+	decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG
+	decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
+	result=$((decimal_value1 + decimal_value2))
+	OFFSETPART2=$(echo "obase=16; $result" | $BC | awk '{printf("%06s\n", $0)}') 2>> $LOG
 else
-	OFFSETPART2="failed"
-	SKIPBLOCKS=""
-	echo -ne "Can't find ifs-root-part2 offset, firmware not supported!\n" | $TEE -a $LOG
-	echo -ne "Backup will continue. A patch will not be available (yet)\n" | $TEE -a $LOG
-	echo -ne "Upload your backup to mibsolution\n" | $TEE -a $LOG
-	sleep 5
-	echo -ne "Backup will start now, but will throw errors\n" | $TEE -a $LOG
-	echo -ne "due to unknown ifs-root stage 2 offset\n" | $TEE -a $LOG
-	sleep 5
+	echo -ne "\nThis should not happen\nContact M.I.B Team\n" | $TEE -i -a $LOG
+	exit 1
 fi
+
+SKIPBLOCKS=$((result / 4096)) # calculte skips needed to get to start of ifs-root-stage2
+
+IFS2OFFSET
+
+echo -ne "\nOffset found: 0x00$OFFSETPART2\n" | $TEE -i -a $LOG
+echo -ne "Stage 2 size: $STAGE2SIZE\n\n" | $TEE -i -a $LOG
 
 return 2> /dev/null
 
@@ -116,8 +91,7 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -log	 		write OFFSET's only to Log"
-		echo "        -s,-S	 		show OFFSET's"
+		echo "        -log	 		get OFFSET's"
 		echo "        --help			show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="copy FEC/EL v0.1.4 (2021-04-10 by MIBonk)"
+revision="copy FEC/EL v0.1.5 (2023-06-12 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -19,6 +19,9 @@ if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
 fi
+
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
 	case $1 in
 
@@ -42,7 +45,7 @@ if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
 		echo -ne "nothing there to copy!\n" | $TEE -a $LOG
 	fi
 else
-	echo -ne "please do first EL Backup!\n" | $TEE -a $LOG
+	echo -ne "please do EL backup 1st!\n" | $TEE -a $LOG
 fi
 
 [ -z "$GEM" ] && echo -ne "\n"
@@ -58,36 +61,33 @@ return 2> /dev/null
 $thisdir/mounts -w
 
 # generate FEC
-#echo -ne "Check FEC File in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-#if [ ! -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ] && [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
+echo -ne "Check addFecs.txt in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
 	. $thisdir/addfec -a
-#else
-#	echo -ne "already exists!\n\n" | $TEE -a $LOG
-#fi
+else
+	echo -ne "addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
+	exit 1
+fi
 
 # copy FEC to Unit, if no one in patch directory check backup folder
-#if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
-	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
-		echo -ne "copy FEC file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-		echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
-		echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	else
-		echo -ne "nothing there to copy!\n\n" | $TEE -a $LOG
-	fi
-#else
-#	echo -ne "please do first FEC Backup!\n" | $TEE -a $LOG
-#fi
+if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
+	echo -ne "copy FEC file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+	[ -n "$GEM" ] && echo -ne "\n"
+	cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+	ERROR
+elif [ -f $VOLUME/common/tools/addFecs.txt ];then
+	echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
+	[ -n "$GEM" ] && echo -ne "\n"
+	cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+	ERROR
+elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+	echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
+	[ -n "$GEM" ] && echo -ne "\n"
+	cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+	ERROR
+else
+	echo -ne "nothing there to copy!\n\n" | $TEE -a $LOG
+fi
 
 [ -z "$GEM" ] && echo -ne "\n"
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="settrain v0.2.1 (2023-06-12 by MIB-Wiki)"
+revision="settrain v0.2.2 (2023-06-12 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -39,6 +39,7 @@ case $1 in
 		TARGETTRAIN=""
 		if [[ "$TRAINVERSION" = *ER* ]]; then
 			echo -ne "Skipping. Your train is already EU!\n\n" | $TEE -i -a $LOG
+			exit 0
 		else
 			echo -ne "Creating backup...\n" | $TEE -i -a $LOG
 			. $thisdir/backup -a

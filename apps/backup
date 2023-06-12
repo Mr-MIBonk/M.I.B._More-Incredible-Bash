@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backup v0.4.1 (2023-06-09 by MIBonk & MIB-Wiki)"
+revision="backup v0.4.2 (2023-06-13 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -25,6 +25,9 @@ if [ "$1" = "-b" ]; then
 else
 	AB=""
 fi
+
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
 # --------run tests-------
 #TEST=1
@@ -93,11 +96,7 @@ case $1 in
 
 		[ -n "$GEM" ] && touch $TMP/backup.mib
 
-		if [[ "$TRAINVERSION" = *MHIG* ]]; then
-			echo -ne "\nRCC offset function not supported on MHIG\n" | $TEE -i -a $LOG
-		else
-			. $thisdir/offset -log
-		fi
+		. $thisdir/offset -log
 
 		if [ -d $BACKUPFOLDER ]; then
 			echo -ne "Found $FAZIT backup, will check if all complete...\n" | $TEE -i -a $LOG
@@ -381,15 +380,14 @@ case $1 in
 			fi	
 		fi
 
-		if [[ -z $AB && $MIBMO -lt 3 ]]; then
+		if [ -z $AB ]; then
 			echo -ne "IFS-stage2......." | $TEE -i -a $LOG
 			if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs ]; then
 				if [ ! -z $SKIPBLOCKS ];then
-					SKIP="1344"
-					COUNTBLOCKS="6144"
+					SKIP="1344" # seize RCC before start of ifs-root
+					COUNTBLOCKS="6144" # max. seize ifs-root
 					((COUNT=$COUNTBLOCKS-($SKIPBLOCKS-$SKIP)))
 					on -f mmx $DD bs=4096 skip=$SKIPBLOCKS if=$BACKUPFOLDER/$MUVERSION-RCC_fs0.bin count=$COUNT of=$BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs 2>> $LOG
-			#		$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 of=$BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2.ifs 2>> $LOG
 					ERROR
 				else
 					echo -ne "OFFSET unkown, aborted!\n" | $TEE -i -a $LOG
@@ -401,8 +399,8 @@ case $1 in
 
 		if [ -z $AB ]; then
 			echo -ne "OFFSET's........." | $TEE -i -a $LOG
-			if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt ]; then
-				echo -ne "OFFSET: 0x00"$OFFSETPART2"-"$STAGE2SIZE"\n" > $BACKUPFOLDER/$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-OFFSET.txt
+			if [ ! -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt ]; then
+				echo -ne "OFFSETPART2: 0x00"$OFFSETPART2"\nSTAGE2SIZE: "$STAGE2SIZE"\n\n" > $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt
 				ERROR
 			else
 				echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG

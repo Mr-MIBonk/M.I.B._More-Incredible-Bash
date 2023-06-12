@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.3.0 (2022-07-23 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.3.1 (2023-06-13 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -19,6 +19,9 @@ if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
 fi
+
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
 if [ -f $VOLUME/common/tools/addFecs.txt ];then
 	echo -ne "AIO detected\n" | $TEE -a $LOG
