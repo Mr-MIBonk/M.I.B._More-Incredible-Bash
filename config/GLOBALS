@@ -1,4 +1,4 @@
-# GLOBALS v0.3.9 (2023-06-10 by MIBonk & MIB-Wiki)
+# GLOBALS v0.4.0 (2023-06-12 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -16,6 +16,15 @@
 
 # USB Mountpoint...
 . $thisdir/mounts -usb
+
+# test if SD card has write access
+touch /$VOLUME/backup/write.test
+if [[ -f /$VOLUME/backup/write.test ]]; then
+	rm -f /$VOLUME/backup/write.test
+else
+	echo "Aborted! SD card is write protected or damaged!"
+	exit 1
+fi
 
 # global bin's
 SHA="/net/rcc/usr/bin/sha1sum"
