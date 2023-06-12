@@ -35,7 +35,7 @@ else
 		echo -ne "\nSD card is write protected!!!\n"
 	else
 		echo -ne "\nCreate issue and attach the log from backup folder at\n"
-		echo -ne "at https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues"
+		echo -ne "https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues"
 	fi
 fi
 
