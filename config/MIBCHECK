@@ -1,0 +1,21 @@
+#!/bin/sh
+# MIBCHECK v0.1.0 (2023-06-12 by MIB-Wiki)
+
+# This scripts checks if a script is compatabile iwth a certain MIB model
+# 1 = MIB2 HARMAN High: MHI2 with FW higer MU ~400 or MHI2Q
+# 2 = very old/early MHI2 FW with MU < ~400
+# 3 = MIB1 HARMAN HIGH: MHIG
+
+if [ $MIBCAP -ge $MIBMO ]; then
+	echo -ne ""
+	#echo -ne "MIB model(s) supported -  script will continue\n" >> $LOG
+else
+	echo -ne "Script does not support this MIB model\n" | $TEE -a $LOG
+	echo -ne "TRAIN: $TRAINVERSION\n" >> $LOG
+	echo -ne "MIB model: $MIBMO\n" >> $LOG
+	echo -ne "Script capability: $MIBCAP\n" >> $LOG
+	echo -ne "Will stope here\nYou can go back now\n"
+	exit 1
+fi
+
+return 2> /dev/null

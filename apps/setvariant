@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setvariant v0.1.3 (2023-06-10 by MIB-Wiki)"
+revision="setvariant v0.1.4 (2023-06-12 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,6 +20,9 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
+
 if [ "$2" = "-noboot" ]; then
 	noboot=$2
 else
@@ -28,137 +31,137 @@ fi
 
 case $1 in
 -var) {
-	trap '' 2
+trap '' 2
 
+COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
+echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
+VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
+echo -ne "Current Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
+
+echo -ne "Reading Variant_2 from EEPROM...\n" | $TEE -i -a $LOG
+echo -ne "Reading Unit Class from EEPROM...\n" | $TEE -i -a $LOG
+VARTYPE=$($E2P r DE 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Unit class: 01=High 04=Premium
+#echo $VARTYPE
+echo -ne "Reading Feature bits from EEPROM...\n" | $TEE -i -a $LOG
+feature_byte=$($E2P r DF 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG
+binary_value=$(echo "ibase=16; obase=2; $feature_byte" | bc ) 2>> $LOG
+binary_value=$(echo "00000000"${binary_value} | tail -c9) 2>> $LOG
+#echo $binary_value
+#feature bits
+	VARTEL="$(echo -ne $binary_value | cut -c8)" #Telephone
+	VARNAV="$(echo -ne $binary_value | cut -c7)" #Navigation
+	VARDAB="$(echo -ne $binary_value | cut -c6)" #DAB
+	VARSIR="$(echo -ne $binary_value | cut -c5)" #Sirius
+	VARLTE="$(echo -ne $binary_value | cut -c4)" #LTE
+	VAR2DNAV="$(echo -ne $binary_value | cut -c3)" #2d Nav
+	VARMMIRADIO="$(echo -ne $binary_value | cut -c2)" #MMI Radio
+	#echo 0$VARMMIRADIO$VAR2DNAV$VARLTE$VARSIR$VARDAB$VARNAV$VARTEL
+echo -ne "Reading Region from EEPROM...\n" | $TEE -i -a $LOG
+VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Region: 02=EU
+#echo $VARREG
+
+#error handler for variant_1
+VARERROR=0
+
+if [ $VARTYPE = 01 ]; then #High
+	VARTYPE="48 "
+elif [ $VARTYPE = 04 ]; then #Premium
+	VARTYPE="50 "
+else
+	echo -ne "Type unknown\n" | $TEE -i -a $LOG
+	VARTYPE=""
+	VARERROR=1
+fi
+
+#if [ $VARTEL = 01 ]; then #ENABLED
+#	VARTEL="54 "
+#elif [ $VARTEL = 00 ]; then #OFF
+#	VARTEL=""
+#else
+#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
+#	VARTEL=""
+#	VARERROR=1
+#fi
+
+if [ $VARNAV = 1 ]; then #ENABLED
+	VARNAV="4e "
+elif [ $VARNAV = 0 ]; then #OFF
+	VARNAV=""
+else
+	echo -ne "Navigation status unknown\n" | $TEE -i -a $LOG
+	VARNAV=""
+	VARERROR=1
+fi
+
+if [ $VARDAB = 1 ]; then #ENABLED
+	VARDAB="44 "
+elif [ $VARDAB = 0 ]; then #OFF
+	VARDAB=""
+else
+	echo -ne "DAB status unknown\n" | $TEE -i -a $LOG
+	VARDAB=""
+	VARERROR=1
+fi
+
+if [ $VARSIR = 1 ]; then #ENABLED
+	VARSIR="53 "
+elif [ $VARSIR = 0 ]; then #OFF
+	VARSIR=""
+else
+	echo -ne "Sirius status unknown\n" | $TEE -i -a $LOG
+	VARSIR=""
+	VARERROR=1
+fi
+
+if [ $VARLTE = 1 ]; then #ENABLED
+	VARLTE="4c "
+elif [ $VARLTE = 0 ]; then #OFF
+	VARLTE=""
+else
+	echo -ne "LTE status unknown\n" | $TEE -i -a $LOG
+	VARLTE=""
+	VARERROR=1
+fi
+
+case $VARREG in
+	01*) VARREG="45 52 " ;; #ER
+	02*) VARREG="45 55 " ;; #EU
+	03*) VARREG="55 53 " ;; #US
+	04*) VARREG="52 57 " ;; #RW
+	05*) VARREG="43 4e " ;; #CN
+	06*) VARREG="4a 50 " ;; #JP
+	07*) VARREG="4B 52 " ;; #KR
+	08*) VARREG=""		  #Asia?
+		echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
+		VARERROR=1 ;;
+	09*) VARREG="54 57 " ;; #TW
+	*) VARREG=""
+		echo -ne "Region unknown\n" | $TEE -i -a $LOG
+		VARERROR=1 ;;
+esac
+
+if [ $VARERROR = 0 ]; then
+	echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
+	$E2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
+	#Build Variant_1 string 
+	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
+	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
+	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
+	AVAR=$(echo "$EVAR" | $XXD -r -p)
+	echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
+	echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
+	$E2P w BA $EVAR >> $LOG
 	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
-	echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
-	VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
-	echo -ne "Current Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
+	echo -ne "New Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
+else
+	echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG
+	exit 1
+fi
+echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 
-	echo -ne "Reading Variant_2 from EEPROM...\n" | $TEE -i -a $LOG
-	echo -ne "Reading Unit Class from EEPROM...\n" | $TEE -i -a $LOG
-	VARTYPE=$($E2P r DE 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Unit class: 01=High 04=Premium
-	#echo $VARTYPE
-	echo -ne "Reading Feature bits from EEPROM...\n" | $TEE -i -a $LOG
-	feature_byte=$($E2P r DF 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG
-	binary_value=$(echo "ibase=16; obase=2; $feature_byte" | bc ) 2>> $LOG
-	binary_value=$(echo "00000000"${binary_value} | tail -c9) 2>> $LOG
-	#echo $binary_value
-	#feature bits
-		VARTEL="$(echo -ne $binary_value | cut -c8)" #Telephone
-		VARNAV="$(echo -ne $binary_value | cut -c7)" #Navigation
-		VARDAB="$(echo -ne $binary_value | cut -c6)" #DAB
-		VARSIR="$(echo -ne $binary_value | cut -c5)" #Sirius
-		VARLTE="$(echo -ne $binary_value | cut -c4)" #LTE
-		VAR2DNAV="$(echo -ne $binary_value | cut -c3)" #2d Nav
-		VARMMIRADIO="$(echo -ne $binary_value | cut -c2)" #MMI Radio
-		#echo 0$VARMMIRADIO$VAR2DNAV$VARLTE$VARSIR$VARDAB$VARNAV$VARTEL
-	echo -ne "Reading Region from EEPROM...\n" | $TEE -i -a $LOG
-	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Region: 02=EU
-	#echo $VARREG
-
-	#error handler for variant_1
-	VARERROR=0
-
-	if [ $VARTYPE = 01 ]; then #High
-		VARTYPE="48 "
-	elif [ $VARTYPE = 04 ]; then #Premium
-		VARTYPE="50 "
-	else
-		echo -ne "Type unknown\n" | $TEE -i -a $LOG
-		VARTYPE=""
-		VARERROR=1
-	fi
-
-	#if [ $VARTEL = 01 ]; then #ENABLED
-	#	VARTEL="54 "
-	#elif [ $VARTEL = 00 ]; then #OFF
-	#	VARTEL=""
-	#else
-	#	echo -ne "Telephone status unknown\n" | $TEE -i -a $LOG
-	#	VARTEL=""
-	#	VARERROR=1
-	#fi
-
-	if [ $VARNAV = 1 ]; then #ENABLED
-		VARNAV="4e "
-	elif [ $VARNAV = 0 ]; then #OFF
-		VARNAV=""
-	else
-		echo -ne "Navigation status unknown\n" | $TEE -i -a $LOG
-		VARNAV=""
-		VARERROR=1
-	fi
-
-	if [ $VARDAB = 1 ]; then #ENABLED
-		VARDAB="44 "
-	elif [ $VARDAB = 0 ]; then #OFF
-		VARDAB=""
-	else
-		echo -ne "DAB status unknown\n" | $TEE -i -a $LOG
-		VARDAB=""
-		VARERROR=1
-	fi
-
-	if [ $VARSIR = 1 ]; then #ENABLED
-		VARSIR="53 "
-	elif [ $VARSIR = 0 ]; then #OFF
-		VARSIR=""
-	else
-		echo -ne "Sirius status unknown\n" | $TEE -i -a $LOG
-		VARSIR=""
-		VARERROR=1
-	fi
-
-	if [ $VARLTE = 1 ]; then #ENABLED
-		VARLTE="4c "
-	elif [ $VARLTE = 0 ]; then #OFF
-		VARLTE=""
-	else
-		echo -ne "LTE status unknown\n" | $TEE -i -a $LOG
-		VARLTE=""
-		VARERROR=1
-	fi
-
-	case $VARREG in
-		01*) VARREG="45 52 " ;; #ER
-		02*) VARREG="45 55 " ;; #EU
-		03*) VARREG="55 53 " ;; #US
-		04*) VARREG="52 57 " ;; #RW
-		05*) VARREG="43 4e " ;; #CN
-		06*) VARREG="4a 50 " ;; #JP
-		07*) VARREG="4B 52 " ;; #KR
-		08*) VARREG=""		  #Asia?
-			echo -ne "Region code 8 unknown\n" | $TEE -i -a $LOG
-			VARERROR=1 ;;
-		09*) VARREG="54 57 " ;; #TW
-		*) VARREG=""
-			echo -ne "Region unknown\n" | $TEE -i -a $LOG
-			VARERROR=1 ;;
-	esac
-
-	if [ $VARERROR = 0 ]; then
-		echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
-		$E2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
-		#Build Variant_1 string 
-		EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
-		#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
-		#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
-		AVAR=$(echo "$EVAR" | $XXD -r -p)
-		echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
-		echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
-		$E2P w BA $EVAR >> $LOG
-		COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
-		echo -ne "New Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
-	else
-		echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG
-		exit 1
-	fi
-	echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
-
-	trap 2
-	[ -z "$noboot" ] && . $thisdir/reboot -t 10
-	return 2> /dev/null
+trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+[ -z "$noboot" ] && return 2> /dev/null
 
 };;
 

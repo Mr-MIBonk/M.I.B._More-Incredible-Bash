@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd aio_conversion_eu.sh v0.1.0 (2023-05-16 by @MIB-Wiki)
+# esd aio_conversion_eu.sh v0.1.2 (2023-06-12 by @MIB-Wiki)
 
 trap '' 2
 
@@ -17,17 +17,18 @@ echo "CAUTION: Make sure the external power is connected to the car during any"
 echo "flash or programming process! Power failure during flasing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
 
-# EU conversion
+. /net/mmx/fs/sda0/config/BASICS
+
+echo -ne "\nStart 1-click EU conversion\nThis will run multiple scripts in series. Stay patient!\n\n" | $TEE -i -a $LOG
+
 /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
 /net/mmx/fs/sda0/apps/setreg -eu -noboot && \
 /net/mmx/fs/sda0/apps/setvariant -var -noboot
 
-. /net/mmx/fs/sda0/config/BASICS
-
-echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n" | $TEE -i -a $LOG
-echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
-echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
-echo -ne "Good luck!\n"
+[ $? -eq 0 ] && echo -ne "\nNow you can insert FAT32 formatted SD card \n" | $TEE -i -a $LOG
+[ $? -eq 0 ] && echo -ne "with FW $TRAINVERSION and update.\n" | $TEE -i -a $LOG
+[ $? -eq 0 ] && echo -ne "IMPORTANT - If available use AIO FW version\n" | $TEE -i -a $LOG
+[ $? -eq 0 ] && echo -ne "Good luck!\n"
 
 trap 2
 exit 0
