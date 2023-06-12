@@ -17,6 +17,14 @@ echo "CAUTION: Make sure the external power is connected to the car during any"
 echo "flash or programming process! Power failure during flasing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
 
+touch /$VOLUME/backup/write.tst
+if [[ -e /$VOLUME/backup/test.tmp ]]; then
+    rm -f /$VOLUME/backup/write.tst
+else
+  echo "Aborted! SD card is not available or write protected!"
+  return 1
+fi
+
 # EU conversion
 /net/mmx/fs/sda0/apps/settrain -eu -noboot
 /net/mmx/fs/sda0/apps/setreg -eu -noboot
@@ -27,7 +35,7 @@ echo "brick your unit! - All you do and use at your own risk!"
 if [[ "$TRAINVERSION" = *ER* ]]; then
 	echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n" | $TEE -i -a $LOG
 	echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
-	echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
+	echo -ne "IMPORTANT! If available use AIO FW version from mibsolution.one!\n" | $TEE -i -a $LOG
 	echo -ne "Good luck!\n"
 else
 	echo -ne "\nConversion failed!\n"
