@@ -24,10 +24,20 @@ echo "brick your unit! - All you do and use at your own risk!"
 
 . /net/mmx/fs/sda0/config/BASICS
 
-echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n" | $TEE -i -a $LOG
-echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
-echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
-echo -ne "Good luck!\n"
+if [[ "$TRAINVERSION" = *EU* ]]; then
+	echo -ne "\nNow you can insert FAT32 formatted SD card with FW\n" | $TEE -i -a $LOG
+	echo -ne "$TRAINVERSION and update.\n" | $TEE -i -a $LOG
+	echo -ne "IMPORTANT! If available use AIO FW version!\n" | $TEE -i -a $LOG
+	echo -ne "Good luck!\n"
+else
+	echo -ne "\nConversion failed!\n"
+	if [[ ! -e $LOG ]]; then
+		echo -ne "\nSD card is write protected!!!\n"
+	else
+		echo -ne "\nCreate issue and attach the log from backup folder at\n"
+		echo -ne "at https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues"
+	fi
+fi
 
 trap 2
 exit 0
