@@ -131,7 +131,7 @@ case $1 in
 			echo -ne "--- Disable variant feature byte sirius\n"
 			$PERSW -f -t int 678364556 8 0 2>> $LOG
 			CODING="$($E2P r F1 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g')"
-			echo "Coding: $CODING" >> $LOG
+			echo "5F Long Coding: $CODING" >> $LOG
 
 			echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 		else
