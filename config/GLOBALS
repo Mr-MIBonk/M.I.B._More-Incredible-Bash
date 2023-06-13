@@ -1,4 +1,4 @@
-# GLOBALS v0.4.0 (2023-06-12 by MIBonk & MIB-Wiki)
+# GLOBALS v0.4.1 (2023-06-13 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -66,20 +66,22 @@ if [ -f $thisdir/../../devconfig/GLOBALS ]; then
 	. $thisdir/../../devconfig/GLOBALS
 else
 	# Set globals
-	if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
-		MIBMO=1 # MHI2 only
-	else
-		if [[ "$TRAINVERSION" = *MHI2* ]]; then
-			MIBMO=2 # MHI2 with old FW 
-		elif [[ "$TRAINVERSION" = *MHIG* ]]; then
-			MIBMO=3 # MHIG
-		fi
-	fi
 	TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 	MUVERSION="MU$($E2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 	FAZIT="$($E2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
 	MNT="/net/mmx/mnt/boardbook/M.I.B-BACKUP"
 	NAND=$MNT/$MUVERSION/
+fi
+
+# Set MIB model
+if [ -f /net/mmx/mnt/app/eso/bin/apps/pc ]; then
+	MIBMO=1 # MHI2 only
+else
+	if [[ "$TRAINVERSION" = *MHI2* ]]; then
+		MIBMO=2 # MHI2 with old FW 
+	elif [[ "$TRAINVERSION" = *MHIG* ]]; then
+		MIBMO=3 # MHIG
+	fi
 fi
 
 # internals...
