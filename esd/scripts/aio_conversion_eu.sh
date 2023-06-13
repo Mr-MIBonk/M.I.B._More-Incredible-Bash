@@ -27,7 +27,7 @@ echo -ne "\nStart 1-click EU conversion\nThis will run multiple scripts in serie
 
 [ $? -eq 0 ] && echo -ne "\nNow you can insert FAT32 formatted SD card \n" | $TEE -i -a $LOG
 [ $? -eq 0 ] && echo -ne "with FW $TRAINVERSION and update.\n" | $TEE -i -a $LOG
-[ $? -eq 0 ] && echo -ne "IMPORTANT - If available use AIO FW version\n" | $TEE -i -a $LOG
+[ $? -eq 0 ] && echo -ne "IMPORTANT! If available use AIO FW version from mibsolution.one\n" | $TEE -i -a $LOG
 [ $? -eq 0 ] && echo -ne "Good luck!\n"
 
 trap 2

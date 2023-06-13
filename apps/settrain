@@ -35,10 +35,10 @@ TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:
 case $1 in
 	-eu) {
 		trap '' 2
-		echo -ne "Current train: $TRAINVERSION\n\n" | $TEE -i -a $LOG
+		echo -ne "Current train: $TRAINVERSION\n" | $TEE -i -a $LOG
 		TARGETTRAIN=""
 		if [[ "$TRAINVERSION" = *ER* ]]; then
-			echo -ne "Skipping. Your train is already EU!\n\n" | $TEE -i -a $LOG
+			echo -ne "Skipping. Your train is already EU!\n" | $TEE -i -a $LOG
 			exit 0
 		else
 			echo -ne "Creating backup...\n" | $TEE -i -a $LOG
