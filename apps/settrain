@@ -78,9 +78,9 @@ case $1 in
 			echo -ne "Changing train to $TARGETTRAIN\n" | $TEE -i -a $LOG
 			$E2P w 3a0 $(echo $TARGETTRAIN | awk '{print substr($1,1,16)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //') >> $LOG
 			if [[ "$TARGETTRAIN" = *MHI2Q* ]]; then
-				$E2P w 3b0 $(echo $TARGETTRAIN | awk '{print substr($1,17,20)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //') 00 >> $LOG
+				$E2P w 3b0 $(echo $TARGETTRAIN | awk '{print substr($1,17,20)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //') 20 >> $LOG
 			else
-				$E2P w 3b0 $(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //') 00 00 >> $LOG
+				$E2P w 3b0 $(echo $TARGETTRAIN | awk '{print substr($1,17,19)}' 2>/dev/null | $XXD -p | $SED 's/../& /g' | $SED 's/0a //') 20 20 >> $LOG
 			fi
 		fi
 		
