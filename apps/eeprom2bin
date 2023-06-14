@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="eeprom2bin v0.1.0 (2021-09-26 by MIB-Wiki)"
+revision="eeprom2bin v0.2.0 (2023-06-14 by MIB-Wiki)"
 # thanks to feralmib
 # use --help for more info
 
@@ -25,24 +25,54 @@ fi
 	-bin) {
 
 if [ -z $2 ]; then
-echo -n "set input Filename\n"
+echo -n "set input filename\n"
 	return 2> /dev/null
 else
-	VALUE=$2
+	INFILE=$2
+	[ ! -f $INFILE ] && echo -ne "Input file does not exist\n" && exit 1
 fi
 
-if [ ! -f $2 ]; then
-	echo -n "$2 does not exist\n"
-	return 2> /dev/null
+if [ -z $3 ]; then
+	echo -ne "\n--- optional: set output filename\n"
+	echo -ne "--- $MUVERSION-EEProm.bin will be used as default\n\n"
+	OUTFILE=$BACKUPFOLDER/$MUVERSION-EEProm.bin
+else
+	OUTFILE="$3"
 fi
 
-INFILE=$2
+autoincr() {
+
+	f=$(basename $OUTFILE) # get file name
+	d=$(dirname $OUTFILE) # get directory path
+	ext=".bin" # required extension for output file
+
+# Extract the file extension (if any), with preceeding '.'
+if [[ "$f" == *.* ]] && [[ $ext = ".${f##*.}" ]]; then
+	if [[ -e "$d/$f" ]]; then
+		i=1
+		f="${f%.*}"
+		while [[ -e "$d/${f}_${i}${ext}" ]]; do
+			let i++
+		done
+		f="${f}_${i}${ext}"
+		OUTFILE="$d/$f"
+	else
+		echo -ne "File extension $ext does not match\nThis should not happen!\n"
+		exit 1
+	fi
+else
+	echo -ne "--- Output file does not fit required format "*"$ext\n"
+	exit 1
+fi
+}
+
 # TODO: make output path dynamic to current path and use input file name for output, just replace .bin
-OUTFILE=$BACKUPFOLDER/$MUVERSION-EEProm.bin
 
 export LC_ALL=C
 HEX=$($SED -rn 's/^0x\S+\W+(.*?)$/\1/p' "${INFILE}" | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p') 2>> $LOG
+[ -f $OUTFILE ] && autoincr
 echo "${HEX}" | awk '{printf("%c",strtonum($0))}' > "${OUTFILE}" 2>> $LOG
+echo -ne "$(basename $OUTFILE) written to SD\n"
 
 return 2> /dev/null
 	};;
@@ -52,7 +82,7 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION] <INPUT file> <Optional: OUTPUT file>"
 		echo ""
 		echo "Options:"
 		echo "        -bin			convert to bin"

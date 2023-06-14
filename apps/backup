@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backup v0.4.2 (2023-06-13 by MIBonk & MIB-Wiki)"
+revision="backup v0.4.3 (2023-06-14 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -288,7 +288,7 @@ case $1 in
 		fi
 
 		echo -ne "Dataset's........" | $TEE -i -a $LOG
-		if [[ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv && $MIBMO = 1 ]]; then
+		if [[ ! -f $BACKUPFOLDER/$MUVERSION-datasets.csv ]]; then
 			echo -ne "Dataset list\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			. $VOLUME/apps/pers -r 0 3221291030 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			echo -ne "Datasets\n" >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
@@ -315,8 +315,7 @@ case $1 in
 			. $VOLUME/apps/pers -r 28442848 104 >>$BACKUPFOLDER/$MUVERSION-datasets.csv 2>> $LOG
 			ERROR
 		else
-			[ $MIBMO = 1 ] && echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
-			[ $MIBMO -gt 1 ] && echo -ne " -> Skipped - FW is too old\n" | $TEE -i -a $LOG
+			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 		fi
 
 		echo -ne "EEPROM..........." | $TEE -i -a $LOG
