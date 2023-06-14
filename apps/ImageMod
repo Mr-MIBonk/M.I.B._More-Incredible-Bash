@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="ImageMod v0.1.6(2023-05-30 MIBonk & MIB-Wiki)"
+revision="ImageMod v0.1.7(2023-06-14 MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,12 +20,8 @@ if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; th
 	return 2> /dev/null
 fi
 
-MIBCAP=1 
-# MIB mode(s) supported by this script
-# 1 = MHI2 only, 2 = ... and legacy (old) FW, 3 = ... and MHIG
-
-# load script header
-. $thisdir/../config/HEADER
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
 
 # script variables
 IMGDIR="/net/mmx/mnt/app/eso/hmi/lsd/Resources"
