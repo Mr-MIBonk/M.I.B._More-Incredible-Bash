@@ -1,0 +1,5 @@
+#!/bin/sh
+export SSD_DIR="/net/mmx/mnt/app/eso/hmi/engdefs/scripts/ssh"
+export PATH=${SSD_DIR}/usr/bin:${SSD_DIR}/usr/sbin:/proc/boot:/bin:/usr/bin:/usr/sbin:/sbin:/mnt/app/media/gracenote/bin:/mnt/app/armle/bin:/mnt/app/armle/sbin:/mnt/app/armle/usr/bin:/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib:${SSD_DIR}/usr/lib
+${SSD_DIR}/usr/bin/scp "$@"
