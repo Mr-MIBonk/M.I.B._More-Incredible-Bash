@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		3.0 - 9.2''
-# Date:			26-05-2023
+# Date:			16-06-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -1640,26 +1640,33 @@ screen install_sshd advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"In case shell access is required you can install a SSH server on your MHI2 unit"
+    label	"In case shell access is required you can install a SSHD server on your MHI2 unit"
 	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Go to mib2-toolbox and copy the folder /Toolbox/ to your M.I.B SD"
+    label	"Only needed if you know what you are doing or when asked b M.I.B team"
 	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> Advanced Settings -> Install SSHD
+#
+###########################################################################################
+screen run_install install_sshd
 
 keyValue
     value   String sys 0x00000000 0
-    label	"SSH server will be installed during M.I.B FW update installation process"
+    label	"AGAIN: Only install if needed. Not just for fun!"
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/Toolbox/scripts/sshd_install.sh"
-    label   "or by pressing this button - after /Toolbox/ folder is on SD"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/ssh/sshd_install.sh"
+    label   "install SSHD server on unit"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"You can connect to your unit via ssh clients for console and file access"
+    label	"You can connect to your unit via ssh clients for shell and file access"
 	poll    0
 	
 keyValue
@@ -1679,7 +1686,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOTE: mib2-toolbox development is independent of M.I.B --> NO support here"
+    label	"Credits go to mib2toolbox and Andrew for making this possible!"
 	poll    0
 
 keyValue
