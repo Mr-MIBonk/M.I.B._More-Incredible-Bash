@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd patch_aio.sh v0.2.2 (2023-05-03 by MIBonk & MIB-Wiki)
+# esd patch_aio.sh v0.2.3 (2023-06-16 by MIBonk & MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,15 +24,17 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-TRAINVERSION="$(on -f mmx /net/mmx/fs/sda0/apps/sbin/pc s:30:1966084 2> /dev/null | /net/mmx/fs/sda0/apps/sbin/sed 's/[^a-zA-Z0-9_-]//g')"
+. /net/mmx/fs/sda0/config/BASICS
 
 sleep 3
-on -f rcc /net/mmx/fs/sda0/apps/carp -b
+if [[ "$TRAINVERSION" = *MHI2* ]] ; then
+	on -f rcc /net/mmx/fs/sda0/apps/carp -b
+fi
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
-	on -f rcc /net/mmx/fs/sda0/apps/installjava -g24wide -noboot
+	/net/mmx/fs/sda0/apps/installjava -g24wide -noboot
 fi
 if [[ "$TRAINVERSION" = *POG11* ]]; then
-	on -f rcc /net/mmx/fs/sda0/apps/addimage -pog11on -noboot
+	/net/mmx/fs/sda0/apps/addimage -pog11on -noboot
 fi
 /net/mmx/fs/sda0/apps/flash -p
 sleep 3

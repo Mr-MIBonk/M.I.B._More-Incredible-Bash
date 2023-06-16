@@ -17,7 +17,7 @@ then
 fi
 
 PUB_KEY_PATH="${VOLUME}/Custom/id_rsa.pub"
-SSHD_APP="${VOLUME}/Toolbox/apps/sshd"
+SSHD_APP="${VOLUME}/mod/sshd"
 
 
 # Make it writable

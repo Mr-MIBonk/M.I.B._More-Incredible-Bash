@@ -2,7 +2,7 @@
 #
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
-# Version:		3.0 - 9.2''
+# Version:		4.0 - 9.2'' - MHI2
 # Date:			16-06-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.6.0 QR Edition"
+    label   "M.I.B. - More Incredible Bash - V3.7.0 MHIG Edition"
 	poll    0
 
 keyValue
@@ -163,7 +163,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Only run AFTER patch is applied --> patch_unit_aio."
+	label 	"Only run AFTER patch is applied --> patch_unit_aio"
 	poll    0
 
 keyValue

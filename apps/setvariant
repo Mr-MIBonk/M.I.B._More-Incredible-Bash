@@ -142,7 +142,7 @@ esac
 
 if [ $VARERROR = 0 ]; then
 	echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
-	$E2P w BA 00 00 00 00 00 00 00 00 00 00 00 00 00 >> $LOG
+	$E2P w BA 20 20 20 20 20 20 20 20 20 20 20 20 20 >> $LOG
 	#Build Variant_1 string 
 	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
 	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
