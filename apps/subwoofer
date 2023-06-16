@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.1 (2023-06-10 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.2 (2023-06-11 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -305,7 +305,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 	$PC b:0:3221422112 $DS3B00 2>> $LOG
 	$PC b:0:1 0 2>> $LOG
-	echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)"\n\n" >> $LOG
+	echo -ne "Dataset on unit:\n"$($PERSR 0 3221422112)"\n\n" >> $LOG
 	echo -ne "DONE\n\n" | $TEE -a $LOG
 
 # ---- 0x3000  ----------------------------------------------------------------------
@@ -334,7 +334,7 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
 		$PC b:0:3221422100 $DS3000 2>> $LOG
 		$PC b:0:1 0 2>> $LOG
-		echo -ne "Dataset on unit:\n"$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)"\n\n" >> $LOG
+		echo -ne "Dataset on unit:\n"$(PERSR 0 3221422100)"\n\n" >> $LOG
 		echo -ne "DONE\n\n" | $TEE -a $LOG
 	else
 		echo -ne "Subwoofer gain already coded\nNo need to change it\n\n" | $TEE -a $LOG
