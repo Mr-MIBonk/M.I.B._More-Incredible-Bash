@@ -1,4 +1,4 @@
-# GLOBALS v0.4.1 (2023-06-13 by MIBonk & MIB-Wiki)
+# GLOBALS v0.4.2 (2023-06-17 by MIBonk & MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@ TIMESTAMP="/net/rcc/usr/bin/date +%Y_%m_%d_%H_%M_%S"
 SHA1="$VOLUME/apps/sbin/sha1sum" # /net/rcc/usr/bin/sha1sum
 RDIFF="$VOLUME/apps/sbin/rdiff" # not on any unit
 E2P="on -f rcc /net/rcc/usr/apps/modifyE2P"
+PATCHER="$VOLUME/apps/sbin/patcher"
 
 # Set temp
 TMP="/net/rcc/dev/shmem"

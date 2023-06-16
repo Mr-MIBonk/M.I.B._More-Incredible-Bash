@@ -161,8 +161,8 @@ case $1 in
 			fi
 
 		if [ -z $AB ]; then
-		echo -ne "GEM info........." | $TEE -i -a $LOG
-			if [ -f $BACKUPFOLDER/$MUVERSION-GEM.jar ] || [ -f $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar ]; then
+		echo -ne "GEM info........" | $TEE -i -a $LOG
+			if [ -f $BACKUPFOLDER/$MUVERSION-GEM.jar ] && [ -f $BACKUPFOLDER/$MUVERSION-AppDevelopment.jar ]; then
 				echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 			else
 				if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
@@ -256,6 +256,7 @@ case $1 in
 		if [ -z $AB ]; then
 			echo -ne "HMI folders......" | $TEE -i -a $LOG
 			if [ ! -d $BACKUPFOLDER/HMI ]; then
+				mkdir $BACKUPFOLDER/HMI
 				if [[ -e /net/mmx/mnt/ols/rhmi ]];then
 					on -f mmx cp -rc /net/mmx/mnt/ols/rhmi/* $BACKUPFOLDER/HMI/rhmi 2>> $LOG
 				fi
