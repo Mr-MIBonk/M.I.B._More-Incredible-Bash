@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="dev menu v0.1.1 (2023-06-10 by MIBonk)"
+revision="dev menu v0.1.2 (2023-06-17 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -19,6 +19,9 @@ if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
 fi
+
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
 
 	case $1 in
 
