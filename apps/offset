@@ -24,9 +24,9 @@ MIBCAP=3
 . $thisdir/../config/MIBCHECK
 
 case $1 in
-	-log) {
+	-log) { #get ifs-root-stage2 (ifs-root.ifs) offset & size
 		if [[ -f /net/rcc/usr/bin/flashlock ]]; then
-			OFFSETPART2=$($FLASHLOCK | grep "3 image type=2(IFS     )" | $CUT -c27-32) 2>> $LOG #get ifs-root-stage2 offset
+			OFFSETPART2=$($FLASHLOCK | grep "3 image type=2(IFS     )" | $CUT -c27-32) 2>> $LOG
 			result=$(echo "ibase=16; $OFFSETPART2" | $BC) 2>> $LOG
 			# file size ifs-root-part2 with fixed values and compare to flashlock output
 			STAGE2SIZE="$($FLASHLOCK | grep $OFFSETPART2)"
@@ -57,8 +57,7 @@ case $1 in
 		return 2> /dev/null
 	};;
 
-	# help or unknown parameter ------------------------------
-	*) {
+	*) { # help or unknown parameter ------------------------------
 		echo ""
 		echo $revision
 		echo ""
@@ -82,7 +81,6 @@ case $1 in
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-		
 	};;
 esac
 exit 0
