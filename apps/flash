@@ -174,9 +174,9 @@ fi
 
 IFSstage2
 
-. $thisdir/rccd -d
-. $thisdir/fecel -fec
-. $thisdir/fecel -el
+. $thisdir/rccd -d #backup RCC after flash
+. $thisdir/fecel -fec #check for FECs and add new once if required
+[ $MIBMO = 1 ] && . $thisdir/fecel -el
 [ $MIBMO = 1 ] && . $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
 . $thisdir/reboot -t 10
 

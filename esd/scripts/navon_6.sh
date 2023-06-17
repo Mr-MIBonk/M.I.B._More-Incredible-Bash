@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd navon_6.sh v0.1.0 (2022-03-28 by @MIB-Wiki)
+# esd navon_6.sh v0.1.1 (2022-06-17 by @MIB-Wiki)
 
 trap '' 2
 
@@ -19,7 +19,7 @@ echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
 # Navigation Country to JP = 6
-/net/mmx/fs/sda0/apps/navon -a 6
+/net/mmx/fs/sda0/apps/navon -a 6 -noboot
 
 echo ""
 echo "All done! now you can go back..."
