@@ -32,31 +32,25 @@ case $1 in
 			STAGE2SIZE="$($FLASHLOCK | grep $OFFSETPART2)"
 			STAGE2SIZE=$(echo $STAGE2SIZE | awk -v FS="(" '{print $3}' | awk -v FS=")" '{print $1}') 2>> $LOG # get ifs-root-stage2 seize in bytes
 			STAGE2SIZE="00"$(echo "obase=16; $STAGE2SIZE" | $BC) 2>> $LOG
-			# ENDIAN Convert...
 			STAGE2SIZE=$(echo $STAGE2SIZE | $SED "s/.\{2\}/&:/g" | awk '{print toupper($0)}') 2>> $LOG
-			BYTE1="$(echo $STAGE2SIZE | cut -d':' -f3)"
-			BYTE2="$(echo $STAGE2SIZE | cut -d':' -f4)"
-			BYTE3="$(echo $STAGE2SIZE | cut -d':' -f2)"
-			BYTE4="$(echo $STAGE2SIZE | cut -d':' -f1)"
-			STAGE2SIZE=$BYTE2$BYTE1$BYTE3$BYTE4
+			# Remove colons and convert endianess
+			STAGE2SIZE=$(echo $STAGE2SIZE|cut -d':' -f4)$(echo $STAGE2SIZE|cut -d':' -f3)$(echo $STAGE2SIZE|cut -d':' -f2)$(echo $STAGE2SIZE|cut -d':' -f1)
+		elif [[ -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt ]] && grep -q OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt && grep -q STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt; then
+			echo -ne "Reading OFFSETPART2 and STAGE2SIZE from backup\n" | $TEE -i -a $LOG
+			OFFSETPART2=$(grep OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c18-23) 2>> $LOG
+			STAGE2SIZE=$(grep STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c13-20) 2>> $LOG
 		else
-			if [[ -f $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt ]] && grep -q OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt && grep -q STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt; then
-				echo -ne "Reading OFFSETPART2 and STAGE2SIZE from backup\n" | $TEE -i -a $LOG
-				OFFSETPART2=$(grep OFFSETPART2 $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c18-23) 2>> $LOG
-				STAGE2SIZE=$(grep STAGE2SIZE $BACKUPFOLDER/$MUVERSION-ifs-root-part2-OFFSET.txt | cut -c13-20) 2>> $LOG
-			else
-				echo -ne "\nSearching ifs-root.ifs (Stage 2) offset\nIt will take about 2 minutes, please wait...\n" | $TEE -i -a $LOG
-				OFFSETPART2=$($DD bs=4096 skip=1344 count=6144 if=$fs0p0 2> /dev/null | $XXD -u | grep 'EB7E FF00 0100 08' | $CUT -c 3-8) 2>> $LOG
-				hex_value1="$OFFSETPART2"
-				hex_value2="540000" #start offset of ifs-root on rcc / skip=1344
-				decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG
-				decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
-				result=$((decimal_value1 + decimal_value2))
-				SKIPBLOCKS=$((result / 4096)) # calculate skips needed to get to start of ifs-root-stage2
-				OFFSETPART2=$(echo "obase=16; $result" | $BC | awk '{printf("%06s\n", $0)}') 2>> $LOG
-				echo -ne "\nCalculating ifs-root.ifs (Stage 2) size.\nIt will take about 1 minute, please wait...\n" | $TEE -i -a $LOG
-				STAGE2SIZE=$($DD bs=4096 skip=$SKIPBLOCKS count=1 if=$fs0p0 2> /dev/null | $DD bs=4 skip=9 count=1 2> /dev/null | $XXD -u -ps ) 2>> $LOG
-			fi
+			echo -ne "\nSearching ifs-root.ifs (Stage 2) offset\nIt will take about 2 minutes, please wait...\n" | $TEE -i -a $LOG
+			OFFSETPART2=$($DD bs=4096 skip=1344 count=6144 if=$fs0p0 2> /dev/null | $XXD -u | grep 'EB7E FF00 0100 08' | $CUT -c 3-8) 2>> $LOG
+			hex_value1="$OFFSETPART2"
+			hex_value2="540000" #start offset of ifs-root on rcc / skip=1344
+			decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG
+			decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
+			result=$((decimal_value1 + decimal_value2))
+			SKIPBLOCKS=$((result / 4096)) # calculate skips needed to get to start of ifs-root-stage2
+			OFFSETPART2=$(echo "obase=16; $result" | $BC | awk '{printf("%06s\n", $0)}') 2>> $LOG
+			echo -ne "\nCalculating ifs-root.ifs (Stage 2) size.\nIt will take about 1 minute, please wait...\n" | $TEE -i -a $LOG
+			STAGE2SIZE=$($DD bs=4096 skip=$SKIPBLOCKS count=1 if=$fs0p0 2> /dev/null | $DD bs=4 skip=9 count=1 2> /dev/null | $XXD -u -ps ) 2>> $LOG
 		fi
 		echo -ne "\nifs-root.ifs (stage2) offset: 0x00$OFFSETPART2\n" | $TEE -i -a $LOG
 		echo -ne "ifs-root.ifs (stage2) size: $STAGE2SIZE\n\n" | $TEE -i -a $LOG
