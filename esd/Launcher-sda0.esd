@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.7.0 MHIG Edition"
+    label   "M.I.B. - More Incredible Bash - V3.7.0 MHI2 Edition"
 	poll    0
 
 keyValue

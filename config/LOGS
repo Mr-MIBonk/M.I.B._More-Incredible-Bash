@@ -1,4 +1,4 @@
-# LOGS settings v0.1.5 (2023-06-10 by MIBonk)
+# LOGS settings v0.1.6 (2023-06-20 by MIBonk)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -15,9 +15,9 @@
 #Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # set logs...
-LOG="$thisdir/../backup/logs/$MUVERSION-$FAZIT.log"
+LOG="$BACKUPFOLDER/logs/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
-	mkdir -p $thisdir/../backup/logs
+	mkdir -p $BACKUPFOLDER/logs
 	cat $thisdir/../config/LOGO > $LOG
 	echo $VERSION >> $LOG
 	if [ -z $MODELID ]; then
