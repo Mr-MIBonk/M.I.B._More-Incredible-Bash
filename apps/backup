@@ -344,7 +344,7 @@ case $1 in
 			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG
 		fi
 
-		if [[ -z $AB && $MIBMO -lt 3 ]]; then
+		if [[ -z $AB ]]; then
 			echo -ne "RCC Flashlock...." | $TEE -i -a $LOG
 			if [ ! -f $BACKUPFOLDER/$MUVERSION-RCC-Flashlock.log ]; then
 				if [[ -e /net/rcc/usr/bin/flashlock ]]; then
