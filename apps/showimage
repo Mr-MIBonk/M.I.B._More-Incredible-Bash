@@ -1,11 +1,11 @@
 #!/bin/sh
 
-revision="showimage v0.1.4 (2023-06-17 by Mib-Wiki)"
+revision="showimage v0.1.5 (2023-06-20 by Mib-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
 export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
-export IPL_CONFIG_DIR=/etc/eso/production
+export IPL_CONFIG_DIR=/net/mmx/etc/eso/production
 
 thisname="$(basename $0)"
 thisdir="$(dirname $0)"
@@ -15,8 +15,12 @@ if [ -z $LOG ]; then
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
 
-MIBCAP=1
+MIBCAP=3
 . $thisdir/../config/MIBCHECK
+
+LOADANDSHOWIMAGE="on -f mmx /net/mmx/eso/bin/apps/loadandshowimage"
+DMDT="on -f mmx /net/mmx/eso/bin/apps/dmdt"
+DMRCClient="on -f mmx /net/mmx/eso/bin/apps/DMRCClient"
 
 	case $1 in
 
@@ -27,21 +31,63 @@ MIBCAP=1
 
 trap '' 2
 
-# echo "displaying ${4}"
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	export LIBIMG_CFGFILE=/etc/config/img.conf 2>> $LOG
+	#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/app/armle/lib/dll 2>> $LOG
+	$LOADANDSHOWIMAGE ${3}${4}&
+	#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target
+	#export IPL_CONFIG_DIR=/net/mmx/etc/eso/production 2>> $LOG
+	$DMRCClient -mv 99 2>> $LOG # trigger display of image
+	#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target
+	#export IPL_CONFIG_DIR=/net/mmx/etc/eso/production
+	$DMRCClient -mv 99 2>> $LOG # trigger display of image
+	if [[ $2 = 0 ]]; then
+		echo -ne "No end time for image set\nStop image display with -unload\n" | $TEE -i -a $LOG
+	else
+		sleep $2
+		#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target
+		$LOADANDSHOWIMAGE 1 2 3 4 5 #unload image
+		#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target
+		#export IPL_CONFIG_DIR=/net/mmx/etc/eso/production
+		$DMRCClient -mv 2>> $LOG # switch back to standard output screen
+	fi
+else
+	export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
+	#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/app/armle/lib/dll
+	$LOADANDSHOWIMAGE ${3}${4}&
+	$DMDT sc 0 -9 2>> $LOG # trigger display of image
+	#sleep 1
+	#/net/mmx/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/screenshot_$4" | $TEE -a $LOG # take screenshot of dislpay output
+	if [[ $2 = 0 ]]; then
+		echo -ne "No end time for image set\nStop image display with -unload\n" | $TEE -i -a $LOG
+	else
+		sleep $2
+		#export LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target
+		$LOADANDSHOWIMAGE 1 2 3 4 5 #unload image
+		$DMDT sb 0 2>> $LOG # switch back to standard output screen
+	fi
+fi
+trap 2
 
-export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
-LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/app/armle/lib/dll /net/mmx/eso/bin/apps/loadandshowimage ${3}${4}&
+return 2> /dev/null
 
-/net/mmx/eso/bin/apps/dmdt sc 0 -9 | $TEE -a $LOG # trigger display of image
+};;
 
-#sleep 1
-#/net/mmx/eso/bin/apps/dmdt ts 0 "/net/mmx/fs/sda0/screenshot_$4" | $TEE -a $LOG # take screenshot of dislpay output
+	-unload) {
 
-sleep $2
+trap '' 2
 
-LD_LIBRARY_PATH=/net/mmx/eso/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/root/lib-target /net/mmx/eso/bin/apps/loadandshowimage 1 2 3 4 5 
-/net/mmx/eso/bin/apps/dmdt sb 0 | $TEE -a $LOG # switch back to standard output screen
+echo -ne "stop image display" | $TEE -i -a $LOG
 
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	export LIBIMG_CFGFILE=/etc/config/img.conf 2>> $LOG
+	$LOADANDSHOWIMAGE 1 2 3 4 5  #unload image
+	$DMRCClient -mv 2>> $LOG # switch back to standard output screen
+else
+	export LIBIMG_CFGFILE=/etc/imgprocessing.cfg
+	$LOADANDSHOWIMAGE 1 2 3 4 5  #unload image
+	$DMDT sb 0 2>> $LOG # switch back to standard output screen
+fi
 trap 2
 
 return 2> /dev/null
@@ -52,6 +98,11 @@ return 2> /dev/null
 # Take a screenshot from screen 0 and dump to *.png file
 # <time until screenshot> <file name appendix>
 trap '' 2
+
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	echo -ne "No support for MHIG...\n" | $TEE -a $LOG
+	exit 0
+fi
 
 if [ -z $2 ]; then
 	sleep 0
@@ -75,8 +126,9 @@ return 2> /dev/null
 		echo "Usage: "$thisname" "
 		echo ""
 		echo "Options:"
-		echo "        -load 	[DURATION] [PATH] [FILE]			loads defined image to screen"
-		echo "        -ts 	[time [s] until screenshot]	[file name appendix]	takes a screenshot of main screen"
+		echo "        -load 	[DURATION] [PATH] [FILE]	loads defined image to screen"
+		echo "        -unload 				unloads image from screen"
+		echo "        -ts 	[time [s] until screenshot]	[file name appendix]	take screenshot of screen"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"

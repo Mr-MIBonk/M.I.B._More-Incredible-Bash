@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="backup v0.4.4 (2023-06-17 by MIBonk & MIB-Wiki)"
+revision="backup v0.4.5 (2023-06-20 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -257,7 +257,7 @@ case $1 in
 			echo -ne "HMI folders......" | $TEE -i -a $LOG
 			if [ ! -d $BACKUPFOLDER/HMI ]; then
 				mkdir $BACKUPFOLDER/HMI
-				if [[ -e /net/mmx/mnt/ols/rhmi ]];then
+				if [[ -e /net/mmx/mnt/ols/rhmi && $MIBMO -lt 3]] ;then
 					on -f mmx cp -rc /net/mmx/mnt/ols/rhmi/* $BACKUPFOLDER/HMI/rhmi 2>> $LOG
 				fi
 				if [[ -f /net/mmx/ramdisk/credentials ]]; then
