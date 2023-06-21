@@ -12,7 +12,7 @@ export GEM=1
 export SWDLAUTORUN=1 # allows Swdlautorun.txt in root of SD during SWDL process
 
 echo "load PNG to display during finalscript --"
-${2}/apps/showimage -load 0 /net/mmx/fs/sda0/mod/images/showimage/ finalscript.png&
+${2}/apps/showimage -load 0 ${2}/mod/images/showimage/ finalscript.png SWDL&
 sleep 10 # to avaoid a parallel run of LOGS
 echo "Running basic backup --------------------"
 ${2}/apps/backup -b
