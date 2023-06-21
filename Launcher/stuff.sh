@@ -13,7 +13,7 @@ export SWDLAUTORUN=1 # allows Swdlautorun.txt in root of SD during SWDL process
 
 echo "load PNG to display during finalscript --"
 ${2}/apps/showimage -load 0 /net/mmx/fs/sda0/mod/images/showimage/ finalscript.png&
-sleep 5 # to avaoid a parallel run of LOGS
+sleep 10 # to avaoid a parallel run of LOGS
 echo "Running basic backup --------------------"
 ${2}/apps/backup -b
 echo "Running Launcher script -----------------"

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Fix SVM Error v0.1.6 (2021-04-02 by MIBonk)"
+revision="Fix SVM Error v0.1.7 (2023-06-21 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -14,22 +14,21 @@ SWDL="/net/rcc/mnt/efs-persist/SWDL/Log"
 
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+echo -ne "\n$ME-$thisname---->\n" >> $LOG
 
 if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
 	echo $thisname" or reboot is already running..."
 	return 2> /dev/null
 fi
 
-if [ $ME != "RCC" ]; then
-	echo -ne "\nSVM will only work in RCC bash!\n\n"
-	exit 0
-fi
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
-	case $1 in
+case $1 in
 
-	-f|-fix) {
+-f|-fix) {
 
 trap '' 2
 [ -n "$GEM" ] && touch $TMP/$thisname.mib
@@ -82,7 +81,7 @@ if [ -f $VERSIONS ]; then
 	echo -ne "CfgAck - " | $TEE -a $LOG
 	. $thisdir/zlib -c $SWDL/CfgAck.bin
 	
-	/usr/apps/modifyE2P w 3f0 00 00 01 >> $LOG
+	$E2P w 3f0 00 00 01 >> $LOG
 	
 	echo -ne "\nDone. Try to delete DTC 1555 with any OBD2 tool!\n\n" | $TEE -a $LOG
 	rm -rf $TMP/$thisname.mib 2>/dev/null
@@ -98,9 +97,9 @@ trap 2
 
 return 2> /dev/null
 
-	};;	
+};;	
 
-	-r|-read) {
+-r|-read) {
 
 trap '' 2
 [ -n "$GEM" ] && touch $TMP/$thisname.mib
@@ -119,7 +118,7 @@ rm -rf $TMP/$thisname.mib 2>/dev/null
 
 return 2> /dev/null
 
-	};;	
+};;	
 
 
 	# help or unknown parameter ------------------------------
