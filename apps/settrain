@@ -37,7 +37,7 @@ case $1 in
 		trap '' 2
 		echo -ne "Current train: $TRAINVERSION\n" | $TEE -i -a $LOG
 		TARGETTRAIN=""
-		if [[ "$TRAINVERSION" = *ER* ]]; then
+		if [[ "$TRAINVERSION" = *ER* || "$TRAINVERSION" = *EU* ]]; then
 			echo -ne "Skipping. Your train is already EU!\n" | $TEE -i -a $LOG
 			exit 0
 		else
