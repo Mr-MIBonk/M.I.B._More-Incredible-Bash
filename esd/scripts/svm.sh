@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd svm.sh v0.1.0 (2021-02-22 by MIBonk)
+# esd svm.sh v0.1.1 (2023-06-21 by MIBonk)
 
 if [ -f /net/rcc/dev/shmem/svm.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,7 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/svm -f
+/net/mmx/fs/sda0/apps/svm -f
 
 echo ""
 echo "All done! now you can go back..."
