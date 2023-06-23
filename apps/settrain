@@ -37,7 +37,7 @@ case $1 in
 		trap '' 2
 		echo -ne "Current train: $TRAINVERSION\n" | $TEE -i -a $LOG
 		TARGETTRAIN=""
-		if [[ "$TRAINVERSION" = *ER* ]]; then
+		if [[ "$TRAINVERSION" = *ER* || "$TRAINVERSION" = *EU* ]]; then
 			echo -ne "Skipping. Your train is already EU!\n" | $TEE -i -a $LOG
 			exit 0
 		else
@@ -45,6 +45,8 @@ case $1 in
 			. $thisdir/backup -a
 			echo -ne "Searching the match for non EU train...\n" | $TEE -i -a $LOG
 			case $TRAINVERSION in
+				MHIG_??_VW*)
+					TARGETTRAIN="MHIG_EU_VW_K1550" ;;
 				MHI2Q_??_AUG22*)
 					TARGETTRAIN="MHI2Q_ER_AUG22_P5092" ;;
 				MHI2_??_AUG22*)
