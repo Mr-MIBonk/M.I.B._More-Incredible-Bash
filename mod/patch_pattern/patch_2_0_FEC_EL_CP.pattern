@@ -1,0 +1,15 @@
+#FEC
+"/usr/apps/MIBRoot:FEC1", "00 00 50 E3 ? 40 A0 13 1D 00 00 1A 04 00 A0 E1 BC 10 9F E5", "4",   "01"
+"/usr/apps/MIBRoot:FEC2", "00 00 50 E3 ? 40 A0 13 1D 00 00 1A 04 00 A0 E1 BC 10 9F E5", "120", "00 F0 20 E3 00 F0 20 E3 01 40 A0 E3"
+"/usr/apps/MIBRoot:FEC3", "00 00 50 E3 ? 40 A0 13 18 00 00 1A 1A 4E 8D E2 05 00 A0 E1", "4",   "01"
+"/usr/apps/MIBRoot:FEC4", "00 00 50 E3 ? 40 A0 13 18 00 00 1A 1A 4E 8D E2 05 00 A0 E1", "100", "00 F0 20 E3 00 F0 20 E3 01 40 A0 E3"
+
+#ExceptionList and metainfo2
+"/usr/apps/MIBRoot:Exception list1", "00 00 54 E3 40 20 9F 15 00 00 00 1A 3C 20 9F E5 24 50 8D E2", "40", "01 00 A0 E3"
+"/usr/apps/MIBRoot:Exception list2", "00 00 54 E3 4C 20 9F 15 00 00 00 1A 48 20 9F E5 89 5F 8D E2", "40", "01 00 A0 E3"
+
+#Component Protection
+"/usr/apps/MIBRoot:Componentent Protection", "00 40 A0 E1 01 60 A0 E1 05 00 A0 E1 5C 11 9F E5 ? ? ? ? 00 30 97 E5", "28",  "00 F0 20 E3"
+"/usr/apps/MIBRoot:Componentent Protection", "00 40 A0 E1 01 60 A0 E1 05 00 A0 E1 5C 11 9F E5 ? ? ? ? 00 30 97 E5", "43",  "EB"
+"/usr/apps/MIBRoot:Componentent Protection", "00 40 A0 E1 01 60 A0 E1 05 00 A0 E1 5C 11 9F E5 ? ? ? ? 00 30 97 E5", "208", "00 F0 20 E3"
+"/usr/apps/MIBRoot:Componentent Protection", "00 40 A0 E1 01 60 A0 E1 05 00 A0 E1 5C 11 9F E5 ? ? ? ? 00 30 97 E5", "243", "EB"
