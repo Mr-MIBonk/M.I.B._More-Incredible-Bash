@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setvariant v0.1.4 (2023-06-12 by MIB-Wiki)"
+revision="setvariant v0.2.0 (2023-06-16 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -29,15 +29,8 @@ else
 	noboot=""
 fi
 
-case $1 in
--var) {
-trap '' 2
-
-COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
-echo -ne "Сurrent Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
-VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
-echo -ne "Current Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
-
+readvar ()
+{
 echo -ne "Reading Variant_2 from EEPROM...\n" | $TEE -i -a $LOG
 echo -ne "Reading Unit Class from EEPROM...\n" | $TEE -i -a $LOG
 VARTYPE=$($E2P r DE 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Unit class: 01=High 04=Premium
@@ -62,7 +55,10 @@ VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Region: 02=E
 
 #error handler for variant_1
 VARERROR=0
+}
 
+convertvar2hex ()
+{
 if [ $VARTYPE = 01 ]; then #High
 	VARTYPE="48 "
 elif [ $VARTYPE = 04 ]; then #Premium
@@ -139,27 +135,164 @@ case $VARREG in
 		echo -ne "Region unknown\n" | $TEE -i -a $LOG
 		VARERROR=1 ;;
 esac
+}
+
+IdentBlock ()
+{
+
+#find IdentBlock for unit
+
+if [[ "$TRAINVERSION" = *VW* ]] || [[ "$TRAINVERSION" = *SK* ]]; then
+	if [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 1 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_DAB
+		IDENT="30 32 30" #020
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 1 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_DAB_Phone
+		IDENT="30 32 31" #021
+	elif [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 1 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_DAB_PhoneLTE
+		IDENT="30 32 31" #021
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 1 ]] && [[ "$VARREG" = 3 ]]; then
+		#High2_NAR_EX_Nav_Sirius
+		IDENT="30 32 36" #026
+	elif [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_PhoneLTE
+		IDENT="30 34 32" #042
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav
+		IDENT="30 34 33" #043
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_Phone
+		IDENT="30 34 34" #044
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 4 ]]; then
+		#High2_RoW_Nav
+		IDENT="30 34 35" #045
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 4 ]]; then
+		#High2_RoW_Nav_Phone
+		IDENT="30 34 36" #046
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 1 ]] && [[ "$VARREG" = 3 ]]; then
+		#High2_NAR_Nav_Sirius
+		IDENT="30 34 37" #047
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 5 ]]; then
+		#High2_CN_Nav
+		IDENT="30 34 38" #048
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 6 ]]; then
+		#High2_JP_Nav
+		IDENT="30 35 30" #050
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 8 ]]; then
+		#High2_TW_Nav
+		IDENT="30 33 32" #032
+	else
+		echo -ne "no matching IdentBlock found for this variant\n"
+	fi
+elif [[ "$TRAINVERSION" = *SE* ]]; then
+	IDENT="30 32 30" #020
+#elif [[ "$TRAINVERSION" = *AU* ]]; then
+	#TODO: Add Audi, Bentley
+elif [[ "$TRAINVERSION" = *POG* ]]; then
+	if [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 1 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_DAB_PhoneLTE
+		IDENT="30 33 35" #035
+	elif [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_PhoneLTE
+		IDENT="30 33 36" #036
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 1 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav_DAB
+		IDENT="30 33 37" #037
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 2 ]]; then
+		#High2_EU_Nav
+		IDENT="30 33 37" #038
+	elif [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 1 ]] && [[ "$VARREG" = 3 ]]; then
+		#High2_US_Nav_PhoneLTE_Sirius
+		IDENT="38 38 30" #880
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 1 ]] && [[ "$VARREG" = 3 ]]; then
+		#High2_US_Nav_Sirius
+		IDENT="38 39 31" #891
+	elif [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 5 ]]; then
+		#High2_CN_Nav_PhoneLTE
+		IDENT="38 39 34" #894
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 5 ]]; then
+		#High2_CN_Nav
+		IDENT="38 39 35" #895
+	elif [[ "$VARLTE" = 0 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 0 ]] && [[ "$VARSIR" = 0 ]] && [[ "$VARREG" = 7 ]]; then
+		#High2_KR_Nav
+		IDENT="38 39 39" #899
+	else
+		echo -ne "no matching IdentBlock found for this variant\n"
+	fi
+elif [[ "$TRAINVERSION" = *BY* ]]; then
+	if [[ "$VARLTE" = 1 ]] && [[ "$VARNAV" = 1 ]] && [[ "$VARDAB" = 0 ]] && [[ "$VARTEL" = 1 ]] && [[ "$VARSIR" = 1 ]] && [[ "$VARREG" = 3 ]]; then
+		#High2_US_Nav_PhoneLTE_Sirius
+		IDENT="38 39 30" #890
+	else
+		echo -ne "no matching IdentBlock found for this variant\n"
+	fi
+else
+	echo -ne "no matching IdentBlock found for this variant\n"
+fi
+
+}
+
+case $1 in
+-var) {
+trap '' 2
+
+echo -ne "---- Read original Variant_1 from unit\n" | $TEE -i -a $LOG
+COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
+echo -ne "---- Variant_1: $COMPONENT\n" | $TEE -i -a $LOG
+echo -ne "---- Read original Variant_2 from unit\n" | $TEE -i -a $LOG
+VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
+echo -ne "---- Variant_2: $VARIANT2\n" | $TEE -i -a $LOG
+
+readvar
+convertvar2hex
+
 
 if [ $VARERROR = 0 ]; then
-	echo -ne "Cleaning Variant_1 in EEPROM(writing 13 zero bytes)\n" | $TEE -i -a $LOG
+	echo -ne "---- Clean Variant_1 - 13 bytes 0x20\n" | $TEE -i -a $LOG
 	$E2P w BA 20 20 20 20 20 20 20 20 20 20 20 20 20 >> $LOG
-	#Build Variant_1 string 
+	#Build variant 1 string
+	#TNDL in Variant_2 is LND in Variant_1 - no T and order is different
 	EVAR="4d 55 2d "$VARTYPE"2d "$VARLTE$VARNAV$VARDAB$VARSIR"2d "$VARREG
-	#EVAR=$(echo "$EVAR" | $SED -r 's/[[:space:]]//g')
-	#AVAR=$(on -f mmx $VOLUME/apps/hex2ascii -convert $EVAR)
 	AVAR=$(echo "$EVAR" | $XXD -r -p)
-	echo -ne "Variant_1 generated from Variant_2: "$AVAR"\n" | $TEE -i -a $LOG
-	echo -ne "Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
+	echo -ne "---- New Variant_1: "$AVAR"\n" | $TEE -i -a $LOG
+	echo -ne "---- Writing generated Variant_1 into EEPROM\n" | $TEE -i -a $LOG
 	$E2P w BA $EVAR >> $LOG
 	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
 	echo -ne "New Variant_1 in EEPROM: $COMPONENT\n" | $TEE -i -a $LOG
 else
-	echo -ne "Aborted. Cannot generate Variant_1!\n" | $TEE -i -a $LOG
+	echo -ne "Error occured during creation of Variant_1\n" | $TEE -i -a $LOG
+	echo -ne "Check messages above\n"
+	echo -ne "No changes to Variant_1 will be applied\n\n" | $TEE -i -a $LOG
 	exit 1
 fi
 echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 
 trap 2
+[ -z "$noboot" ] && . $thisdir/reboot -t 10
+[ -z "$noboot" ] && return 2> /dev/null
+
+};;
+
+-identblock) {
+
+trap '' 2
+
+echo -ne "IdentBlock will be derived from Variant\n" | $TEE -i -a $LOG
+
+readvar
+IdentBlock
+
+if [ ! -z $IDENT ]
+	echo -ne "write IdentBlock $IDENT to eeprom\n" | $TEE -i -a $LOG
+	$E2P w 86 $IDENT | $TEE -i -a $LOG
+	$E2P w 91 $IDENT | $TEE -i -a $LOG
+else
+	echo -ne "IdentBlock not found\n" | $TEE -i -a $LOG
+fi
+
+trap 2
+
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 [ -z "$noboot" ] && return 2> /dev/null
 
@@ -173,8 +306,9 @@ trap 2
 		echo "Usage: "$thisname" [OPTION] [-noboot]"
 		echo ""
 		echo "Options:"
-		echo "        -var          set variant_1"
-		echo "        --help        show this help"
+		echo "        -var			set variant_1"
+		echo "        -identblock		set IdentBlock based on variant_2"
+		echo "        --help			show this help"
 		echo ""
 		echo "Note: Backup will only work in RCC bash!"
 		echo ""
