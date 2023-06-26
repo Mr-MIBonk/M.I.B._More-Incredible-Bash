@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd aio_conversion_eu.sh v0.1.2 (2023-06-12 by @MIB-Wiki)
+# esd aio_conversion_eu.sh v0.1.3 (2023-06-23 by @MIB-Wiki)
 
 trap '' 2
 
