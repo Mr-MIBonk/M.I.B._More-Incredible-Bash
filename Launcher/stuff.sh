@@ -6,19 +6,20 @@
 # if you need more time extend FinalScriptMaxTime = XX
 # add echo to output debugging information to RCC log on UART
 
-echo "[stuffScript] Cool stuff found and executing..."
+. /net/mmx/fs/sda0/config/BASICS
+
+echo -ne "[stuffScript] Cool stuff found and executing...\n" | $TEE -i -a $LOG
 
 export GEM=1
 export SWDLAUTORUN=1 # allows Swdlautorun.txt in root of SD during SWDL process
 
-echo "load PNG to display during finalscript --"
-${2}/apps/showimage -load 0 ${2}/mod/images/showimage/ finalscript.png SWDL&
-sleep 10 # to avaoid a parallel run of LOGS
-echo "Running basic backup --------------------"
+echo -ne "\n--- Load PNG to display during finalscript --\n" | $TEE -i -a $LOG
+${2}/apps/showimage -load 0 ${2}/mod/images/showimage/ finalscript.png SWDL
+echo -ne "\n--- Running basic backup --------------------\n" | $TEE -i -a $LOG
 ${2}/apps/backup -b
-echo "Running Launcher script -----------------"
+echo -ne "\n--- Running Launcher script -----------------\n" | $TEE -i -a $LOG
 ${2}/apps/launcher -all
-echo "unload PNG ------------------------------"
+echo -ne "\n--- Unload PNG ------------------------------\n" | $TEE -i -a $LOG
 ${2}/apps/showimage -unload
 
-echo "[stuffScript] Cool stuff DONE"
+echo -ne "[stuffScript] Cool stuff DONE\n" | $TEE -i -a $LOG
