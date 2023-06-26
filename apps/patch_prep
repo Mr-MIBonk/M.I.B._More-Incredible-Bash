@@ -1,0 +1,158 @@
+#!/bin/sh
+
+revision="patch_prep v0.1.0 (2023-06-24 by @MIB-Wiki)"
+# use --help for more info
+
+export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
+export LD_LIBRARY_PATH=/net/mmx/mnt/app/root/lib-target:/net/mmx/mnt/eso/lib:/net/mmx/eso/lib:/net/mmx/mnt/app/usr/lib:/net/mmx/mnt/app/armle/lib:/net/mmx/mnt/app/armle/lib/dll:/net/mmx/mnt/app/armle/usr/lib
+export IPL_CONFIG_DIR=/etc/eso/production
+
+thisname="$(basename $0)"
+thisdir="$(dirname $0)"
+
+if [ -z $LOG ]; then
+	. $thisdir/../config/GLOBALS
+	echo -ne "\n$ME-$thisname---->\n" >> $LOG
+fi
+
+if [ -f $TMP/reboot.mib ]; then
+	echo "Reboot running..."
+	return 2> /dev/null
+fi
+
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
+
+function BLOCKS {
+hex_value1="$OFFSETPART2"
+hex_value2="540000" #start offset of ifs-root on rcc / skip=1344
+decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG
+decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
+result=$((decimal_value1 + decimal_value2))
+SKIPBLOCKS=$((result / 4096)) # calculate skips needed to get to start of ifs-root-stage2
+}
+
+INFILE=$2
+
+	case $1 in
+
+	-create) {
+
+INFILE_PATH=$VOLUME/$INFILE #SD root
+if [[ -f $INFILE_PATH ]]; then
+	echo -ne "--- Processing file: $INFILE\n" | $TEE -i -a $LOG
+else
+	echo -ne "--- INFO: File not found!\n    Files have to be located in SD root\n    Path: $VOLUME\n" | $TEE -i -a $LOG
+	echo -ne "--- File name has to start with 4 digit ifs-root version\n    e. g.:\n" | $TEE -i -a $LOG
+	echo -ne "    from M.I.B backup: 8961-ifs-root-part2-0x00ba0000.ifs\n" | $TEE -i -a $LOG
+	echo -ne "    from FW update:    8961-ifs-root.ifs\n\n" | $TEE -i -a $LOG
+	exit 0
+fi
+
+echo -ne "--- Searching ifs-root-stage2 offset\n" | $TEE -i -a $LOG
+if [[ "$INFILE" = *"0x"* ]]; then
+	OFFSETPART2=$(echo "$INFILE" | cut -d'x' -f2 | cut -c3- | cut -d'.' -f1)
+	STAGE2SIZE=$($DD bs=4 skip=9 count=1 if=$INFILE_PATH 2> /dev/null | $XXD -u -ps ) 2>> $LOG
+else
+	echo -ne "--- Reading offset from file\n    It will take about 2 minutes, please wait...\n" | $TEE -i -a $LOG
+	OFFSETPART2=$($DD bs=4096 skip=0 count=6144 if=$INFILE_PATH | $XXD -u | grep 'EB7E FF00 0100 08' | $CUT -c 3-8) 2>> $LOG
+	BLOCKS
+	SKIPBLOCKS=$((decimal_value1 / 4096)) # calculate skips needed to get to start of ifs-root-stage2
+	OFFSETPART2=$(echo "obase=16; $result" | $BC | awk '{printf("%06s\n", $0)}') 2>> $LOG
+	echo -ne "--- Calculating ifs-root-stage2.ifs size.\n    It will take about 1 minute, please wait...\n" | $TEE -i -a $LOG
+	STAGE2SIZE=$($DD bs=4096 skip=$SKIPBLOCKS count=1 if=$INFILE_PATH 2> /dev/null | $DD bs=4 skip=9 count=1 2> /dev/null | $XXD -u -ps ) 2>> $LOG
+fi
+
+rcc_version="${INFILE%%-*}"
+echo -ne "\n--- RCC-version: "$rcc_version"\n" | $TEE -i -a $LOG
+echo -ne "--- OFFSETPART2: "$OFFSETPART2"\n" | $TEE -i -a $LOG
+echo -ne "--- STAGE2SEIZE: "$STAGE2SIZE"\n\n" | $TEE -i -a $LOG
+
+if [[ "$INFILE" = *"0x"* ]]; then
+	echo -ne "--- Renaming input file\n" | $TEE -i -a $LOG
+	INFILE="$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"
+	mv $INFILE_PATH $VOLUME/$INFILE
+else
+	echo -ne "--- Extract stage2 from ifs-root\n" | $TEE -i -a $LOG
+	INFILE="$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"
+	SKIP=0 # seize RCC before start of ifs-root
+	COUNTBLOCKS="6144" # max. seize ifs-root
+	((COUNT=$COUNTBLOCKS-($SKIPBLOCKS-$SKIP)))
+	$DD bs=4096 skip=$SKIPBLOCKS if=$INFILE_PATH count=$COUNT of=$VOLUME/$INFILE >> $LOG
+fi
+
+INFILE_PATH=$VOLUME/$INFILE
+FILE_OLD="${INFILE_PATH%????}_patched.ifs"
+
+echo -ne "\n--- Creating FEC & CP patch\n" | $TEE -i -a $LOG
+$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $INFILE_PATH 2>> $LOG
+STAGE2SIZE_FEC_CP=$($DD bs=4 skip=9 count=1 if=$FILE_OLD 2> /dev/null | $XXD -u -ps ) 2>> $LOG
+FILE_NEW_FEC_CP=$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE_FEC_CP"_FEC_CP.ifs"
+mv $FILE_OLD $FILE_NEW_FEC_CP 2>> $LOG
+
+echo -ne "\n--- Creating CP only patch\n" | $TEE -i -a $LOG
+$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_CP.pattern $INFILE_PATH 2>> $LOG
+STAGE2SIZE_CP=$($DD bs=4 skip=9 count=1 if=$FILE_OLD 2> /dev/null | $XXD -u -ps ) 2>> $LOG
+FILE_NEW_CP=$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE_CP"_CP.ifs"
+mv $FILE_OLD $FILE_NEW_CP 2>> $LOG
+
+echo -ne "\n--- Creating FEC only patch\n" | $TEE -i -a $LOG
+$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC.pattern $INFILE_PATH 2>> $LOG
+STAGE2SIZE_FEC=$($DD bs=4 skip=9 count=1 if=$FILE_OLD 2> /dev/null | $XXD -u -ps ) 2>> $LOG
+FILE_NEW_FEC=$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE_FEC"_FEC.ifs"
+mv $FILE_OLD $FILE_NEW_FEC 2>> $LOG
+
+#Calculation SHA1 for all files
+	SHA1_ORIG=$($SHA1 $INFILE_PATH | awk '{print $1}')
+	SHA1_FEC_CP=$($SHA1 $FILE_NEW_FEC_CP | awk '{print $1}')
+	SHA1_CP=$($SHA1 $FILE_NEW_CP | awk '{print $1}')
+	SHA1_FEC=$($SHA1 $FILE_NEW_FEC | awk '{print $1}')
+
+DB=MHIG_patch_db.csv
+echo -ne "--- Creating DB entry in $DB\n" | $TEE -i -a $LOG
+if [ ! -f $VOLUME/$DB ]; then
+	echo -ne "ifs-root_version;stage2_offset;header_chk_orig;SHA1_orig;header_chk_FEC_CP;SHA1_FEC_CP;header_chk_CP;SHA1_CP;header_chk_FEC;SHA1_FEC\n" > $VOLUME/$DB
+fi
+grep -v $rcc_version $DB > $VOLUME/tmp.txt && mv $VOLUME/tmp.txt $VOLUME/$DB
+echo -ne "$rcc_version;$OFFSETPART2;$STAGE2SIZE;$SHA1_ORIG;$STAGE2SIZE_FEC_CP;$SHA1_FEC_CP;$STAGE2SIZE_CP;$SHA1_CP;$STAGE2SIZE_FEC;$SHA1_FEC\n" >> $VOLUME/$DB
+
+echo -ne "--- DONE!\n" | $TEE -i -a $LOG
+
+return 2> /dev/null
+
+	};;	
+	
+
+	# help or unknown parameter ------------------------------
+	*) {
+		echo ""
+		echo "EXPERT USE ONLY!!!"
+		echo ""
+		echo $revision
+		echo ""
+		echo "Usage: "$thisname" <file name> "
+		echo ""
+		echo "Option:"
+		echo "        -create 			create patch"
+		echo "        --help			show this help"
+		echo ""
+		echo "This program is free software; you can redistribute it and/or"
+		echo "modify it under the terms of the GNU General Public License"
+		echo "as published by the Free Software Foundation; either version 2"
+		echo "of the License, or (at your option) any later version."
+		echo ""
+		echo "This program is distributed in the hope that it will be useful,"
+		echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+		echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+		echo "See the GNU General Public License for more details."
+		echo ""
+		echo "You should have received a copy of the GNU General Public License"
+		echo "along with this program; if not, write to the Free Software Foundation,"
+		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
+		echo ""
+
+	};;
+
+	esac
+
+exit 0
