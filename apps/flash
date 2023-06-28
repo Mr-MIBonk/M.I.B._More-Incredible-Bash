@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.0 (2023-06-28 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.1 (2023-06-28 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -183,6 +183,13 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 	fi
 	echo -ne "--- Calculating SHA1 of patch file\n" | $TEE -i -a $LOG
 	SHA1_PATCH="$($SHA1 $IFS2 | awk '{print $1}')" 2>> $LOG
+	if [[ $SHA1_PATCH = $SHA1_FEC_CP ]]; then 
+		echo -ne "--- OK: Patch checksum is validated against database\n" | $TEE -i -a $LOG
+	else
+		echo -ne "!!! Patch checksum does NOT match database entry\n    Stopping here ...\n" | $TEE -i -a $LOG
+		rm -rf $TMP/$thisname.mib 2>/dev/null
+		exit 0
+	fi
 	LITTLE2BIG $STAGE2SIZE
 	DDCALC
 	STAGE2="$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
