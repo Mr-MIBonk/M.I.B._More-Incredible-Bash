@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="reboot Unit v0.1.4 (2021-06-09 by MIBonk)"
+revision="reboot Unit v0.1.5 (2023-06-28 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -54,7 +54,12 @@ case $1 in
 				let COUNTER=COUNTER-1
 			done
 		[ -z "$GEM" ] && echo -ne "\nUnit is rebooting now...\n" | $TEE -a $LOG
-		on -f rcc /usr/apps/mib2_ioc_flash $REBOOT 2>>$LOG
+		if [[ "$TRAINVERSION" = *MHIG* ]]; then
+			[ -z "$GEM" ] && echo -ne "\nButtons will stop working now and reboot will take ~60s\n" | $TEE -a $LOG
+			on -f mmx slay -f j9
+		else
+			on -f rcc /usr/apps/mib2_ioc_flash $REBOOT 2>>$LOG
+		fi
 		return 2> /dev/null
 	};;
 

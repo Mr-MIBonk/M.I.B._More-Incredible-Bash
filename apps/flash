@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.2.3 (2023-06-13 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.0 (2023-06-28 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -24,93 +24,125 @@ MIBCAP=3
 . $thisdir/../config/MIBCHECK
 
 function IFSstage2 {
+	if [ -f "$IFS2" ]; then
+		[ -z "$GEM" ] && echo -ne "\033[33m"
+		[ -z "$GEM" ] && echo -ne "\n"
+		echo -ne "Do NOT power down the unit while flashing!\n"
+		echo -ne "Do NOT remove the SD-card/USB stick!\n"
+		[ -z "$GEM" ] && echo -ne "You have 10 seconds before flashing will start...\n"
+		[ -z "$GEM" ] && echo -ne "\033[31m"
+		[ -z "$GEM" ] && echo -ne "\nPress CTRL+C to abort!!!\n\n"
+		[ -z "$GEM" ] && echo -ne "\033[00;00m"
+		[ -z "$GEM" ] && echo -ne "10 seconds left..."
+		COUNTER=9
+		while [  $COUNTER -gt -1 ]; do
+			sleep 1
+			[ -z "$GEM" ] && echo -ne "$COUNTER..."
+			let COUNTER=COUNTER-1
+		done
+		[ -z "$GEM" ] && echo -ne "\033[31m"
+		[ -z "$GEM" ] && echo -ne "\n\n"
+		echo -ne "Flashing will start now."
+		[ -z "$GEM" ] && echo -ne "\n"
+		echo -ne "\nDO NOT INTERRUPT!\n\nDURATION: ~3 Minutes\n"
+		[ -z "$GEM" ] && echo -ne "\033[00;00m"
+		echo -ne "\n" >> $LOG
+		[ -f /net/rcc/usr/bin/flashlock ] && $FLASHUNLOCK >> $LOG
+		[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
+		[ -z "$GEM" ] && echo -ne "\n" >> $LOG
 
-if [ -f "$IFS2" ]; then
-	[ -z "$GEM" ] && echo -ne "\033[33m"
-	[ -z "$GEM" ] && echo -ne "\n"
-	echo -ne "Do NOT power down the unit while flashing!\n"
-	echo -ne "Do NOT remove the SD-card/USB stick!\n"
-	[ -z "$GEM" ] && echo -ne "You have 10 seconds before flashing will start...\n"
-	[ -z "$GEM" ] && echo -ne "\033[31m"
-	[ -z "$GEM" ] && echo -ne "\nPress CTRL+C to abort!!!\n\n"
-	[ -z "$GEM" ] && echo -ne "\033[00;00m"
-	[ -z "$GEM" ] && echo -ne "10 seconds left..."
-	COUNTER=9
-	while [  $COUNTER -gt -1 ]; do
-		sleep 1
-		[ -z "$GEM" ] && echo -ne "$COUNTER..."
-		let COUNTER=COUNTER-1
-	done
-	[ -z "$GEM" ] && echo -ne "\033[31m"
-	[ -z "$GEM" ] && echo -ne "\n\n"
-	echo -ne "Flashing will start now."
-	[ -z "$GEM" ] && echo -ne "\n"
-	echo -ne "\nDO NOT INTERRUPT!\n\nDURATION: ~3 Minutes\n"
-	[ -z "$GEM" ] && echo -ne "\033[00;00m"
-	echo -ne "\n" >> $LOG
-	[ -f /net/rcc/usr/bin/flashlock ] && $FLASHUNLOCK >> $LOG
-	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
-	[ -z "$GEM" ] && echo -ne "\n" >> $LOG
+		trap '' 2
+		#TODO: case sensitive HEX ba vs BA has to be fixed for all
+		#      Or delete this check completly, as offset is now determined very well from unit.
+		if [[ "$OFFSETPART2" = "ba0000" ]] || [[ "$OFFSETPART2" = "BA0000" ]]; then
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		elif [[ "$OFFSETPART2" = "c20000" ]] || [[ "$OFFSETPART2" = "C20000" ]]; then
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		elif [[ "$OFFSETPART2" = "c00000" ]] || [[ "$OFFSETPART2" = "C00000" ]]; then
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		elif [[ "$OFFSETPART2" = "be0000" ]] || [[ "$OFFSETPART2" = "BE0000" ]]; then
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		elif [[ "$OFFSETPART2" = "bc0000" ]] || [[ "$OFFSETPART2" = "BC0000" ]]; then
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		else
+			echo -ne "\nFlash offset unknown, flashing aborted!\nGet in contact with M.I.B team and share your backup\nSupport will be added\n\n" | $TEE -i -a $LOG
+			rm -rf $TMP/$thisname.mib 2>/dev/null
+			exit 0
+		fi
 
-	trap '' 2
-	if [[ "$OFFSETPART2" = "ba0000" ]]; then
-		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-	elif [[ "$OFFSETPART2" = "c20000" ]]; then
-		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-	elif [[ "$OFFSETPART2" = "c00000" ]]; then
-		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-	elif [[ "$OFFSETPART2" = "be0000" ]]; then
-		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-	elif [[ "$OFFSETPART2" = "bc0000" ]]; then
-		echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-	else
-		echo -ne "\nFlash offset unknown, flashing aborted!\nGet in contact with M.I.B team and share your backup\nSUpport will be added\n\n" | $TEE -i -a $LOG
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		exit 0
-	fi
+		FLASHLOG="/net/rcc/tmp/flash.log"
+		echo "\n" > $FLASHLOG
+		$FLASHIT -v -d -x -a $OFFSETPART2 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
+		cat $FLASHLOG >> $LOG #append $FLASHLOG to $LOG
 
-	FLASHLOG="/net/rcc/tmp/flash.log"
-	echo "\n" > $FLASHLOG
-	/net/rcc/usr/bin/flashit -v -d -x -a $OFFSETPART2 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
-	cat $FLASHLOG >> $LOG #append $FLASHLOG to $LOG
+		#validate flash
+			STRING1="programming"
+			STRING2="erasing"
+			PROGRAMMING=$(grep -e $STRING1 $FLASHLOG 2> /dev/null | cut -b 54-177)
+			#echo -ne "${#PROGRAMMING}\n"
+			ERASING=$(grep -e $STRING2 $FLASHLOG 2> /dev/null | cut -b 54-177)
+			#echo -ne "${#ERASING}\n"
+			
+		if [[ ${#PROGRAMMING} = ${#ERASING} ]]; then
+			echo -ne "\nOK: Flash checked and valid\n" | $TEE -i -a $LOG
+			sleep 2
+		else
+			echo -ne "\nATTENTION: Flash validation FAILED\n\nREBOOT will be CANCELED\n\n" | $TEE -i -a $LOG
+			echo -ne "DO NOT reboot or power down  unit - read next lines carefully!!\n\n" | $TEE -i -a $LOG
+			echo -ne "Possible reasons:\n1. Read error from SD\n2. SD card faulty\n3. File on SD corrupted\n\n"
+			echo -ne "Actions:\n1. Copy patch file again to SD --> try to flash again\n   You can safely remove and insert SD now\n2. Still failing --> try with a FRESH SD card\n3. Still Failing --> get in contact with experts and share your log file\nAs long as you do not reboot or power down the unit the failed flash will not take effect.\nRecovery will be easier this way. However, even a rebooted unit can (most likely) be recovered with expert help and 20-50$ of hardware\n\n-- DO NOT PANIC - GET HELP --\n\n"
+			echo -ne "You can go back now...\n"
+			rm -rf $TMP/$thisname.mib 2>/dev/null
+			exit 0
+		fi
 
-	#validate flash
-		STRING1="programming"
-		STRING2="erasing"
-		PROGRAMMING=$(grep -e $STRING1 $FLASHLOG 2> /dev/null | cut -b 54-177)
-		#echo -ne "${#PROGRAMMING}\n"
-		ERASING=$(grep -e $STRING2 $FLASHLOG 2> /dev/null | cut -b 54-177)
-		#echo -ne "${#ERASING}\n"
+		trap 2
+
+		[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
+		[ -f /net/rcc/usr/bin/flashlock ] && $FLASHLOCK >> $LOG
+		[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
 		
-	if [[ ${#PROGRAMMING} = ${#ERASING} ]]; then
-		echo -ne "\nOK: Flash checked and valid\n" | $TEE -i -a $LOG
-		sleep 2
 	else
-		echo -ne "\nATTENTION: Flash validation FAILED\n\nREBOOT will be CANCELED\n\n" | $TEE -i -a $LOG
-		echo -ne "DO NOT reboot or power down  unit - read next lines carefully!!\n\n" | $TEE -i -a $LOG
-		echo -ne "Possible reasons:\n1. Read error from SD\n2. SD card faulty\n3. File on SD corrupted\n\n"
-		echo -ne "Actions:\n1. Copy patch file again to SD --> try to flash again\n   You can safely remove and insert SD now\n2. Still failing --> try with a FRESH SD card\n3. Still Failing --> get in contact with experts and share your log file\nAs long as you do not reboot or power down the unit the failed flash will not take effect.\nRecovery will be easier this way. However, even a rebooted unit can (most likely) be recovered with expert help and 20-50$ of hardware\n\n-- DO NOT PANIC - GET HELP --\n\n"
+		echo -ne "\nNo Flashfiles there!\n\n" | $TEE -i -a $LOG
+		echo -ne "Please check if unit is already patched.\n"
+		echo -ne "Patch can only be applied to stock Firmware.\n\n"
 		echo -ne "You can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		exit 0
 	fi
-
-	trap 2
-	
-	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
-	[ -f /net/rcc/usr/bin/flashlock ] && $FLASHLOCK >> $LOG
-	[ -z "$GEM" ] && echo -ne "\n" | $TEE -i -a $LOG
-	
-else
-	echo -ne "\nNo Flashfiles there!\n\n" | $TEE -i -a $LOG
-	echo -ne "Please check if unit is already patched.\n"
-	echo -ne "Patch can only be applied to stock Firmware.\n\n"
-	echo -ne "You can go back now...\n"
 	rm -rf $TMP/$thisname.mib 2>/dev/null
-	exit 0
-fi
-rm -rf $TMP/$thisname.mib 2>/dev/null
 
+}
+
+function DB_PARSER {
+	# Parsing Patch with FEC and CP
+	PATCH_DB="$VOLUME/patches/MHIG_patch_db.csv"
+	IFS_VERSION=$(grep -E "RCC.*ifs-root.*App" $TMP/version.txt | awk -F "|" '{print $5}' | cut -c1-4 ) # get RCC ifs-root version
+	#HW_VERSION=$(grep -E "RCC.*ifs-root.*App" $TMP/version.txt | awk -F "|" '{print $3}') # get RCC HW version
+	OFFSETPART2=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $2}')
+	STAGE2SIZE=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $3}')
+	SHA1_orig=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $4}')
+	header_chk_FEC_CP=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $5}')
+	SHA1_FEC_CP=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $6}')
+	IFS2_new=$VOLUME"/patches/"$IFS_VERSION"-ifs-root-stage2-0x00"$OFFSETPART2"-"$header_chk_FEC_CP"_FEC_CP.ifs"
+	IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
+}
+
+function DDCALC {
+	hex_value1="$OFFSETPART2" #start of stage2 in HEX
+	hex_value2="$big_endian" # size of stage2 in HEX
+	decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG # 
+	decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
+	SKIPBLOCKS=$((decimal_value1 / 4096))
+	COUNT=$(((decimal_value2 / 4096) + 1)) # count extended by 1 block to certainly get the ent of stage2
+}
+
+function LITTLE2BIG {
+	# Reverse the byte order
+	big_endian=$(echo ${1} | sed 's/\(..\)\(..\)\(..\)\(..\)/\4\3\2\1/')
+	#echo "Little Endian: ${1}"
+	#echo "Big Endian: ${big_endian}"
+	
 }
 
 	case $1 in
@@ -124,34 +156,53 @@ trap '' 2
 
 if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 	echo -ne "\n" >> $LOG
-	echo -ne "Backup is not complete, do flash update is not save!!!\n\n" | $TEE -i -a $LOG
+	echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG
 	rm -rf $TMP/$thisname.mib 2>/dev/null
 	exit 0
 fi
 
-# flash Patch...
 IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs" # patch folder and file
 PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
 echo -ne "\n" >> $LOG
 
-IFS2_new=$VOLUME"/patches/ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs"
-IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
-
 if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	echo -ne "--- Read data from patch DB\n" | $TEE -i -a $LOG
+	if grep -E "RCC.*ifs-root.*App" $TMP/version.txt >/dev/null; then >> $LOG
+		DB_PARSER
+	else
+		echo -ne "--- Patch not found in DB\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+		exit 0
+	fi
 	IFS2=$IFS2_new
 	if [ ! -f $IFS2 ]; then
-		echo -ne "Creating missing patch file LIVE on unit now - This will take about 2 minutes\nPlease be patient\n" | $TEE -i -a $LOG
-		sleep 3
+		echo -ne "--- Creating missing patch file LIVE on unit now - This will take about 2 minutes\nPlease be patient\n" | $TEE -i -a $LOG
 		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $IFS2_backup | $TEE -i -a $LOG #patch command
-		mv ${IFS2_backup%????}_patched.ifs $IFS2_new 2>> $LOG
+		mv ${IFS2_backup%????}_patched.ifs $IFS2 2>> $LOG
 	else
-		echo -ne "OK: File "ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" found\n\n" | $TEE -i -a $LOG
+		echo -ne "--- OK: File "$(basename $IFS2)" found\n" | $TEE -i -a $LOG
 	fi
-	STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=IFS2 2> /dev/null | $XXD -u -ps) # Patched ifs-root-stage2 header seize
-	# $STAGE2SIZE - ifs-root-stage2 header seize currently on unit
-	if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
-		echo -ne "\nUnit is already patched!\nHeader seize on unit - $STAGE2SIZE - matches patch file - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
-		echo -ne "No need to patch unit again!\n\nYou can go back now...\n"
+	echo -ne "--- Calculating SHA1 of patch file\n" | $TEE -i -a $LOG
+	SHA1_PATCH="$($SHA1 $IFS2 | awk '{print $1}')" 2>> $LOG
+	LITTLE2BIG $STAGE2SIZE
+	DDCALC
+	STAGE2="$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
+	#extract stage2 with correct length no FF at end of file.
+	echo -ne "--- Dumping stage2 from unit - duration ~1 minutes\n" | $TEE -i -a $LOG
+	$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 count=$COUNT | head -c $decimal_value2 > $VOLUME/patches/$STAGE2
+	echo -ne "--- Calculating SHA1 of stage2 from unit\n" | $TEE -i -a $LOG
+	SHA1_UNIT="$($SHA1 $VOLUME/patches/$STAGE2 | awk '{print $1}')" 2>> $LOG
+	# echo $SHA1_UNIT
+	# echo $SHA1_PATCH
+	#rm -f $VOLUME/patches/$STAGE2
+	if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
+		echo -ne "\n!!! Unit is already patched!\n" | $TEE -i -a $LOG
+		echo -ne "    No need to patch unit again!\n\nYou can go back now...\n"
+		rm -rf $TMP/$thisname.mib 2>/dev/null
+		exit 0
+	elif [[ $SHA1_UNIT = $SHA1_orig ]]; then 
+		echo -ne "--- Stock ifs-root-stage2 found on unit\n    Proceed with patching" | $TEE -i -a $LOG
+	else
+		echo -ne "!!! Unknown ifs-root-stage2 unit\n    Patch will not be installed\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		exit 0
 	fi
@@ -195,6 +246,8 @@ fi
 
 IFSstage2
 
+# TODO ifs-root-stage2 could be dumped after flash and compared against SHA1 of patch file
+#      rccd is only run if error occured, to document the failure
 . $thisdir/rccd -d #backup RCC after flash
 . $thisdir/fecel -fec #check for FECs and add new once if required
 [ $MIBMO = 1 ] && . $thisdir/fecel -el
