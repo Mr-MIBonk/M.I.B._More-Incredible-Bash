@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setvariant v0.2.0 (2023-06-16 by MIB-Wiki)"
+revision="setvariant v0.2.1 (2023-06-29 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -283,7 +283,7 @@ echo -ne "IdentBlock will be derived from Variant\n" | $TEE -i -a $LOG
 readvar
 IdentBlock
 
-if [ ! -z $IDENT ]
+if [ ! -z $IDENT ]; then
 	echo -ne "write IdentBlock $IDENT to eeprom\n" | $TEE -i -a $LOG
 	$E2P w 86 $IDENT | $TEE -i -a $LOG
 	$E2P w 91 $IDENT | $TEE -i -a $LOG
