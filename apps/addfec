@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.3.1 (2023-06-13 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.3.2 (2023-06-29 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -23,7 +23,23 @@ fi
 MIBCAP=3
 . $thisdir/../config/MIBCHECK
 
-if [ -f $VOLUME/common/tools/addFecs.txt ];then
+ADDFECSELECT ()
+{
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	#e.g. MHIG_EU_VW_K1550
+	MODEL=$(echo "$TRAINVERSION" | cut -d "_" -f 1)
+	REGION=$(echo "$TRAINVERSION" | cut -d "_" -f 2)
+	BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3)
+	addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
+	echo $addFec
+	if [[ -f $addFec ]]; then
+		echo -ne "--- addFec found for:"$MODEL"_"$REGION"_"$BRAND" \nFecs within addFecs.txt:\n" | $TEE -a $LOG
+		cat $addFec | $TEE -a $LOG
+	else
+		echo -ne "--- addFec NOT found\n    Will stop here ...\n" | $TEE -a $LOG
+		exit 0
+	fi
+elif [ -f $VOLUME/common/tools/addFecs.txt ];then
 	echo -ne "AIO detected\n" | $TEE -a $LOG
 	addFec=$VOLUME/common/tools/addFecs.txt
 else
@@ -33,6 +49,8 @@ fi
 #remove CR EOL from addFecs.txt
 $SED 's/\r//g' $addFec > $TMP/addFecs.txt
 addFec=$TMP/addFecs.txt
+}
+
 
 #-----------------------------------------------------------------------------
 
@@ -209,6 +227,8 @@ touch $TMP/AddedFecs.tmp
 -a) {
 
 trap '' 2
+
+ADDFECSELECT
 
 BuildFecContainer
 
