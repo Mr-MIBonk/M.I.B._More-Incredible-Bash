@@ -55,7 +55,7 @@ case $1 in
 			done
 		[ -z "$GEM" ] && echo -ne "\nUnit is rebooting now...\n" | $TEE -a $LOG
 		if [[ "$TRAINVERSION" = *MHIG* ]]; then
-			[ -z "$GEM" ] && echo -ne "\nButtons will stop working now and reboot will take ~60s\n" | $TEE -a $LOG
+			echo -ne "\nButtons will stop working now\nScreen might turn off\nReboot will take ~60s\n" | $TEE -a $LOG
 			on -f mmx slay -f j9
 		else
 			on -f rcc /usr/apps/mib2_ioc_flash $REBOOT 2>>$LOG
