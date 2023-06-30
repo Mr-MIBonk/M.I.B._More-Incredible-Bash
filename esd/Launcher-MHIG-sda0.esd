@@ -80,7 +80,7 @@ screen patch_unit_aio =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Always get latest M.I.B version - mib.mibsolution.one"
+	label	"Always get latest M.I.B version"
 	poll    0
 
 keyValue
