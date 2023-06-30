@@ -67,6 +67,10 @@ keyValue
 	label	" "
 	poll    0
 
+script
+	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr.sh"
+	label    "Check: QR links to MIB ressources - 15s duration"
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> PATCH AIO
@@ -1116,6 +1120,7 @@ BIOSCtrl
 	entry	"France" 32788
 	entry	"Australia" 1024
 	entry	"China" 32782
+	entry	"China" 32782
 	entry	"Russia" 32785
 	poll	1000
 
@@ -1383,7 +1388,7 @@ keyValue
 	poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/ssh/sshd_install.sh"
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/sshd/scripts/sshd_install.sh"
     label   "install SSHD server on unit"
 
 keyValue

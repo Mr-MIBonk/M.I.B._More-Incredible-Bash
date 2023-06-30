@@ -322,7 +322,7 @@ case $1 in
 		echo -ne "EEPROM..........." | $TEE -i -a $LOG
 		if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.bin ]; then
 			$E2P r 0 8000 > $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
-			. $VOLUME/apps/eeprom2bin -bin $BACKUPFOLDER/$MUVERSION-EEProm.txt 2>> $LOG
+			. $VOLUME/apps/eeprom2bin -bin $BACKUPFOLDER/$MUVERSION-EEProm.txt >/dev/null 2>> $LOG
 			ERROR
 		else
 			echo -ne " -> Backup is already there!\n" | $TEE -i -a $LOG

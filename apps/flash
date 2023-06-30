@@ -119,13 +119,15 @@ function DB_PARSER {
 	PATCH_DB="$VOLUME/patches/MHIG_patch_db.csv"
 	IFS_VERSION=$(grep -E "RCC.*ifs-root.*App" $TMP/version.txt | awk -F "|" '{print $5}' | cut -c1-4 ) # get RCC ifs-root version
 	#HW_VERSION=$(grep -E "RCC.*ifs-root.*App" $TMP/version.txt | awk -F "|" '{print $3}') # get RCC HW version
-	OFFSETPART2=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $2}')
-	STAGE2SIZE=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $3}')
+	OFFSETPART2_DB=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $2}')
+	#echo "OFFSETPART2: "$OFFSETPART2 | $TEE -i -a $LOG
+	STAGE2SIZE_orig=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $3}')
 	SHA1_orig=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $4}')
 	header_chk_FEC_CP=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $5}')
 	SHA1_FEC_CP=$(grep -E $IFS_VERSION $PATCH_DB | awk -F ";" '{print $6}')
 	IFS2_new=$VOLUME"/patches/"$IFS_VERSION"-ifs-root-stage2-0x00"$OFFSETPART2"-"$header_chk_FEC_CP"_FEC_CP.ifs"
 	IFS2_backup=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
+	#echo "IFS2_backup: "$IFS2_backup | $TEE -i -a $LOG
 }
 
 function DDCALC {
@@ -163,6 +165,7 @@ fi
 
 IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs" # patch folder and file
 PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
+
 echo -ne "\n" >> $LOG
 
 if [[ "$TRAINVERSION" = *MHIG* ]]; then
@@ -173,11 +176,45 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		echo -ne "--- Patch not found in DB\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
 		exit 0
 	fi
+	echo -ne "--- Read:\n" | $TEE -i -a $LOG
+	 . $thisdir/offset -log
+	if [ $OFFSETPART2 = $OFFSETPART2_DB ]; then
+		echo -ne "--- OK: Unit and DB OFFSETPART2 match\n" | $TEE -i -a $LOG
+	else
+		echo -ne "!!! Unit and DB OFFSETPART2 do NOT match\n    Stopping here ...\n" | $TEE -i -a $LOG
+		rm -rf $TMP/$thisname.mib 2>/dev/null
+		exit 0
+	fi
+	if [ $STAGE2SIZE != $STAGE2SIZE_orig ]; then
+		echo -ne "--- OK: Unit and DB STAGE2SIZE match\n" | $TEE -i -a $LOG
+	else
+		echo -ne "!!! Unit and DB STAGE2SIZE do NOT match\n" | $TEE -i -a $LOG
+		if [ $STAGE2SIZE = $header_chk_FEC_CP ]; then
+			echo -ne "!!! Patch is already installed\n    Stopping here ...\n" | $TEE -i -a $LOG
+		else
+		echo -ne "    Stopping here ...\n" | $TEE -i -a $LOG
+		fi
+		rm -rf $TMP/$thisname.mib 2>/dev/null
+		exit 0
+	fi
+	echo -ne "--- Dumping stage2 from unit - duration ~1 minutes\n" | $TEE -i -a $LOG
+	LITTLE2BIG $STAGE2SIZE
+	DDCALC
+	STAGE2="$VOLUME/patches/$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
+	#extract stage2 with correct length no FF at end of file.
+	$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 count=$COUNT | head -c $decimal_value2 > $STAGE2
+	
 	IFS2=$IFS2_new
 	if [ ! -f $IFS2 ]; then
 		echo -ne "--- Creating missing patch file LIVE on unit now - This will take about 2 minutes\nPlease be patient\n" | $TEE -i -a $LOG
-		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $IFS2_backup | $TEE -i -a $LOG #patch command
-		mv ${IFS2_backup%????}_patched.ifs $IFS2 2>> $LOG
+		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2
+		if [[ -f ${STAGE2%????}_patched.ifs ]]; then
+			mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
+		else
+			echo -ne "!!! Patched file not found on unit\n    Stopping here ...\n" | $TEE -i -a $LOG
+			rm -rf $TMP/$thisname.mib 2>/dev/null
+			exit 0
+		fi
 	else
 		echo -ne "--- OK: File "$(basename $IFS2)" found\n" | $TEE -i -a $LOG
 	fi
@@ -190,17 +227,11 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		exit 0
 	fi
-	LITTLE2BIG $STAGE2SIZE
-	DDCALC
-	STAGE2="$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
-	#extract stage2 with correct length no FF at end of file.
-	echo -ne "--- Dumping stage2 from unit - duration ~1 minutes\n" | $TEE -i -a $LOG
-	$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 count=$COUNT | head -c $decimal_value2 > $VOLUME/patches/$STAGE2
 	echo -ne "--- Calculating SHA1 of stage2 from unit\n" | $TEE -i -a $LOG
 	SHA1_UNIT="$($SHA1 $VOLUME/patches/$STAGE2 | awk '{print $1}')" 2>> $LOG
 	# echo $SHA1_UNIT
 	# echo $SHA1_PATCH
-	#rm -f $VOLUME/patches/$STAGE2
+	rm -f $STAGE2
 	if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
 		echo -ne "\n!!! Unit is already patched!\n" | $TEE -i -a $LOG
 		echo -ne "    No need to patch unit again!\n\nYou can go back now...\n"
