@@ -358,24 +358,54 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> VIM -> Advanced Coding
+# Main -> M.I.B. -> VIM
 #
 ###########################################################################################
-screen vim  =>M.I.B.<=
+screen vim =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
+	label 	"VIM - Video In Motion"
 	poll    0
+
+bitvalue
+    value   per 0 0xC0030002
+	range   0.0 0.7
+	label   "Currently set Video Speed limit [km/h]"
+	entry	"0" 0
+	entry	"2" 2
+	entry	"3" 3
+	entry	"5" 5
+	entry	"6" 6
+	entry	"10" 10
+	entry	"30" 30
+	entry	"60" 60
+	entry	"199" 199
+#	entry	"254" 254
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim199.sh"
+	label   "Set VIM to 199 km/h"
+
+script
+	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim06.sh"
+	label   "Set VIM to 6 km/h (Original)"
+
+keyValue
+    value   String sys 0x00000000 0
+	label	"___________________________________________________________________________"
+	poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> VIM -> Advanced Coding
+#
+###########################################################################################
+screen advanced_coding vim
 
 keyValue
     value   String sys 0x00000000 0
 	label	"CAUTION: Advanced editing of VIM dataset - ON YOUR OWN RISK"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-	label	"MHIG can NOT run videos! This can only help tp lift some GUI restrictions"
 	poll    0
 
 keyValue

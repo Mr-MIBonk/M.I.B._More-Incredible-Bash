@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="VIM v0.1.9 (2023-06-17 by MIBonk & MIB-Wiki)"
+revision="VIM v0.2.0 (2023-07-01 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -16,13 +16,13 @@ else
 	VALUE=$1
 fi
 
-VIM=$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422082 2> /dev/null)
-VIM=$(echo $VIM | awk '{print toupper($0)}')  
-
 if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+VIM=$($UDP -key 3221422082 -ns 0 -type b | $SED -n "s/^.*'\(.*\)'.*$/\1/p" | $SED 's/ //g' 2> /dev/null)
+VIM=$(echo $VIM | awk '{print toupper($0)}')  
 
 if [ -f $TMP/$thisname.mib ] || [ -f $TMP/reboot.mib ]; then
 	echo $thisname" or reboot is already running..."
@@ -64,8 +64,8 @@ if [ ! -z $VIM 2>/dev/null ]; then
 			VIMPATCH=$PRI$HEXVALUE$SEC
 			. $thisdir/crc16 $VIMPATCH
 			VIMPATCH=$VIMPATCH$crcsum
-			$PC b:0:3221422082 $VIMPATCH 2>> $LOG
-			$PC b:0:1 0 2>> $LOG
+			$UDP -key 3221422082 -ns 0 -type b -value $VIMPATCH 2>> $LOG
+			$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG
 			DEZ=$(echo "ibase=16; $HEXVALUE" | $BC)
 			echo -ne "VIM is now patched on Byte $2 with $DEZ km/h (0x$HEXVALUE)\n" | $TEE -a $LOG
 			[ -z "$GEM" ] && echo -ne "\n"
@@ -97,7 +97,6 @@ trap '' 2
 
 if [ ! -z $VIM 2>/dev/null ]; then
 	echo -ne "VIM on Unit: "$VIM"\n\n" | $TEE -a $LOG
-
 fi
 
 rm -rf $TMP/$thisname.mib 2>/dev/null
@@ -123,8 +122,8 @@ if [ ! -z $VIM 2>/dev/null ]; then
 	VIMPATCH=$(echo $VIM | cut -c1-56)
 	. $thisdir/crc16 $VIMPATCH
 	VIMPATCH=$VIMPATCH$crcsum
-	$PC b:0:3221422082 $VIMPATCH 2>> $LOG
-	$PC b:0:1 0 2>> $LOG
+	$UDP -key 3221422082 -ns 0 -type b -value $VIMPATCH 2>> $LOG
+	$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG
 	echo -ne "VIM is now patched to $VIMPATCH\n" | $TEE -a $LOG
 	[ -z "$GEM" ] && echo "\n"
 	rm -rf $TMP/$thisname.mib 2>/dev/null
@@ -152,10 +151,10 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -s <POSITION> <HEXVALUE> change Byte"
-		echo "        -r 	read String"
-		echo "        -w 	write string to Persistance"
-		echo "        --help 			show this help"
+		echo "        -s	<POSITION> <HEXVALUE> change Byte"
+		echo "        -r	read String"
+		echo "        -w	write string to Persistance"
+		echo "        --help	show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
