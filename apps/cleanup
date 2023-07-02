@@ -28,7 +28,7 @@ fi
 	echo -ne "!!!! Delete all Backups and Logs from backup folder(y/n)?" 
 	read CONT
 if [ "$CONT" = "y" ]; then
-	rm -rf $BACKUPFOLDER/logs/*
+	rm -rf $BACKUPFOLDER/*
 	echo -ne "\033[00;00m"
   	echo -ne "\nCleanup all done!\n\n"
 else

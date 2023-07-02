@@ -18,7 +18,7 @@ fi
 
 	-s|-show) {
 
-cat $thisdir/../$MUVERSION-$TRAINVERSION-$FAZIT/logs/$MUVERSION-$FAZIT.log | less;
+cat $BACKUPFOLDER/$MUVERSION-$FAZIT.log | less;
 
 return 2> /dev/null
 

@@ -34,7 +34,7 @@ MIBCAP=3
 			echo -ne "Saving RCC flash to SD /backup/logs/\n" | $TEE -a $LOG
 			echo -ne "Duration ~3 minutes.\nPlease wait..." | $TEE -a $LOG
 			[ -n "$GEM" ] && echo -ne "\n"
-			cat /net/rcc/dev/fs0 > $BACKUPFOLDER/logs/$MUVERSION"-RCC_fs0_post_patch.ifs" 2>> $LOG
+			cat /net/rcc/dev/fs0 > $BACKUPFOLDER/$MUVERSION"-RCC_fs0_post_patch.ifs" 2>> $LOG
 			ERROR
 			[ -z "$GEM" ] && echo -ne "\n"
 

@@ -16,7 +16,7 @@ https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-c
 
 **Add M.I.B LOG file to your report**
 Always attach your M.I.B LOG file!
-Check M.I.B SD card in folder `/backup/logs/` and upload that file together with your report.
+Check M.I.B SD card in folder `/backup/` and upload that file together with your report.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.

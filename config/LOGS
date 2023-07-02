@@ -18,9 +18,8 @@
 if [[ ! -e "$BACKUPFOLDER" ]]; then
 	mkdir -p "$BACKUPFOLDER"
 fi
-LOG="$BACKUPFOLDER/logs/$MUVERSION-$FAZIT.log"
+LOG="$BACKUPFOLDER/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
-	mkdir -p $BACKUPFOLDER/logs
 	cat $thisdir/../config/LOGO > $LOG
 	echo $VERSION >> $LOG
 	if [ -z $MODELID ]; then

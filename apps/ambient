@@ -138,10 +138,11 @@ trap '' 2
 touch $TMP/$thisname.mib
 if [ -d $ROOT_AMB ]; then
 	echo -ne "Backup Skin files..." | $TEE -i -a $LOG
-	mkdir -p $thisdir/../logs/$MUVERSION-$FAZIT/
-	cp -rf $ROOT_AMB/* $thisdir/../logs/$MUVERSION-$FAZIT/ 2>> $LOG
+	if [[ ! -e $BACKUPFOLDER/ambient ]]; then
+		mkdir -p $BACKUPFOLDER/ambient
+	fi
+	cp -rf $ROOT_AMB/* $BACKUPFOLDER/ambient/ 2>> $LOG
 	ERROR
-	sleep 1
 	echo -ne "\n\n" | $TEE -i -a $LOG
 fi
 
