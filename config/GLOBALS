@@ -17,17 +17,16 @@
 # USB Mountpoint...
 . $thisdir/mounts -usb
 
-# test if SD card has write access
-touch /$VOLUME/backup/write.test
-if [[ -f /$VOLUME/backup/write.test ]]; then
-	rm -f /$VOLUME/backup/write.test
+# Check if SD card has write access
+touch $VOLUME/write.test
+if [[ -f $VOLUME/write.test ]]; then
+	rm -f $VOLUME/write.test
 else
 	echo "Aborted! SD card is write protected or damaged!"
 	exit 1
 fi
 
 # global bin's
-SHA="/net/rcc/usr/bin/sha1sum"
 FLASHLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashlock" # /usr/bin/
 FLASHIT="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashit" # /usr/bin/
 FLASHUNLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashunlock" # /usr/bin/
