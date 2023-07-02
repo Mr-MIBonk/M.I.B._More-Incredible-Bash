@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="cleanup v0.1.0 (2020-11-16 by MIBonk)"
+revision="cleanup v0.1.1 (2023-07-02 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -25,10 +25,10 @@ fi
 	-a|-all) {
 
 	echo -ne "\033[31m"
-	echo -ne "!!!! Delete all Backups and Logs on USB Mount(y/n)?" 
+	echo -ne "!!!! Delete all Backups and Logs from backup folder(y/n)?" 
 	read CONT
 if [ "$CONT" = "y" ]; then
-	rm -rf $thisdir/../logs/*;
+	rm -rf $BACKUPFOLDER/logs/*
 	echo -ne "\033[00;00m"
   	echo -ne "\nCleanup all done!\n\n"
 else
