@@ -225,7 +225,7 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Coding for USB with iPod and adaptions for CarPlay, Android Auto and MirrorLink"
+	label 	"Coding for USB with iPod and adaptations for CarPlay, Android Auto and MirrorLink"
 	poll    0
 
 keyValue
@@ -1736,7 +1736,7 @@ screen  WLAN_activation Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Enabling WLAN coding and adaptions on MHI2 unit"
+	label 	"Enabling WLAN coding and adaptations on MHI2 unit"
 	poll    0
 
 keyValue
@@ -1785,7 +1785,7 @@ bitvalue
 
 keyValue
     value   int per 28442848 514
-    label   "Adaptions WLAN off/on  1 = ON | 0 = OFF"
+    label   "Adaptations WLAN off/on  1 = ON | 0 = OFF"
     poll    0
 
 choice

@@ -1094,11 +1094,6 @@ screen eu_conversion advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
     label	"This WILL mess up your unit, if you do not know what you are doing!"
 	poll    0
 
@@ -1149,7 +1144,6 @@ BIOSCtrl
 	entry	"Germany" 32771
 	entry	"France" 32788
 	entry	"Australia" 1024
-	entry	"China" 32782
 	entry	"China" 32782
 	entry	"Russia" 32785
 	poll	1000
@@ -1498,7 +1492,7 @@ keyValue
 	
 keyValue
     value   String sys 0x00000000 0
-	label 	"Enabling WLAN coding and adaptions on MHI2 unit"
+	label 	"Enabling WLAN coding and adaptations on MHI2 unit"
 	poll    0
 
 keyValue
@@ -1552,7 +1546,7 @@ bitvalue
 
 keyValue
     value   int per 28442848 514
-    label   "Adaptions WLAN off/on  1 = ON | 0 = OFF"
+    label   "Adaptations WLAN off/on  1 = ON | 0 = OFF"
     poll    0
 
 choice
