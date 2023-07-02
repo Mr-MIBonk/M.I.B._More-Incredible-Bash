@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd setlang eu v0.1.0 (2022-03-09 by MIB-Wiki)
+# esd setlang eu v0.1.1 (2023-07-02 by MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -25,7 +25,6 @@ echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
 on -f rcc /net/mmx/fs/sda0/apps/setlang -eu
-sleep 3
 
 trap 2
 
