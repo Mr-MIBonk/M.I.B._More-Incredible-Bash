@@ -27,64 +27,64 @@ fi
 
 	-p|-patch) {
 
-if [ ! -z $2 ] && [ -d $thisdir/../mod/ambient/$2 ]; then
-MAGIC="mod/ambient/$2"
-else
-echo -ne "No patch available for this paramter\n" 2>&1 | $TEE -a $LOG
-exit 0
-fi
-
-trap '' 2
-[ -n "$GEM" ] && touch $TMP/$thisname.mib
-$thisdir/mounts -w
-echo -ne "MOD_"$2" is now being patched...\n" 2>&1 | $TEE -a $LOG
-MOD=$($SHA $thisdir/../$MAGIC/* | awk '{ print $1}')
-if [ -d $ROOT_AMB ]; then
-for FOUND in $ROOT_AMB/*
-do
-	if [ -d $FOUND ]; then
-		echo -e "\n"$FOUND | awk -F"/" '{print $NF}' 2>&1 | $TEE -a $LOG
-		if [ -d $FOUND/$DIR_AMB/ ]; then
-			COUNT=0
-			while [ ${COUNT} -lt 2 ]
-			do
-				HASH=$($SHA "$FOUND/$DIR_AMB/$COUNT.gca" | awk '{ print $1}')
-				if [ -f $FOUND/$DIR_AMB/$COUNT.gca ]; then
-					if [[ $MOD != *"$HASH"* ]]; then
-						if [ -f $thisdir/../$MAGIC/$HASH.gca ]; then
-							# check if bck is already there....
-							if [ ! -f $FOUND/$DIR_AMB/$COUNT.bck ];then
-							mv $FOUND/$DIR_AMB/$COUNT.gca $FOUND/$DIR_AMB/$COUNT.bck
-							fi
-							cp -rf $thisdir/../$MAGIC/$HASH.gca $FOUND/$DIR_AMB/$COUNT.gca
-							echo "_"$COUNT" patch done :-)" 2>&1 | $TEE -a $LOG
-						else
-							echo "_"$COUNT" checksum failed..." 2>&1 | $TEE -a $LOG
-						fi
-					else
-						echo "_"$COUNT" already patched :-)" 2>&1 | $TEE -a $LOG
-					fi
-				else
-					echo "_"$COUNT" is missing..." 2>&1 | $TEE -a $LOG
-				fi
-			COUNT=$(($COUNT+1))
-			done
+		if [ ! -z $2 ] && [ -d $thisdir/../mod/ambient/$2 ]; then
+		MAGIC="mod/ambient/$2"
 		else
-			echo "_directory is missing..." 2>&1 | $TEE -a $LOG
+		echo -ne "No patch available for this paramter\n" 2>&1 | $TEE -a $LOG
+		exit 0
 		fi
-	fi
-done
-echo -e "\n ---> be happy ;-)\n" 2>&1 | $TEE -a $LOG
-else
-	echo -e "_nothing found!\n" 2>&1 | $TEE -a $LOG
-fi
 
-$thisdir/mounts -r
-rm -rf $TMP/$thisname.mib 2>/dev/null
+		trap '' 2
+		[ -n "$GEM" ] && touch $TMP/$thisname.mib
+		$thisdir/mounts -w
+		echo -ne "MOD_"$2" is now being patched...\n" 2>&1 | $TEE -a $LOG
+		MOD=$($SHA $thisdir/../$MAGIC/* | awk '{ print $1}')
+		if [ -d $ROOT_AMB ]; then
+		for FOUND in $ROOT_AMB/*
+		do
+			if [ -d $FOUND ]; then
+				echo -e "\n"$FOUND | awk -F"/" '{print $NF}' 2>&1 | $TEE -a $LOG
+				if [ -d $FOUND/$DIR_AMB/ ]; then
+					COUNT=0
+					while [ ${COUNT} -lt 2 ]
+					do
+						HASH=$($SHA "$FOUND/$DIR_AMB/$COUNT.gca" | awk '{ print $1}')
+						if [ -f $FOUND/$DIR_AMB/$COUNT.gca ]; then
+							if [[ $MOD != *"$HASH"* ]]; then
+								if [ -f $thisdir/../$MAGIC/$HASH.gca ]; then
+									# check if bck is already there....
+									if [ ! -f $FOUND/$DIR_AMB/$COUNT.bck ];then
+									mv $FOUND/$DIR_AMB/$COUNT.gca $FOUND/$DIR_AMB/$COUNT.bck
+									fi
+									cp -rf $thisdir/../$MAGIC/$HASH.gca $FOUND/$DIR_AMB/$COUNT.gca
+									echo "_"$COUNT" patch done :-)" 2>&1 | $TEE -a $LOG
+								else
+									echo "_"$COUNT" checksum failed..." 2>&1 | $TEE -a $LOG
+								fi
+							else
+								echo "_"$COUNT" already patched :-)" 2>&1 | $TEE -a $LOG
+							fi
+						else
+							echo "_"$COUNT" is missing..." 2>&1 | $TEE -a $LOG
+						fi
+					COUNT=$(($COUNT+1))
+					done
+				else
+					echo "_directory is missing..." 2>&1 | $TEE -a $LOG
+				fi
+			fi
+		done
+		echo -e "\n ---> be happy ;-)\n" 2>&1 | $TEE -a $LOG
+		else
+			echo -e "_nothing found!\n" 2>&1 | $TEE -a $LOG
+		fi
 
-trap 2
+		$thisdir/mounts -r
+		rm -rf $TMP/$thisname.mib 2>/dev/null
 
-return 2> /dev/null
+		trap 2
+
+		return 2> /dev/null
 
 	};;
 
