@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="setregeu v0.1.5 (2023-06-12 by MIB-Wiki)"
+revision="setregeu v0.1.6 (2023-07-02 by MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -124,6 +124,7 @@ case $1 in
 			echo -ne "--- Variant region\n" | $TEE -a $LOG
 			# 1=Europe/ROW, 2=Europe, 3=NAR, 4=ROW, 5=China, 6=Japan, 7=Korea, 8=Asia, 9=Taiwan
 			$PERSW -f -t int 678364556 9 2 2>> $LOG
+			$E2P w E0 02 >> $LOG
 
 			#echo -ne "switch variant feature byte type to High\n"
 			#$PC i:678364556:4 1
