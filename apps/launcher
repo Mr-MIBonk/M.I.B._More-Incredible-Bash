@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="launcher v0.1.6 (2023-06-20 MIB-Wiki)"
+revision="launcher v0.1.7 (2023-07-02 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -16,124 +16,120 @@ fi
 echo -ne "\n$ME-$thisname---->\n" | $TEE -i -a $LOG
 
 if [ -f $TMP/backup.mib ] || [ -f $TMP/reboot.mib ] || [ -f $TMP/flash.mib ]; then
-	echo "Backup or reboot is already running..."
+	echo "Aborted. Backup, reboot or flashing is running!"
 	return 2> /dev/null
 fi
 
 case $1 in
+	-all) {
+		trap '' 2
 
--all) {
+		#Remove Swdlautorun.txt from SD to avoid update loop
+		if [ -f $VOLUME/Swdlautorun.txt ]; then
+			if [ -f $VOLUME/_Swdlautorun.txt ]; then
+				rm -f $VOLUME/_Swdlautorun.txt
+				echo "-- _Swdlautorun.txt removed" | $TEE -a $LOG
+			fi
+			mv -f $VOLUME/Swdlautorun.txt $VOLUME/_Swdlautorun.txt 2>> $LOG
+			echo "-- Swdlautorun.txt disabled" | $TEE -a $LOG
+		else
+			if [ -f $VOLUME/_Swdlautorun.txt ]; then
+				echo "-- _Swdlautorun.txt found. Autostart already disabled" | $TEE -a $LOG
+			else
+				echo "-- Swdlautorun.txt & _Swdlautorun.txt not found" | $TEE -a $LOG
+			fi
+		fi
 
-trap '' 2
+		# Prevent MOST popup...
+		mount -uw /net/rcc/mnt/efs-persist
+		touch /net/rcc/mnt/efs-persist/SWDL/skipMostPopup.txt
+		echo "-- Skip MOST popup enabled" | $TEE -a $LOG
 
-#Remove Swdlautorun.txt from SD to avoid update loop
-if [ -f $VOLUME/Swdlautorun.txt ]; then
-	if [ -f $VOLUME/_Swdlautorun.txt ]; then
-		rm -f $VOLUME/_Swdlautorun.txt
-		echo "-- _Swdlautorun.txt removed" | $TEE -a $LOG
-	fi
-	mv -f $VOLUME/Swdlautorun.txt $VOLUME/_Swdlautorun.txt 2>> $LOG
-	echo "-- Swdlautorun.txt disabled" | $TEE -a $LOG
-else
-	if [ -f $VOLUME/_Swdlautorun.txt ]; then
-		echo "-- _Swdlautorun.txt found" | $TEE -a $LOG
-		echo "-- autostart already disabled" | $TEE -a $LOG
-	else
-		echo "-- Swdlautorun.txt & _Swdlautorun.txt not found" | $TEE -a $LOG
-	fi
-fi
+		# Clear illegal and withdrawn FECs
+		rm -f /net/rcc/mnt/efs-persist/FEC/IllegalFecContainer.fec 2>> $LOG
+		rm -f /net/rcc/mnt/efs-persist/FEC/WithdrawnFecContainer.fec 2>> $LOG
+		echo "-- Illegal and withdrawn FECs removed" | $TEE -a $LOG
 
-# prevent MOST popup...
-mount -uw /net/rcc/mnt/efs-persist
-touch /net/rcc/mnt/efs-persist/SWDL/skipMostPopup.txt
-echo "-- Skip MOST enabled" | $TEE -a $LOG
+		# Do some cleanup...
+		mount -uw /net/rcc/mnt/efs-persist
+		rm -rf /net/rcc/mnt/efs-persist/SWDL/*.old
+		rm -rf /net/rcc/mnt/efs-persist/SWDL/Log/service/*
+		rm -rf /net/rcc/mnt/efs-persist/SWDL/FileCopyInfo/Launcher.info
+		rm -rf /net/rcc/mnt/efs-persist/SWDL/MainUnit-version2.txt.SWDL.compatibility.txt
+		echo "-- Cleanup done!" | $TEE -a $LOG
 
-#Clear illeagl and withdrawn FECs
-rm -f /net/rcc/mnt/efs-persist/FEC/IllegalFecContainer.fec 2>> $LOG
-rm -f /net/rcc/mnt/efs-persist/FEC/WithdrawnFecContainer.fec 2>> $LOG
-echo "-- Illegal and withdrawn FECs removed" | $TEE -a $LOG
+		# Check if update of GEM to 4.12 if required
+		mount -uw /net/mmx/mnt/app
+		checksum0="43024c7ba4c452fc0bda70c9cd91adb28027d494" #GEM4.12
+		checksum1="3725aad3ed38cd72a132e76908db43b9f49dd19c" #GEM3.4
+		checksum2="017bb1a07c18b671beb0ec1cb66c5f736a9af8ff" #GEM3.5
+		checksum3="0ebe8b0226b27fd9f5124cc406559c5fe84d6e34" #GEM3.6 - e.g. K2161
+		checksum4="ae2645648d0a8dec1500af9df21fc556d91f25d2" #GEM4.0 - e.g. K2589
+		checksum5="752b591b155dd0ade562d327c8476eac2fbec041" #GEM3.3 - e.g. MHIG K155X
 
-# do some cleanup...
-mount -uw /net/rcc/mnt/efs-persist
-rm -rf /net/rcc/mnt/efs-persist/SWDL/*.old
-rm -rf /net/rcc/mnt/efs-persist/SWDL/Log/service/*
-rm -rf /net/rcc/mnt/efs-persist/SWDL/FileCopyInfo/Launcher.info
-rm -rf /net/rcc/mnt/efs-persist/SWDL/MainUnit-version2.txt.SWDL.compatibility.txt
-echo "-- Cleanup done!" | $TEE -a $LOG
+		if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/AppDevelopment.jar ]; then
+			GEMJAR="AppDevelopment.jar"
+			echo "-- $GEMJAR found" | $TEE -a $LOG
+		elif [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
+			GEMJAR="GEM.jar"
+			echo "-- $GEMJAR found" | $TEE -a $LOG
+		else
+			echo "!! *.jar not found" | $TEE -a $LOG
+		fi
 
-# update GEM --> 4.12 to run M.I.B
-mount -uw /net/mmx/mnt/app
-checksum0="43024c7ba4c452fc0bda70c9cd91adb28027d494" #GEM4.12
-checksum1="3725aad3ed38cd72a132e76908db43b9f49dd19c" #GEM3.4
-checksum2="017bb1a07c18b671beb0ec1cb66c5f736a9af8ff" #GEM3.5
-checksum3="0ebe8b0226b27fd9f5124cc406559c5fe84d6e34" #GEM3.6 - e.g. K2161
-checksum4="ae2645648d0a8dec1500af9df21fc556d91f25d2" #GEM4.0 - e.g. K2589
-checksum5="752b591b155dd0ade562d327c8476eac2fbec041" #GEM3.3 - e.g. MHIG K155X
+		if [ -n "$GEMJAR" ]; then
+			checksum_unit="$($SHA1 /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR | awk '{print $1}')" 2>> $LOG
+			if [ $checksum1 = $checksum_unit ] || [ $checksum2 = $checksum_unit ] || [ $checksum3 = $checksum_unit ] || [ $checksum4 = $checksum_unit ] || [ $checksum5 = $checksum_unit ]; then
+				echo "-- Updating GEM to 4.12..." | $TEE -a $LOG
+				mount -uw /net/mmx/mnt/app/
+				on -f mmx cp -r /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_"$GEMJAR" 2>> $LOG
+				on -f mmx cp -r $VOLUME/mod/gem/GEM412 /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR  2>> $LOG #GEM4.12
+				echo "-- GEM is updated" | $TEE -a $LOG
+			elif [ $checksum0 = $checksum_unit ]; then
+				echo "-- GEM 4.12 is already installed" | $TEE -a $LOG
+			else
+				echo "-- GEM update is skipped (sha1=$checksum_unit)" | $TEE -a $LOG
+			fi
+		fi
 
-if [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/AppDevelopment.jar ]; then
-	GEMJAR="AppDevelopment.jar"
-	echo "AppDevelopment.jar found" | $TEE -a $LOG
-	elif [ -f /net/mmx/mnt/app/eso/hmi/lsd/jars/GEM.jar ]; then
-		GEMJAR="GEM.jar"
-	echo "GEM.jar found"
-	else
-		echo "*.jar not found" | $TEE -a $LOG
-fi
+		# Add M.I.B. to GEM
+		on -f mmx rm -rf /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
+		if [[ "$TRAINVERSION" = *MHIG* ]]; then
+			on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-MHIG-sda0.esd /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
+			echo "-- MHIG esd installed" | $TEE -a $LOG
+		else
+			on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-sda0.esd /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
+			echo "-- MHI2 esd installed" | $TEE -a $LOG
+		fi
+		echo "-- M.I.B GEM link installed" | $TEE -a $LOG
 
-if [ -n "$GEMJAR" ]; then
-	checksum_unit="$(/net/rcc/usr/bin/sha1sum /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR | awk '{print $1}')" 2>> $LOG
-	if [ $checksum1 = $checksum_unit ] || [ $checksum2 = $checksum_unit ] || [ $checksum3 = $checksum_unit ] || [ $checksum4 = $checksum_unit ] || [ $checksum5 = $checksum_unit ]; then
-		echo "GEM <4.11 found" | $TEE -a $LOG
-		echo "M.I.B can not run on this version!" | $TEE -a $LOG
-		echo "Upgrading now :)" | $TEE -a $LOG
-		mount -uw /net/mmx/mnt/app/
-		on -f mmx cp -r /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR /net/mmx/mnt/app/eso/hmi/lsd/jars/backup_"$GEMJAR" 2>> $LOG
-		on -f mmx cp -r $VOLUME/mod/gem/GEM412 /net/mmx/mnt/app/eso/hmi/lsd/jars/$GEMJAR  2>> $LOG #GEM4.12
-		echo "-- GEM replaced. DONE" | $TEE -a $LOG
-	else
-		echo "-- GEM version OK - no update needed" | $TEE -a $LOG
-	fi
-fi
+		# Turning on GEM via developer mode adaptation of block 5F
+		echo "-- activating Development Mode (GEM)..." | $TEE -a $LOG
+		mount -uw /net/mmx/mnt/app
+		$UDP -key 3221356557 -ns 0 -type b -value 1 2>> $LOG # Enable GEM
+		$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG #Store change to Persistence
 
-# add M.I.B. to GEM
-on -f mmx rm -rf /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
-if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-MHIG-sda0.esd /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
-	echo "--- MHIG esd installed" | $TEE -a $LOG
-else
-	on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-sda0.esd /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2>> $LOG
-	echo "--- MHI2 esd insatlled" | $TEE -a $LOG
-fi
-echo "-- M.I.B GEM link installed" | $TEE -a $LOG
+		# Run user's script if found
+		mount -uw $VOLUME
+		if [ -f $VOLUME/mod/command.sh ]; then
+			echo "-- Executing $VOLUME/mod/command.sh..." | $TEE -a $LOG
+			. $VOLUME/mod/command.sh
+			echo "-- Finished $VOLUME/mod/command.sh" | $TEE -a $LOG
+		fi
 
-# GEM ON
-echo "-- activating Development Mode (GEM)..." | $TEE -a $LOG
-mount -uw /net/mmx/mnt/app
-$UDP -key 3221356557 -ns 0 -type b -value 1 2>> $LOG # Enbale GEM
-$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG #Store change to Persistence
+		trap 2
 
-# run individual scripts
-mount -uw $VOLUME
-if [ -f $VOLUME/mod/command.sh ]; then
-	. $VOLUME/mod/command.sh
-	echo "-- individual scripts found & done!" | $TEE -a $LOG
-fi
+		return 2> /dev/null
+	};;
 
-trap 2
-
-return 2> /dev/null
-
-};;
-
-# help or unknown parameter ------------------------------
-	*) {
+	*) { # help or unknown parameter ------------------------------
 		echo ""
 		echo $revision
 		echo ""
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -all 		all launcher code is executed"
+		echo "        -all   all launcher code is executed"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"
@@ -149,7 +145,6 @@ return 2> /dev/null
 		echo "along with this program; if not, write to the Free Software Foundation,"
 		echo "Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA."
 		echo ""
-		
 	};;
-	esac
+esac
 exit 0
