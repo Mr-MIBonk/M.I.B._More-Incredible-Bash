@@ -41,7 +41,7 @@ trap '' 2
 	echo -ne "Enable AndroidAuto and Boardbook button image support on POG11\n"
 	sleep 2
 	if [[ "$TRAINVERSION" = *POG11* ]]; then
-		checksum_unit="$(/net/rcc/usr/bin/sha1sum $IMAGE$AA | awk '{print $1}')"
+		checksum_unit="$($SHA1 $IMAGE$AA | awk '{print $1}')"
 		if [ $checksum_AA = $checksum_unit ]; then
 			mount -uw /net/mmx/mnt/app
 			mv $IMAGE$AA $IMAGE"bck_"$AA 2>> $LOG
