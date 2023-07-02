@@ -15,13 +15,16 @@
 #Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # set logs...
+if [[ ! -e "$BACKUPFOLDER" ]]; then
+	mkdir -p "$BACKUPFOLDER"
+fi
 LOG="$BACKUPFOLDER/logs/$MUVERSION-$FAZIT.log"
 if [ ! -f $LOG ]; then
 	mkdir -p $BACKUPFOLDER/logs
 	cat $thisdir/../config/LOGO > $LOG
 	echo $VERSION >> $LOG
 	if [ -z $MODELID ]; then
-	. $thisdir/../config/LOCALS > /dev/null
+		. $thisdir/../config/LOCALS > /dev/null
 	fi
 	echo -ne "______________________________________________________________________\n" >> $LOG
 	echo -ne "\nNOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF\n\n" >> $LOG
@@ -41,12 +44,12 @@ if [ ! -f $LOG ]; then
 fi
 
 ERROR() {
-RESULT=$?
-if [ $RESULT -eq 0 ]; then
-  echo -ne " -> done :-)\n" | $TEE -a $LOG
-else
-  echo -ne " -> failed!\n"| $TEE -a $LOG
-fi
+	RESULT=$?
+	if [ $RESULT -eq 0 ]; then
+	  echo -ne " -> done :-)\n" | $TEE -a $LOG
+	else
+	  echo -ne " -> failed!\n"| $TEE -a $LOG
+	fi
 }
 
 return 2> /dev/null
