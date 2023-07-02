@@ -7,12 +7,12 @@
 
 M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/blob/main/LICENSE) for more information.
 
-**Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even more details about M.I.B and your MHI2 unit.**
+**Check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki for even more details about M.I.B and your MHIG/MHI2/MHI2Q unit.**
 
 ## NOTE:
-- M.I.B. is running on Harman MHI2(Q) units (MIB 2.x) only.
+- M.I.B. is running on Harman MHIG (MIB1 High) and MHI2/MHI2Q (MIB2 High) units only.
 - Minimum requirement to run M.I.B. in GEM is GEM version 4.1+.
-- Most older FW version will receive an udated GEM during M.I.B install.
+- Old GEM of most units with old FW versions will automatically be updated to GEM 4.12 during M.I.B installation.
 
 - Make sure, that you always run latest M.I.B version --> https://mib.mibsolution.one & https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash
 - For additional Information check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki & https://mibwiki.one
@@ -20,7 +20,7 @@ M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](h
 ## CAUTION:
 - Ensure that a external power is connected to the car during any flash or programming process!
 - It is not recommended to flash with running engine!
-- Power failure during flasing/programming will brick your unit.
+- Power failure during flashing/programming will brick your unit.
 - All you do and use at your own risk!
 
 ## M.I.B Functions:
@@ -31,7 +31,7 @@ M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](h
 - [POG24 & BYG24 AndroidAuto & CarPlay Widescreen Patch](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/POG24-&-BYG24---AndroidAuto-&-CarPlay-Widescreen-Patch)
 
 ## [Prepare SD card](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#i---prepare-mib-sd-card):
-- Extract all files of the M.I.B. to the root directory of a clean SD-Card (FAT32 formatted is requirement)
+- Extract all files of the M.I.B. to the root folder of a clean FAT32 formatted SD card
 - Make sure that your SD card is not write protected.
 - Patched IFS-stage2 images have to be placed on the SD card in the folder /patches
 - Pre-patched (CP, FEC and EL) ifs-root-stage2 images can be found for all recent MHI2 FW versions here: https://mib.mibsolution.one
@@ -52,16 +52,16 @@ There is also a example video guide available now:<br />
  
 ### [M.I.B. in Green Engineering Menu - GEM](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Prepare-M.I.B-SD-card-&-install-M.I.B#iii---enter-green-engineering-menu-gem-to-run-mib):
 - After M.I.B SD card is prepared
-- Insert the SD card into slot SD1 of your MHI2 unit.
-- Enter Engineering/Red Menu to start SW Update. Select UPDATE, select SD card, select "M.I.B. Launcher V1.0", START update.
-- Installtion of M.I.B. on your Unit will start. The unit will restart three time until update process is finished.
+- Insert the SD card into slot SD1 of your unit.
+- Enter Engineering/Red Menu to start SW Update. Select UPDATE, select SD card, select "FREE for all - M.I.B. Launcher V1.2", START update.
+- Installation of M.I.B. on your Unit will start. The unit will restart three time until update process is finished.
 - GEM will be activated as part of the installation.
 - SVM error has to be cleared via M.I.B. function in GEM after installation
--  Enter GEM on your unit and have FUN! 
-- Select ==>>m.i.b<<== in GEM
+- Enter GEM on your unit
+- Select ==>>m.i.b<<== in GEM and have FUN!
   
-### NOTE: SD card has to be placed in unit (SD1) to enable M.I.B. in GEM. --> no SD no M.I.B.
-- GEM screen layout is fitted to 9.2'' screens - should work OK on 8'', but will have text cutted on smaller than 8''
+### IMPORTANT! SD card must be presented in SD slot 1 (SD1) to enable M.I.B. in GEM. --> no SD no M.I.B.
+- GEM screen layout is designed for 9.2'' screens but should work OK on 8'' just some text lines may look cut
 
 ### [Update to new M.I.B. version](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/Update-&-Uninstall-M.I.B):
 - No need to reinstall M.I.B if you want to use a new version.
@@ -82,8 +82,8 @@ There is also a example video guide available now:<br />
 #### Start M.I.B by typing
 - /net/mmx/fs/sda0/start
 
-- Default screen seize of Putty/Kitty is often too small to display the M.I.B. menu in full.
-- Increase the window seize manually.
+- Default screen size of Putty/Kitty is often too small to display the M.I.B. menu in full.
+- Increase the window size manually.
 
 ### CONTACT:
 - GITHUB: https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash
