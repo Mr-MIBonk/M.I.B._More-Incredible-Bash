@@ -184,11 +184,11 @@ PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
 echo -ne "\n" >> $LOG
 
 if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	echo -ne "--- Reading data from patch DB\n" | $TEE -i -a $LOG
 	if grep -E "RCC.*ifs-root.*App" $TMP/version.txt >/dev/null; then >> $LOG
+		echo -ne "--- Reading patch DB...\n" | $TEE -i -a $LOG
 		DB_PARSER
 	else
-		echo -ne "--- Patch not found in DB\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+		echo -ne "--- Error! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
 		DEBUG
 		exit 0
 	fi
