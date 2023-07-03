@@ -192,7 +192,7 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		DEBUG
 		exit 0
 	fi
-	echo -ne "--- Searching offset and size of root-part2.ifs...:\n" | $TEE -i -a $LOG
+	echo -ne "--- Searching offset and size of root-stage2.ifs...:\n" | $TEE -i -a $LOG
 	 . $thisdir/offset -log
 	if [ $OFFSETPART2 = $OFFSETPART2_DB ]; then
 		echo -ne "--- OK: OFFSETPART2 in DB and RCC flash match.\n" | $TEE -i -a $LOG
