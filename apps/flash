@@ -184,7 +184,7 @@ PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
 echo -ne "\n" >> $LOG
 
 if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	echo -ne "--- Read data from patch DB\n" | $TEE -i -a $LOG
+	echo -ne "--- Reading data from patch DB\n" | $TEE -i -a $LOG
 	if grep -E "RCC.*ifs-root.*App" $TMP/version.txt >/dev/null; then >> $LOG
 		DB_PARSER
 	else
@@ -192,30 +192,30 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		DEBUG
 		exit 0
 	fi
-	echo -ne "--- Read:\n" | $TEE -i -a $LOG
+	echo -ne "--- Searching offset and size of root-part2.ifs...:\n" | $TEE -i -a $LOG
 	 . $thisdir/offset -log
 	if [ $OFFSETPART2 = $OFFSETPART2_DB ]; then
-		echo -ne "--- OK: Unit and DB OFFSETPART2 match\n" | $TEE -i -a $LOG
+		echo -ne "--- OK: OFFSETPART2 in DB and RCC flash match.\n" | $TEE -i -a $LOG
 	else
-		echo -ne "!!! Unit and DB OFFSETPART2 do NOT match\n    Stopping here ...\n" | $TEE -i -a $LOG
+		echo -ne "!!! Error: OFFSETPART2 in DB and RCC flash do NOT match.\n    Stopping here ...\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	fi
 	if [ $STAGE2SIZE = $STAGE2SIZE_orig ]; then
-		echo -ne "--- OK: Unit and DB STAGE2SIZE match\n" | $TEE -i -a $LOG
+		echo -ne "--- OK: STAGE2SIZE in DB and RCC flash match.\n" | $TEE -i -a $LOG
 	else
-		echo -ne "!!! Unit and DB STAGE2SIZE do NOT match\n" | $TEE -i -a $LOG
+		echo -ne "!!! Error: STAGE2SIZE in DB and RCC flash do NOT match.\n" | $TEE -i -a $LOG
 		if [ $STAGE2SIZE = $header_chk_FEC_CP ]; then
-			echo -ne "!!! Patch is already installed\n    Stopping here ...\n" | $TEE -i -a $LOG
-		else
-		echo -ne "    Stopping here ...\n" | $TEE -i -a $LOG
+			echo -ne "!!! Patch is already installed\n" | $TEE -i -a $LOG
 		fi
+		echo -ne "    Stopping here ...\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	fi
-	echo -ne "--- Dumping stage2 from unit - duration ~1 minutes\n" | $TEE -i -a $LOG
+	echo -ne "--- Dumping root-stage2.ifs from RCC flash.\n" | $TEE -i -a $LOG
+	echo -ne "    It will take about 1 minute. Please wait...\n" | $TEE -i -a $LOG
 	LITTLE2BIG $STAGE2SIZE
 	DDCALC
 	STAGE2="$VOLUME/patches/$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
@@ -224,42 +224,44 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 	
 	IFS2=$IFS2_new
 	if [ ! -f $IFS2 ]; then
-		echo -ne "--- Creating missing patch file LIVE on unit now - This will take about 2 minutes\nPlease be patient\n" | $TEE -i -a $LOG
+		echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
+		echo -ne "    It will take about 2 minutes. Please wait...\n" | $TEE -i -a $LOG
 		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2
 		if [[ -f ${STAGE2%????}_patched.ifs ]]; then
 			mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
 		else
-			echo -ne "!!! Patched file not found on unit\n    Stopping here ...\n" | $TEE -i -a $LOG
+			echo -ne "!!! Patching failed.\n    Stopping here ...\n" | $TEE -i -a $LOG
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			DEBUG
 			exit 0
 		fi
 	else
-		echo -ne "--- OK: File "$(basename $IFS2)" found\n" | $TEE -i -a $LOG
+		echo -ne "--- OK: "$(basename $IFS2)" is created.\n" | $TEE -i -a $LOG
 	fi
-	echo -ne "--- Calculating SHA1 of patch file\n" | $TEE -i -a $LOG
+	echo -ne "--- Calculating SHA1 of $(basename $IFS2)\n" | $TEE -i -a $LOG
 	SHA1_PATCH="$($SHA1 $IFS2 | awk '{print $1}')" 2>> $LOG
-	if [[ $SHA1_PATCH = $SHA1_FEC_CP ]]; then 
-		echo -ne "--- OK: Patch checksum is validated against database\n" | $TEE -i -a $LOG
+	if [[ $SHA1_PATCH = $SHA1_FEC_CP ]]; then
+		echo -ne "--- OK: sha1 of $(basename $IFS2) is valid.\n" | $TEE -i -a $LOG
 	else
-		echo -ne "!!! Patch checksum does NOT match database entry\n    Stopping here ...\n" | $TEE -i -a $LOG
+		echo -ne "!!! sha1 of $(basename $IFS2) is NOT found in DB\n    Stopping here ...\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	fi
-	echo -ne "--- Calculating SHA1 of stage2 from unit\n" | $TEE -i -a $LOG
+	echo -ne "--- Calculating SHA1 of root-stage2.ifs in RCC flash.\n" | $TEE -i -a $LOG
 	SHA1_UNIT="$($SHA1 $VOLUME/patches/$STAGE2 | awk '{print $1}')" 2>> $LOG
 	rm -f $STAGE2
 	if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
-		echo -ne "\n!!! Unit is already patched!\n" | $TEE -i -a $LOG
-		echo -ne "    No need to patch unit again!\n\nYou can go back now...\n"
+		echo -ne "\n!!! root-stage2.ifs is already patched!\n" | $TEE -i -a $LOG
+		echo -ne "\nYou can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	elif [[ $SHA1_UNIT = $SHA1_orig ]]; then 
-		echo -ne "--- Stock ifs-root-stage2 found on unit\n    Proceed with patching" | $TEE -i -a $LOG
+		echo -ne "--- root-stage2.ifs in RCC flash is stock.\n" | $TEE -i -a $LOG
+		echo -ne "    Replacing with $(basename $IFS2)..." | $TEE -i -a $LOG
 	else
-		echo -ne "!!! Unknown ifs-root-stage2 unit\n    Patch will not be installed\n" | $TEE -i -a $LOG
+		echo -ne "!!! root-stage2.ifs in RCC flash is unknown.\n" | $TEE -i -a $LOG
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
