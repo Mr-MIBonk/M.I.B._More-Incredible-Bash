@@ -85,7 +85,7 @@ B2NAND() {
 	echo -ne "\nls -als /net/mmx/mnt/boardbook --> " >> $LOG
 	ls -als $NAND/.. >> $LOG
 	SIZE="$(df -h /net/mmx/mnt/boardbook | awk '{print $4}')"
-	echo -ne "Free space available on /net/mmx/mnt/boardbook "$SIZE" kbytes\n" >> $LOG
+	echo -ne "Free space in /net/mmx/mnt/boardbook "$SIZE"bytes\n" >> $LOG
 }
 
 case $1 in
@@ -400,7 +400,7 @@ case $1 in
 		echo -ne "$TRAINVERSION $MUVERSION\n"
 		echo -ne "In case of errors, please check Log file on SD card.\n"
 		[ -z "$GEM" ] && echo -ne "\n"
-		echo -ne "\nAll done!!" >> $LOG
+		echo -ne "\n$ME-$thisname-done!" | $TEE -i -a $LOG
 
 		rm -rf $TMP/backup.mib 2>/dev/null
 
