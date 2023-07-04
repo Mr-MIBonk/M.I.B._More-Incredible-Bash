@@ -323,8 +323,10 @@ function LITTLE2BIG {
 		. $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
 		. $thisdir/reboot -t 10
 
-		return 2> /dev/null
 	trap 2
+
+	return 2> /dev/null
+
 	};;
 
 
@@ -344,8 +346,10 @@ function LITTLE2BIG {
 		. $thisdir/fecel -b
 		. $thisdir/reboot -t 10
 
-		return 2> /dev/null
 	trap 2
+
+	return 2> /dev/null
+
 	};;
 
 	# help or unknown parameter ------------------------------

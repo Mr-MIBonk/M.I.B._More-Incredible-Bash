@@ -229,69 +229,69 @@ BuildFecContainer ()
 
 -a) {
 
-trap '' 2
+	trap '' 2
 
-ADDFECSELECT
+		ADDFECSELECT
 
-BuildFecContainer
+		BuildFecContainer
 
-trap 2
+	trap 2
 
-return 2> /dev/null
+	return 2> /dev/null
 
 };;
 
 -l) {
 
-trap '' 2
+	trap '' 2
 
-FECPOINTER ()
-{
-	Pointer=0
-	FecsParsed=0
-	FECCOUNTHEX=$($DD if=$TMP/FecContainer.tmp skip=$Pointer bs=2 count=1 2> /dev/null)
-	FECCOUNTDEC=$(echo $((0x$FECCOUNTHEX)))
-	((Pointer=Pointer+8))
-	while [ $FECCOUNTDEC -ne 0 ]; do
-		ParseFecContainer
-		((FecsParsed=FecsParsed+1))
-	done
-}
+		FECPOINTER ()
+		{
+			Pointer=0
+			FecsParsed=0
+			FECCOUNTHEX=$($DD if=$TMP/FecContainer.tmp skip=$Pointer bs=2 count=1 2> /dev/null)
+			FECCOUNTDEC=$(echo $((0x$FECCOUNTHEX)))
+			((Pointer=Pointer+8))
+			while [ $FECCOUNTDEC -ne 0 ]; do
+				ParseFecContainer
+				((FecsParsed=FecsParsed+1))
+			done
+		}
 
-echo -ne "FECs from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
-echo -ne "FECs currently used by unit\n" | $TEE -a $LOG
-rm $TMP/*.tmp 2> /dev/null
-if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
-	$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
-	VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-	FECPOINTER
-	ParseFecContainer
-	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
-	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
-	echo -ne "\n\n" | $TEE -a $LOG
-	
-else
-	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
-fi
+		echo -ne "FECs from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
+		echo -ne "FECs currently used by unit\n" | $TEE -a $LOG
+		rm $TMP/*.tmp 2> /dev/null
+		if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
+			$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
+			VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
+			FECPOINTER
+			ParseFecContainer
+			FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
+			echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
+			echo -ne "\n\n" | $TEE -a $LOG
+			
+		else
+			echo -ne "\nno FEC File found\n" | $TEE -a $LOG
+		fi
 
-echo -ne "FECs from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
-echo -ne "FECs from factory\n" | $TEE -a $LOG
-rm $TMP/*.tmp 2> /dev/null
-if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
-	$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
-	VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-	FECPOINTER
-	ParseFecContainer
-	FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
-	echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
-	echo -ne "\n\n" | $TEE -a $LOG
-else
-	echo -ne "\nno FEC File found\n" | $TEE -a $LOG
-fi
+		echo -ne "FECs from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
+		echo -ne "FECs from factory\n" | $TEE -a $LOG
+		rm $TMP/*.tmp 2> /dev/null
+		if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
+			$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
+			VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
+			FECPOINTER
+			ParseFecContainer
+			FECLIST=$(echo $(cat $TMP/installedFecs.tmp))
+			echo -ne $FECLIST | $SED -r 's/,/\n/g' 2> /dev/null | $TEE -a $LOG
+			echo -ne "\n\n" | $TEE -a $LOG
+		else
+			echo -ne "\nno FEC File found\n" | $TEE -a $LOG
+		fi
 
-trap 2
+	trap 2
 
-return 2> /dev/null
+	return 2> /dev/null
 
 };;
 
