@@ -185,7 +185,7 @@ BuildFec ()
 
 BuildFecContainer ()
 {
-touch $TMP/AddedFecs.tmp
+	touch $TMP/AddedFecs.tmp
 	ParseFecs
 	if [ -f $addFec ];then
 		while read FEC; do
