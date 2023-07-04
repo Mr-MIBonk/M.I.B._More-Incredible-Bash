@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.3 (2023-07-03 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.4 (2023-07-04 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -133,13 +133,13 @@ function DEBUG {
 	echo "--------------- DEBUG --------------" >> $LOG
 	echo "IFS_VERSION:		"$IFS_VERSION >> $LOG
 	echo "OFFSETPART2:		"$OFFSETPART2 >> $LOG
-	echo "OFFSETPART2_DB:	"$OFFSETPART2_DB >> $LOG
+	echo "OFFSETPART2_DB:		"$OFFSETPART2_DB >> $LOG
 	echo "STAGE2SIZE:		"$STAGE2SIZE >> $LOG
 	echo "STAGE2SIZE_orig:	"$STAGE2SIZE_orig >> $LOG
 	echo "SHA1_orig:		"$SHA1_orig >> $LOG
-	echo "header_chk_FEC_CP: "$header_chk_FEC_CP >> $LOG
+	echo "header_chk_FEC_CP:	"$header_chk_FEC_CP >> $LOG
 	echo "SHA1_FEC_CP:		"$SHA1_FEC_CP >> $LOG
-	echo "IFS2_new:			"$IFS2_new >> $LOG
+	echo "IFS2_new:		"$IFS2_new >> $LOG
 	echo "IFS2_backup:		"$IFS2_backup >> $LOG
 	echo "Big Endian:		${big_endian}" >> $LOG
 	echo "SHA1_UNIT:		"$SHA1_UNIT >> $LOG
@@ -226,7 +226,7 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 	if [ ! -f $IFS2 ]; then
 		echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
 		echo -ne "    It will take about 2 minutes. Please wait...\n" | $TEE -i -a $LOG
-		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2
+		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2 | $TEE -i -a $LOG
 		if [[ -f ${STAGE2%????}_patched.ifs ]]; then
 			mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
 		else
