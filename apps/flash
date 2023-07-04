@@ -188,7 +188,7 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		echo -ne "--- Reading patch DB...\n" | $TEE -i -a $LOG
 		DB_PARSER
 	else
-		echo -ne "--- Error! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+		echo -ne "--- !!! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
 		DEBUG
 		exit 0
 	fi
