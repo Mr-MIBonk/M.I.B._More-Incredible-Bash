@@ -153,7 +153,7 @@ function DDCALC {
 	decimal_value1=$(echo "ibase=16; $hex_value1" | $BC) 2>> $LOG # 
 	decimal_value2=$(echo "ibase=16; $hex_value2" | $BC) 2>> $LOG
 	SKIPBLOCKS=$((decimal_value1 / 4096))
-	COUNT=$(((decimal_value2 / 4096) + 1)) # count extended by 1 block to certainly get the ent of stage2
+	COUNT=$(((decimal_value2 / 4096) + 1)) # count extended by 1 block to certainly get the end of stage2
 }
 
 function LITTLE2BIG {
@@ -165,187 +165,187 @@ function LITTLE2BIG {
 
 	-p|-patch) {
 
-trap '' 2
-	[ -n "$GEM" ] && touch $TMP/$thisname.mib
+		trap '' 2
+			[ -n "$GEM" ] && touch $TMP/$thisname.mib
 
- . $thisdir/backup -a
+		 . $thisdir/backup -a
 
-if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
-	echo -ne "\n" >> $LOG
-	echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG
-	echo -ne "\nYou can go back now...\n"
-	rm -rf $TMP/$thisname.mib 2>/dev/null
-	DEBUG
-	exit 0
-fi
-
-IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs" # patch folder and file
-PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
-
-echo -ne "\n" >> $LOG
-
-if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	if grep -E "RCC.*ifs-root.*App" $TMP/version.txt >/dev/null; then >> $LOG
-		echo -ne "--- Reading patch DB...\n" | $TEE -i -a $LOG
-		DB_PARSER
-	else
-		echo -ne "!!! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
-		echo -ne "\nYou can go back now...\n"
-		DEBUG
-		exit 0
-	fi
-	echo -ne "--- Searching offset and size of root-stage2.ifs...:\n" | $TEE -i -a $LOG
-	 . $thisdir/offset -log
-	if [ $OFFSETPART2 = $OFFSETPART2_DB ]; then
-		echo -ne "--- OK: OFFSETPART2 in DB and RCC flash match.\n" | $TEE -i -a $LOG
-	else
-		echo -ne "!!! Error: OFFSETPART2 in DB and RCC flash do NOT match.\n    Stopping here ...\n" | $TEE -i -a $LOG
-		echo -ne "\nYou can go back now...\n"
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		DEBUG
-		exit 0
-	fi
-	if [ $STAGE2SIZE = $STAGE2SIZE_orig ]; then
-		echo -ne "--- OK: STAGE2SIZE in DB and RCC flash match.\n" | $TEE -i -a $LOG
-	else
-		echo -ne "!!! Error: STAGE2SIZE in DB and RCC flash do NOT match.\n" | $TEE -i -a $LOG
-		if [ $STAGE2SIZE = $header_chk_FEC_CP ]; then
-			echo -ne "!!! Patch is already installed\n" | $TEE -i -a $LOG
-		fi
-		echo -ne "    Stopping here ...\n" | $TEE -i -a $LOG
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		DEBUG
-		exit 0
-	fi
-	echo -ne "--- Dumping root-stage2.ifs from RCC flash.\n" | $TEE -i -a $LOG
-	echo -ne "    It will take about 1 minute. Please wait...\n" | $TEE -i -a $LOG
-	LITTLE2BIG $STAGE2SIZE
-	DDCALC
-	STAGE2="$VOLUME/patches/$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
-	#extract stage2 with correct length no FF at end of file.
-	$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 count=$COUNT | head -c $decimal_value2 > $STAGE2
-	
-	IFS2=$IFS2_new
-	if [ ! -f $IFS2 ]; then
-		echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
-		echo -ne "    It will take about 2 minutes. Please wait...\n" | $TEE -i -a $LOG
-		$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2 | $TEE -i -a $LOG
-		if [[ -f ${STAGE2%????}_patched.ifs ]]; then
-			mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
-		else
-			echo -ne "!!! Patching failed.\n    Stopping here ...\n" | $TEE -i -a $LOG
+		if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
+			echo -ne "\n" >> $LOG
+			echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG
 			echo -ne "\nYou can go back now...\n"
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			DEBUG
 			exit 0
 		fi
-	else
-		echo -ne "--- OK: "$(basename $IFS2)" is created.\n" | $TEE -i -a $LOG
-	fi
-	echo -ne "--- Calculating SHA1 of $(basename $IFS2)\n" | $TEE -i -a $LOG
-	SHA1_PATCH="$($SHA1 $IFS2 | awk '{print $1}')" 2>> $LOG
-	if [[ $SHA1_PATCH = $SHA1_FEC_CP ]]; then
-		echo -ne "--- OK: sha1 of $(basename $IFS2) is valid.\n" | $TEE -i -a $LOG
-	else
-		echo -ne "!!! sha1 of $(basename $IFS2) is NOT found in DB\n    Stopping here ...\n" | $TEE -i -a $LOG
-		echo -ne "\nYou can go back now...\n"
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		DEBUG
-		exit 0
-	fi
-	echo -ne "--- Calculating SHA1 of root-stage2.ifs in RCC flash.\n" | $TEE -i -a $LOG
-	SHA1_UNIT="$($SHA1 $STAGE2 | awk '{print $1}')" 2>> $LOG
-	rm -f $STAGE2
-	if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
-		echo -ne "!!! root-stage2.ifs is already patched!\n    Stopping here ...\n" | $TEE -i -a $LOG
-		echo -ne "\nYou can go back now...\n"
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		DEBUG
-		exit 0
-	elif [[ $SHA1_UNIT = $SHA1_orig ]]; then 
-		echo -ne "--- root-stage2.ifs in RCC flash is stock.\n" | $TEE -i -a $LOG
-		echo -ne "    Replacing with $(basename $IFS2)...\n" | $TEE -i -a $LOG
-	else
-		echo -ne "!!! root-stage2.ifs in RCC flash is unknown.\n    Stopping here ...\n" | $TEE -i -a $LOG
-		echo -ne "\nYou can go back now...\n"
-		rm -rf $TMP/$thisname.mib 2>/dev/null
-		DEBUG
-		exit 0
-	fi
-elif [ ! -d $PF ]; then
-	echo -ne "Patch folder "$PF" NOT found on SD card\n\n" | $TEE -i -a $LOG
-	echo -ne "Possible reasons:\n1. Patch folder is not copied to SD\n2. FW is not yet known to M.I.B\n\n"
-	echo -ne "Actions:\n1. Copy folder "$TRAINVERSION"_"$MUVERSION"_PATCH to SD card\n2. Share your backup in case no patch is available for this FW yet\n\n"
-	echo -ne "Missing files/folders - no patch can be applied\n\n"
-	echo -ne "You can go back now...\n"
-	rm -rf $TMP/$thisname.mib 2>/dev/null
-	DEBUG
-	exit 0
-else
-	echo -ne "OK: Patch folder "$PF" found on SD card\n\n" | $TEE -i -a $LOG
-	if [ -f $IFS2 ]; then
-		echo -ne "OK: File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" found in folder\n\n" | $TEE -i -a $LOG
-		sleep 2
-	else
-		STAGE2SIZE_STOCK=$(find $PF -name $MUVERSION"*.ifs" 2> /dev/null | cut -b 92-99) # Stock ifs-root-stage2 header size
-		STAGE2FILE_SD=$(find $PF -name $MUVERSION"*.ifs" -type f -printf "%f\n") # Stock ifs-root-stage2 file name
-		STAGE2FILE_SD_PATH=$(find $PF -name $MUVERSION"*.ifs") # Stock ifs-root-stage2 file name with path
-		# /net/mmx/fs/sda0/patches/MHI2_ER_SKG13_P4526_MU1440_PATCH/MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs
-		STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | $XXD -u -ps) # Patched ifs-root-stage2 header size
-		echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
-		echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" nedded to patch this unit\n" | $TEE -i -a $LOG
-		if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
-			echo -ne "\nUnit is already patched!\nHeader size on unit - $STAGE2SIZE - matches patch file - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
-			echo -ne "No need to patch unit again!\n\nYou can go back now...\n"
-			rm -rf $TMP/$thisname.mib 2>/dev/null
-			DEBUG
-			exit 0
-		else
-			echo -ne "Header size on unit - $STAGE2SIZE - does not match patch files size - $STAGE2SIZE_PATCH - or stock - $STAGE2SIZE_STOCK - image\n\n" | $TEE -i -a $LOG
-			echo -ne "Possible reasons:\n1. Unit holds an unknown patch! \n2. Wrong ifs-root-stage2 is flashed to unit\n3. Train/MU is not correct\n\n"
-			echo -ne "Actions:\n1. Check train/MU\n2. Install FW again to get stock ifs-root-stage2 on unit\n\n"
-			echo -ne "Patch can only be applied to stock Firmware.\n\n"
+
+		IFS2=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2"-"$STAGE2SIZE".ifs" # patch folder and file
+		PF=$VOLUME"/patches/"$TRAINVERSION"_"$MUVERSION"_PATCH" # patch folder
+
+		echo -ne "\n" >> $LOG
+
+		if [[ "$TRAINVERSION" = *MHIG* ]]; then
+			if grep -E "RCC.*ifs-root.*App" $TMP/version.txt >/dev/null; then >> $LOG
+				echo -ne "--- Reading patch DB...\n" | $TEE -i -a $LOG
+				DB_PARSER
+			else
+				echo -ne "!!! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+				echo -ne "\nYou can go back now...\n"
+				DEBUG
+				exit 0
+			fi
+			echo -ne "--- Searching offset and size of root-stage2.ifs...:\n" | $TEE -i -a $LOG
+			 . $thisdir/offset -log
+			if [ $OFFSETPART2 = $OFFSETPART2_DB ]; then
+				echo -ne "--- OK: OFFSETPART2 in DB and RCC flash match.\n" | $TEE -i -a $LOG
+			else
+				echo -ne "!!! Error: OFFSETPART2 in DB and RCC flash do NOT match.\n    Stopping here ...\n" | $TEE -i -a $LOG
+				echo -ne "\nYou can go back now...\n"
+				rm -rf $TMP/$thisname.mib 2>/dev/null
+				DEBUG
+				exit 0
+			fi
+			if [ $STAGE2SIZE = $STAGE2SIZE_orig ]; then
+				echo -ne "--- OK: STAGE2SIZE in DB and RCC flash match.\n" | $TEE -i -a $LOG
+			else
+				echo -ne "!!! Error: STAGE2SIZE in DB and RCC flash do NOT match.\n" | $TEE -i -a $LOG
+				if [ $STAGE2SIZE = $header_chk_FEC_CP ]; then
+					echo -ne "!!! Patch is already installed\n" | $TEE -i -a $LOG
+				fi
+				echo -ne "    Stopping here ...\n" | $TEE -i -a $LOG
+				rm -rf $TMP/$thisname.mib 2>/dev/null
+				DEBUG
+				exit 0
+			fi
+			echo -ne "--- Dumping root-stage2.ifs from RCC flash.\n" | $TEE -i -a $LOG
+			echo -ne "    It will take about 1 minute. Please wait...\n" | $TEE -i -a $LOG
+			LITTLE2BIG $STAGE2SIZE
+			DDCALC
+			STAGE2="$VOLUME/patches/$IFS_VERSION-ifs-root-stage2-0x00$OFFSETPART2-"$STAGE2SIZE"_check.ifs"
+			#extract stage2 with correct length no FF at end of file.
+			$DD bs=4096 skip=$SKIPBLOCKS if=$fs0p0 count=$COUNT | head -c $decimal_value2 > $STAGE2
+			
+			IFS2=$IFS2_new
+			if [ ! -f $IFS2 ]; then
+				echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
+				echo -ne "    It will take about 2 minutes. Please wait...\n" | $TEE -i -a $LOG
+				$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2 | $TEE -i -a $LOG
+				if [[ -f ${STAGE2%????}_patched.ifs ]]; then
+					mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
+				else
+					echo -ne "!!! Patching failed.\n    Stopping here ...\n" | $TEE -i -a $LOG
+					echo -ne "\nYou can go back now...\n"
+					rm -rf $TMP/$thisname.mib 2>/dev/null
+					DEBUG
+					exit 0
+				fi
+			else
+				echo -ne "--- OK: "$(basename $IFS2)" is created.\n" | $TEE -i -a $LOG
+			fi
+			echo -ne "--- Calculating SHA1 of $(basename $IFS2)\n" | $TEE -i -a $LOG
+			SHA1_PATCH="$($SHA1 $IFS2 | awk '{print $1}')" 2>> $LOG
+			if [[ $SHA1_PATCH = $SHA1_FEC_CP ]]; then
+				echo -ne "--- OK: sha1 of $(basename $IFS2) is valid.\n" | $TEE -i -a $LOG
+			else
+				echo -ne "!!! sha1 of $(basename $IFS2) is NOT found in DB\n    Stopping here ...\n" | $TEE -i -a $LOG
+				echo -ne "\nYou can go back now...\n"
+				rm -rf $TMP/$thisname.mib 2>/dev/null
+				DEBUG
+				exit 0
+			fi
+			echo -ne "--- Calculating SHA1 of root-stage2.ifs in RCC flash.\n" | $TEE -i -a $LOG
+			SHA1_UNIT="$($SHA1 $STAGE2 | awk '{print $1}')" 2>> $LOG
+			rm -f $STAGE2
+			if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
+				echo -ne "!!! root-stage2.ifs is already patched!\n    Stopping here ...\n" | $TEE -i -a $LOG
+				echo -ne "\nYou can go back now...\n"
+				rm -rf $TMP/$thisname.mib 2>/dev/null
+				DEBUG
+				exit 0
+			elif [[ $SHA1_UNIT = $SHA1_orig ]]; then 
+				echo -ne "--- root-stage2.ifs in RCC flash is stock.\n" | $TEE -i -a $LOG
+				echo -ne "    Replacing with $(basename $IFS2)...\n" | $TEE -i -a $LOG
+			else
+				echo -ne "!!! root-stage2.ifs in RCC flash is unknown.\n    Stopping here ...\n" | $TEE -i -a $LOG
+				echo -ne "\nYou can go back now...\n"
+				rm -rf $TMP/$thisname.mib 2>/dev/null
+				DEBUG
+				exit 0
+			fi
+		elif [ ! -d $PF ]; then
+			echo -ne "Patch folder "$PF" NOT found on SD card\n\n" | $TEE -i -a $LOG
+			echo -ne "Possible reasons:\n1. Patch folder is not copied to SD\n2. FW is not yet known to M.I.B\n\n"
+			echo -ne "Actions:\n1. Copy folder "$TRAINVERSION"_"$MUVERSION"_PATCH to SD card\n2. Share your backup in case no patch is available for this FW yet\n\n"
+			echo -ne "Missing files/folders - no patch can be applied\n\n"
 			echo -ne "You can go back now...\n"
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			DEBUG
 			exit 0
+		else
+			echo -ne "OK: Patch folder "$PF" found on SD card\n\n" | $TEE -i -a $LOG
+			if [ -f $IFS2 ]; then
+				echo -ne "OK: File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" found in folder\n\n" | $TEE -i -a $LOG
+				sleep 2
+			else
+				STAGE2SIZE_STOCK=$(find $PF -name $MUVERSION"*.ifs" 2> /dev/null | cut -b 92-99) # Stock ifs-root-stage2 header size
+				STAGE2FILE_SD=$(find $PF -name $MUVERSION"*.ifs" -type f -printf "%f\n") # Stock ifs-root-stage2 file name
+				STAGE2FILE_SD_PATH=$(find $PF -name $MUVERSION"*.ifs") # Stock ifs-root-stage2 file name with path
+				# /net/mmx/fs/sda0/patches/MHI2_ER_SKG13_P4526_MU1440_PATCH/MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs
+				STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | $XXD -u -ps) # Patched ifs-root-stage2 header size
+				echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
+				echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" nedded to patch this unit\n" | $TEE -i -a $LOG
+				if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
+					echo -ne "\nUnit is already patched!\nHeader size on unit - $STAGE2SIZE - matches patch file - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
+					echo -ne "No need to patch unit again!\n\nYou can go back now...\n"
+					rm -rf $TMP/$thisname.mib 2>/dev/null
+					DEBUG
+					exit 0
+				else
+					echo -ne "Header size on unit - $STAGE2SIZE - does not match patch files size - $STAGE2SIZE_PATCH - or stock - $STAGE2SIZE_STOCK - image\n\n" | $TEE -i -a $LOG
+					echo -ne "Possible reasons:\n1. Unit holds an unknown patch! \n2. Wrong ifs-root-stage2 is flashed to unit\n3. Train/MU is not correct\n\n"
+					echo -ne "Actions:\n1. Check train/MU\n2. Install FW again to get stock ifs-root-stage2 on unit\n\n"
+					echo -ne "Patch can only be applied to stock Firmware.\n\n"
+					echo -ne "You can go back now...\n"
+					rm -rf $TMP/$thisname.mib 2>/dev/null
+					DEBUG
+					exit 0
+				fi
+			fi
 		fi
-	fi
-fi
 
-IFSstage2
+		IFSstage2
 
-# TODO ifs-root-stage2 could be dumped after flash and compared against SHA1 of patch file
-#      rccd is only run if error occured, to document the failure
-. $thisdir/rccd -d #backup RCC after flash
-. $thisdir/fecel -fec #check for FECs and add new once if required
-[ $MIBMO = 1 ] && . $thisdir/fecel -el
-. $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
-. $thisdir/reboot -t 10
+		# TODO ifs-root-stage2 could be dumped after flash and compared against SHA1 of patch file
+		#      rccd is only run if error occured, to document the failure
+		. $thisdir/rccd -d #backup RCC after flash
+		. $thisdir/fecel -fec #check for FECs and add new once if required
+		[ $MIBMO = 1 ] && . $thisdir/fecel -el
+		. $thisdir/showimage -load 30 $thisdir/../mod/images/showimage/ success.png
+		. $thisdir/reboot -t 10
 
-return 2> /dev/null
-
+		return 2> /dev/null
+	trap 2
 	};;
 
 
 	-r|-restore) {
 
-trap '' 2
-	[ -n "$GEM" ] && touch $TMP/$thisname.mib
+	trap '' 2
+			[ -n "$GEM" ] && touch $TMP/$thisname.mib
 
-. $thisdir/offset -log
+		. $thisdir/offset -log
 
-# flash back to Original...
-IFS2=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
-echo -ne "search "$FAZIT" Backup File "$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs\n" | $TEE -i -a $LOG
+		# flash back to Original...
+		IFS2=$VOLUME"/backup/"$MUVERSION"-"$TRAINVERSION"-"$FAZIT"/"$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs"
+		echo -ne "search "$FAZIT" Backup File "$MUVERSION"-ifs-root-part2-0x00"$OFFSETPART2".ifs\n" | $TEE -i -a $LOG
 
-IFSstage2
+		IFSstage2
 
-. $thisdir/fecel -b
-. $thisdir/reboot -t 10
+		. $thisdir/fecel -b
+		. $thisdir/reboot -t 10
 
-return 2> /dev/null
-
+		return 2> /dev/null
+	trap 2
 	};;
 
 	# help or unknown parameter ------------------------------

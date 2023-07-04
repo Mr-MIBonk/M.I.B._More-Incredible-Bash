@@ -25,32 +25,35 @@ MIBCAP=3
 
 ADDFECSELECT ()
 {
-if [[ "$TRAINVERSION" = *MHIG* ]]; then
-	#e.g. MHIG_EU_VW_K1550
-	MODEL=$(echo "$TRAINVERSION" | cut -d "_" -f 1)
-	REGION=$(echo "$TRAINVERSION" | cut -d "_" -f 2)
-	BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3)
-	addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
-	echo $addFec
-	if [[ -f $addFec ]]; then
-		echo -ne "--- addFec found for:"$MODEL"_"$REGION"_"$BRAND" \nFecs within addFecs.txt:\n" | $TEE -a $LOG
-		cat $addFec | $TEE -a $LOG
+	if [[ "$TRAINVERSION" = *MHIG* ]]; then
+		#e.g. MHIG_EU_VW_K1550
+		MODEL=$(echo "$TRAINVERSION" | cut -d "_" -f 1)
+		REGION=$(echo "$TRAINVERSION" | cut -d "_" -f 2)
+		BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3)
+		addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
+		echo $addFec
+		if [[ -f $addFec ]]; then
+			echo -ne "--- addFec found for:"$MODEL"_"$REGION"_"$BRAND" \nFecs within addFecs.txt:\n" | $TEE -a $LOG
+			cat $addFec | $TEE -a $LOG
+		else
+			echo -ne "--- addFec NOT found\n    Will stop here ...\n" | $TEE -a $LOG
+			exit 0
+		fi
+	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
+		echo -ne "AIO detected\n" | $TEE -a $LOG
+		addFec=$VOLUME/common/tools/addFecs.txt
+	elif [ -f $VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
+		echo -ne "addFecs.txt found in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		addFec=$VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
 	else
-		echo -ne "--- addFec NOT found\n    Will stop here ...\n" | $TEE -a $LOG
-		exit 0
+		echo -ne "addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
+		exit 1
 	fi
-elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-	echo -ne "AIO detected\n" | $TEE -a $LOG
-	addFec=$VOLUME/common/tools/addFecs.txt
-else
-	addFec=$thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
-fi
 
-#remove CR EOL from addFecs.txt
-$SED 's/\r//g' $addFec > $TMP/addFecs.txt
-addFec=$TMP/addFecs.txt
+	#remove CR EOL from addFecs.txt
+	$SED 's/\r//g' $addFec > $TMP/addFecs.txt
+	addFec=$TMP/addFecs.txt
 }
-
 
 #-----------------------------------------------------------------------------
 

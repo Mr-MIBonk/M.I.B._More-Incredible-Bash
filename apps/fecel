@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="copy FEC/EL v0.1.5 (2023-06-12 by MIBonk)"
+revision="copy FEC/EL v0.1.6 (2023-07-04 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -61,13 +61,8 @@ return 2> /dev/null
 $thisdir/mounts -w
 
 # generate FEC
-echo -ne "Check addFecs.txt in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
+
 	. $thisdir/addfec -a
-else
-	echo -ne "addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
-	exit 1
-fi
 
 # copy FEC to Unit, if no one in patch directory check backup folder
 if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
