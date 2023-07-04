@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.3 (2023-07-04 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.4 (2023-07-04 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -212,10 +212,10 @@ trap '' 2
 	DS3000=$DSPATCH
 	echo -ne "Patched dataset:\n"$DSPATCH"\n\n" >> $LOG
 
-	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "--------------------------- CRC ---------------------------\n" | $TEE -a $LOG
 	echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
-	ADDCRC $DS3000
-	echo -ne "-------------------------- DONE ---------------------------\n"
+	ADDCRC $DS3000 | $TEE -a $LOG
+	echo -ne "-------------------------- DONE ---------------------------\n" | $TEE -a $LOG
 	DS3000=$DSPATCH
 	echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
