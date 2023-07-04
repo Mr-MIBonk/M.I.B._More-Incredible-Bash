@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.2 (2023-06-11 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.3 (2023-07-04 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -48,7 +48,7 @@ if [ ! -z $1 2>/dev/null ]; then
 			DSPATCH=$PRI$HEXVALUE$SEC
 			echo -ne "Patched dataset:\n"$DSPATCH"\n\n" >> $LOG
 		else
-			echo -ne "Invalid position\n\n"
+			echo -ne "Invalid position\n\n" | $TEE -a $LOG
 		fi
 	else	
 		echo -ne "Value must be provided as hex value\n\n" | $TEE -a $LOG
@@ -62,11 +62,11 @@ fi
 BACKUP()
 {
 	echo -ne "\nREAD sound datasets ---\n" | $TEE -i -a $LOG
-	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" #0x3000
-	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" #0x3B00
-	DS3000_6=$($PC b:0:3221422100:6) #0x3000 Byte hex 06
-	DS3000_31=$($PC b:0:3221422100:31) #0x3000 Byte hex 1F
-	DS3000_684=$($PC b:0:3221422100:684) #0x3000 Byte 684
+	DS3000="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" 2>> $LOG #0x3000
+	DS3B00="$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" 2>> $LOG #0x3B00
+	DS3000_6=$($PC b:0:3221422100:6) 2>> $LOG #0x3000 Byte hex 06
+	DS3000_31=$($PC b:0:3221422100:31) 2>> $LOG #0x3000 Byte hex 1F
+	DS3000_684=$($PC b:0:3221422100:684) 2>> $LOG #0x3000 Byte 684
 
 	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
 	if [ ! -f $NAND/0x3B00 ]; then
@@ -83,7 +83,7 @@ BACKUP()
 		echo $DS3000 > $NAND/0x3000 2>> $LOG
 		echo $DS3000 > $BACKUPFOLDER/0x3000 2>> $LOG
 		echo $DS3000_684 > $NAND/0x3000_684 2>> $LOG
-		echo $DS3000 > $BACKUPFOLDER/0x3000_684 2>> $LOG
+		echo $DS3000_684 > $BACKUPFOLDER/0x3000_684 2>> $LOG
 		ERROR
 		sleep 1
 	else
@@ -114,12 +114,12 @@ ADDGAIN()
 #echo -ne "$2\n"
 
 if [ $(( $2 % 2 )) -eq 0 ] || [ $2 = 0 ]; then
-	GAIN=$(echo "ibase=16;$1" | $BC)
-	GAINADD=$(echo "$2*12.5" | $BC)
+	GAIN=$(echo "ibase=16;$1" | $BC) 2>> $LOG
+	GAINADD=$(echo "$2*12.5" | $BC) 2>> $LOG
 	#echo -ne "Input gain is $GAIN db\nGain to add is $GAINADD in decimal\n"
-	NEWGAIN=$(echo "$GAINADD+$GAIN" | $BC)
+	NEWGAIN=$(echo "$GAINADD+$GAIN" | $BC) 2>> $LOG
 	#echo -ne "$NEWGAIN\n"
-	NEWGAIN=$(echo "obase=16;$NEWGAIN" | $BC)
+	NEWGAIN=$(echo "obase=16;$NEWGAIN" | $BC) 2>> $LOG
 	#echo -ne "$NEWGAIN\n"
 else
 	echo -ne "Gain must be multiple of 2\n" | $TEE -a $LOG
@@ -141,7 +141,7 @@ else
 	return 2> /dev/null
 fi
 
-AMP="$($PC i:0:0x50182CFF)" # long coding byte 11
+AMP="$($PC i:0:0x50182CFF)" 2>> $LOG # long coding byte 11
 echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 # echo -ne "$(on -f mmx /eso/bin/dumb_persistence_reader 0 4101)\n" # longcoding output for debugging
 
@@ -176,38 +176,38 @@ trap '' 2
 	
 	echo -ne "0x3000 dataset found on unit:\n$DS3000\n\n" >> $LOG
 	LENGTH=${#DS3000} # Length DS with crc
-	LENGTH=$(echo $LENGTH -4 | $BC) # DS length without crc
-	DS3000=$(echo $DS3000 | cut -c1-$LENGTH) # DS with crc bytes removed
+	LENGTH=$(echo $LENGTH -4 | $BC) 2>> $LOG # DS length without crc
+	DS3000=$(echo $DS3000 | cut -c1-$LENGTH) 2>> $LOG # DS with crc bytes removed
 	echo -ne "0x3000 dataset without crc:\n$DS3000\n\n" >> $LOG
 	
 	#SUBGAIN="$($PC b:0:3221422100:684)" # 0x3000 byte 00 - type of sound system
 	SUBGAIN=$DS3000_684
-	#echo -ne "Gain found in dataset $SUBGAIN in hex\n"
-	SUBGAINDEC="$(echo "ibase=16; $SUBGAIN" | $BC)"
-	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
+	#echo -ne "Gain found in dataset $SUBGAIN in hex\n" | $TEE -a $LOG
+	SUBGAINDEC="$(echo "ibase=16; $SUBGAIN" | $BC)" 2>> $LOG
+	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)" 2>> $LOG
 	echo -ne "Subwoofer gain dataset $SUBGAINDEC dB\n" | $TEE -i -a $LOG
 	echo -ne "Subwoofer gain increase $2 dB\n" | $TEE -i -a $LOG
 	
 	echo -ne "ADD gain to dataset ---\n"
 	ADDGAIN $SUBGAIN $2
-	#echo -ne "New subwoofer gain $NEWGAIN in hex\n"
-	SUBGAINDEC="$(echo "ibase=16; $NEWGAIN" | $BC)"
-	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
+	#echo -ne "New subwoofer gain $NEWGAIN in hex\n"  | $TEE -a $LOG
+	SUBGAINDEC="$(echo "ibase=16; $NEWGAIN" | $BC)" 2>> $LOG
+	SUBGAINDEC="$(echo "$SUBGAINDEC/12.5" | $BC)" 2>> $LOG
 	echo -ne "New subwoofer gain $SUBGAINDEC dB\n\n" | $TEE -i -a $LOG
 
-	DS3000_684_ORIG=$(cat $NAND/0x3000_684)
-	ORIGDEC="$(echo "ibase=16; $DS3000_684_ORIG" | $BC)"
-	ORIGDEC="$(echo "$SUBGAINDEC/12.5" | $BC)"
-	DIFF="$(echo "$SUBGAINDEC-$ORIGDEC" | $BC)"
+	DS3000_684_ORIG=$(cat $NAND/0x3000_684) 2>> $LOG
+	ORIGDEC="$(echo "ibase=16; $DS3000_684_ORIG" | $BC)" 2>> $LOG
+	ORIGDEC="$(echo "$SUBGAINDEC/12.5" | $BC)" 2>> $LOG
+	DIFF="$(echo "$SUBGAINDEC-$ORIGDEC" | $BC)" 2>> $LOG
 	if [ $DIFF -le 8 ]; then # is less than or equal to
-		echo -ne "Continue subwoofer gain increase\n"
+		echo -ne "Continue subwoofer gain increase\n" | $TEE -a $LOG
 	else
-		echo -ne "Subwoofer gain increase to stock value is bigger than +8dB\nWill stop here\n"
+		echo -ne "Subwoofer gain increase to stock value is bigger than +8dB\nWill stop here\n" | $TEE -a $LOG
 		sleep 2
 		exit 2> /dev/null
 	fi
 
-	echo -ne "\nCreate new dataset ---\n"
+	echo -ne "\nCreate new dataset ---\n" | $TEE -a $LOG
 	DSEDIT $DS3000 684 $NEWGAIN # set center range for subwoofer knob
 	DS3000=$DSPATCH
 	echo -ne "Patched dataset:\n"$DSPATCH"\n\n" >> $LOG
@@ -295,11 +295,11 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 
 	echo -ne "\nPatched dataset:\n"$DS3B00"\n\n" >> $LOG
 
-	echo -ne "--------------------------- CRC ---------------------------\n"
+	echo -ne "--------------------------- CRC ---------------------------\n" | $TEE -a $LOG
 	echo -ne "Calculating CRC will take about 20 seconds NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
-	ADDCRC $DS3B00
-	echo -ne "-------------------------- DONE ---------------------------\n"
-	DS3B00=$DSPATCH
+	ADDCRC $DS3B00 | $TEE -a $LOG
+	echo -ne "-------------------------- DONE ---------------------------\n" | $TEE -a $LOG
+	DS3B00=$DSPATCH | $TEE -a $LOG
 	echo -ne "Patched dataset with CRC:\n"$DS3B00"\n\n" >> $LOG
 	
 	echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
@@ -324,11 +324,11 @@ echo -ne "Install SUBWOOFER dataset\n" | $TEE -a $LOG
 		DS3000=$DSPATCH
 		echo -ne "Patched dataset:\n"$DS3000"\n\n" >> $LOG
 		
-		echo -ne "--------------------------- CRC ---------------------------\n"
+		echo -ne "--------------------------- CRC ---------------------------\n" | $TEE -a $LOG
 		echo -ne "Calculating CRC will take about 2 minutes NOW\nPlease stay patient!\nNext output will only be visible after calculation has finished!\n" | $TEE -a $LOG
-		ADDCRC $DS3000
-		echo -ne "-------------------------- DONE ---------------------------\n"
-		DS3000=$DSPATCH
+		ADDCRC $DS3000 | $TEE -a $LOG
+		echo -ne "-------------------------- DONE ---------------------------\n" | $TEE -a $LOG
+		DS3000=$DSPATCH | $TEE -a $LOG
 		echo -ne "Patched dataset with CRC:\n"$DS3000"\n\n" >> $LOG
 
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
@@ -357,18 +357,18 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 
 	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
-	if [ -f $BACKUPFOLDER/0x3B00 ] && [ -f $BACKUPFOLDER/0x3000 ]; then
+	if [ -f $NAND/0x3B00 ] && [ -f $NAND/0x3000 ]; then
 		echo -ne "Dataset backups found\n" | $TEE -i -a $LOG
 		echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
-		$PC b:0:3221422112 $(cat $BACKUPFOLDER/0x3B00) 2>> $LOG
+		$PC b:0:3221422112 $(cat $NAND/0x3B00) 2>> $LOG
 		$PC b:0:1 0 2>> $LOG
 		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
 		echo -ne "0x3B00 DONE\n\n" | $TEE -a $LOG
 		
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
-		$PC b:0:3221422100 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
+		$PC b:0:3221422100 $(cat $NAND/0x3000) 2>> $LOG | $TEE -i -a $LOG
 		$PC b:0:1 0 2>> $LOG
 		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
 		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG
