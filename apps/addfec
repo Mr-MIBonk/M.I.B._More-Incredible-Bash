@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.3.3 (2023-07-04 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.3.4 (2023-07-04 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -36,7 +36,7 @@ ADDFECSELECT ()
 			echo -ne "--- addFec found for:"$MODEL"_"$REGION"_"$BRAND" \nFecs within addFecs.txt:\n" | $TEE -a $LOG
 			cat $addFec | $TEE -a $LOG
 		else
-			echo -ne "--- addFec NOT found\n    Will stop here ...\n" | $TEE -a $LOG
+			echo -ne "--- addFec NOT found\nSupport for "$MODEL"_"$REGION"_"$BRAND" has to be added\n    Will stop here ...\n" | $TEE -a $LOG
 			exit 0
 		fi
 	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
