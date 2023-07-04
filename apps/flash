@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.4 (2023-07-04 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.5 (2023-07-04 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -173,6 +173,7 @@ trap '' 2
 if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 	echo -ne "\n" >> $LOG
 	echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG
+	echo -ne "\nYou can go back now...\n"
 	rm -rf $TMP/$thisname.mib 2>/dev/null
 	DEBUG
 	exit 0
@@ -188,7 +189,8 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		echo -ne "--- Reading patch DB...\n" | $TEE -i -a $LOG
 		DB_PARSER
 	else
-		echo -ne "--- !!! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+		echo -ne "!!! Info about ifs-root partition is missing.\nPlease get in contact with M.I.B team and share your backup\n" | $TEE -i -a $LOG
+		echo -ne "\nYou can go back now...\n"
 		DEBUG
 		exit 0
 	fi
@@ -198,6 +200,7 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		echo -ne "--- OK: OFFSETPART2 in DB and RCC flash match.\n" | $TEE -i -a $LOG
 	else
 		echo -ne "!!! Error: OFFSETPART2 in DB and RCC flash do NOT match.\n    Stopping here ...\n" | $TEE -i -a $LOG
+		echo -ne "\nYou can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
@@ -231,6 +234,7 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 			mv ${STAGE2%????}_patched.ifs $IFS2 2>> $LOG
 		else
 			echo -ne "!!! Patching failed.\n    Stopping here ...\n" | $TEE -i -a $LOG
+			echo -ne "\nYou can go back now...\n"
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			DEBUG
 			exit 0
@@ -244,24 +248,26 @@ if [[ "$TRAINVERSION" = *MHIG* ]]; then
 		echo -ne "--- OK: sha1 of $(basename $IFS2) is valid.\n" | $TEE -i -a $LOG
 	else
 		echo -ne "!!! sha1 of $(basename $IFS2) is NOT found in DB\n    Stopping here ...\n" | $TEE -i -a $LOG
+		echo -ne "\nYou can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	fi
 	echo -ne "--- Calculating SHA1 of root-stage2.ifs in RCC flash.\n" | $TEE -i -a $LOG
-	SHA1_UNIT="$($SHA1 $VOLUME/patches/$STAGE2 | awk '{print $1}')" 2>> $LOG
+	SHA1_UNIT="$($SHA1 $STAGE2 | awk '{print $1}')" 2>> $LOG
 	rm -f $STAGE2
 	if [[ $SHA1_UNIT = $SHA1_FEC_CP ]]; then 
-		echo -ne "\n!!! root-stage2.ifs is already patched!\n" | $TEE -i -a $LOG
+		echo -ne "!!! root-stage2.ifs is already patched!\n    Stopping here ...\n" | $TEE -i -a $LOG
 		echo -ne "\nYou can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
 	elif [[ $SHA1_UNIT = $SHA1_orig ]]; then 
 		echo -ne "--- root-stage2.ifs in RCC flash is stock.\n" | $TEE -i -a $LOG
-		echo -ne "    Replacing with $(basename $IFS2)..." | $TEE -i -a $LOG
+		echo -ne "    Replacing with $(basename $IFS2)...\n" | $TEE -i -a $LOG
 	else
-		echo -ne "!!! root-stage2.ifs in RCC flash is unknown.\n" | $TEE -i -a $LOG
+		echo -ne "!!! root-stage2.ifs in RCC flash is unknown.\n    Stopping here ...\n" | $TEE -i -a $LOG
+		echo -ne "\nYou can go back now...\n"
 		rm -rf $TMP/$thisname.mib 2>/dev/null
 		DEBUG
 		exit 0
