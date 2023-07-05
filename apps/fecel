@@ -37,7 +37,7 @@ MIBCAP=3
 			cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
 			ERROR
 		elif [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
-			echo -ne "copy EL file from  backup "$FAZIT"...." | $TEE -a $LOG
+			echo -ne "copy EL file from backup "$FAZIT"...." | $TEE -a $LOG
 			[ -n "$GEM" ] && echo -ne "\n"
 			cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
 			ERROR

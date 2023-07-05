@@ -33,7 +33,7 @@ ADDFECSELECT ()
 		addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
 		echo $addFec
 		if [[ -f $addFec ]]; then
-			echo -ne "--- addFec found for:"$MODEL"_"$REGION"_"$BRAND" \nFecs within addFecs.txt:\n" | $TEE -a $LOG
+			echo -ne "--- Found addFec.txt for "$MODEL"_"$REGION"_"$BRAND" \nWill add following FECS:\n" | $TEE -a $LOG
 			cat $addFec | $TEE -a $LOG
 		else
 			echo -ne "--- addFec NOT found\nSupport for "$MODEL"_"$REGION"_"$BRAND" has to be added\n    Will stop here ...\n" | $TEE -a $LOG
@@ -63,22 +63,23 @@ ParseFecs ()
 	if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
 		$XXD -u -p -c 99999 $BACKUPFOLDER/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FECs to FEC file from M.I.B backup folder\n" | $TEE -a $LOG
+		echo -ne "\nUsing /backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	elif [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FECs to FEC File from /net/rcc/mnt/efs-persist/FEC\n" | $TEE -a $LOG
+		echo -ne "\nUsing /net/rcc/mnt/efs-persist/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	elif [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nadd FECs to FEC File from /net/rcc/mnt/efs-system/backup/FEC\n" | $TEE -a $LOG
+		echo -ne "\n/net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	else
-		echo -ne "\nno FEC File found, create own one now!\n" | $TEE -a $LOG
+		echo -ne "\nFecContainer.fec not found. Generating a new one...\n" | $TEE -a $LOG
 		CreateFec
 	fi
 
 	FecCheck=$($DD if=$TMP/FecContainer.tmp skip=8 bs=2 count=2 2> /dev/null)
 	if [[ $FecCheck -ne 1102 ]] && [[ $FecCheck -ne 1107 ]]; then
+		echo -ne "\nInvalid FecContainer.fec. Generating a new one...\n" | $TEE -a $LOG
 		rm $TMP/FecContainer.tmp
 		CreateFec
 	fi
