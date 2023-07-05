@@ -126,7 +126,7 @@ keyValue
 
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecel.sh"
-	label   "Add new Fecs to FecContainer.fec"
+	label   "Add FECs from addFEC.txt to FecContainer.fec"
 
 keyValue
     value   String sys 0x00000000 0
