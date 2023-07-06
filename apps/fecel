@@ -29,23 +29,13 @@ MIBCAP=3
 
 	$thisdir/mounts -w
 
-	# copy EL to Unit, if no one in patch directory check backup folder
-	if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
-		if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt ];then
-			echo -ne "copy EL file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-			[ -n "$GEM" ] && echo -ne "\n"
-			cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
-			ERROR
-		elif [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
-			echo -ne "copy EL file from backup "$FAZIT"...." | $TEE -a $LOG
-			[ -n "$GEM" ] && echo -ne "\n"
-			cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
-			ERROR
-		else
-			echo -ne "nothing there to copy!\n" | $TEE -a $LOG
-		fi
+	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt ];then
+		echo -ne "copy EL file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+		ERROR
 	else
-		echo -ne "please do EL backup 1st!\n" | $TEE -a $LOG
+		echo -ne "No /patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt found\n" | $TEE -a $LOG
 	fi
 
 	[ -z "$GEM" ] && echo -ne "\n"
@@ -61,30 +51,7 @@ MIBCAP=3
 	$thisdir/mounts -w
 
 	# generate FEC
-
 	. $thisdir/addfec -a
-
-	# copy FEC to Unit, if no one in patch directory check backup folder
-	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
-		echo -ne "copy FEC file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-		echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
-		echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	else
-		echo -ne "nothing there to copy!\n\n" | $TEE -a $LOG
-	fi
-
-	[ -z "$GEM" ] && echo -ne "\n"
 
 	$thisdir/mounts -r
 	return 2> /dev/null

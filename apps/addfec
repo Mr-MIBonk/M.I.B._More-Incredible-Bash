@@ -205,17 +205,11 @@ BuildFecContainer ()
 			cat $TMP/AddedFecs.tmp >> $TMP/FecContainer.fec
 			$DD if=$TMP/FecContainer.tmp skip=4 bs=2 2> /dev/null | $XXD -r -p >> $TMP/FecContainer.fec
 			echo -ne "FecContainer.fec is generated.\n" | $TEE -a $LOG
-			if [ -d $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH" ];then
-				cp -rf $TMP/FecContainer.fec $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec
-				echo -ne "FecContainer.fec is copied to /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH\n" | $TEE -a $LOG
-			else
-				echo -ne "/patches/$TRAINVERSION_"$MUVERSION"_PATCH folder not found!...\n" | $TEE -a $LOG
-				[ -f $VOLUME/common/tools/addFecs.txt ] && echo -ne "AIO detected.\n" | $TEE -a $LOG
-				echo "Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
-				[ -n "$GEM" ] && echo -ne "\n"
-				cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/ 2>> $LOG
-				ERROR
-			fi
+			echo "Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
+			[ -n "$GEM" ] && echo -ne "\n"
+			cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/ 2>> $LOG
+			ERROR
+			[ -z "$GEM" ] && echo -ne "\n"
 		else
 			echo -ne "Generation of AddedFecs.tmp failed!\n\n" | $TEE -a $LOG
 		fi
@@ -233,9 +227,15 @@ BuildFecContainer ()
 
 	trap '' 2
 
+	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
+		echo -ne "Copying FecContainer.fec from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		[ -n "$GEM" ] && echo -ne "\n"
+		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		ERROR
+	else
 		ADDFECSELECT
-
 		BuildFecContainer
+	fi
 
 	trap 2
 
