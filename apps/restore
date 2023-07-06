@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="restore v0.1.7 (2023-07-06 by MIBonk & MIB-Wiki)"
+revision="restore v0.1.8 (2023-07-06 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -60,12 +60,12 @@ trap '' 2
 
 	echo -ne "restore FecContainer.fec.....\n" | $TEE -i -a $LOG
 	mount -uw /net/rcc/mnt/efs-persist/
-	if [ -f $BACKUPFOLDER/FEC/backup/FecContainer.fec ];then
+	if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
+		cp -r /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		echo -ne "Copied FecContainer.fec from /net/rcc/mnt/efs-persist/backup/FEC to unit \n" | $TEE -a $LOG
+	elif [ -f $BACKUPFOLDER/FEC/backup/FecContainer.fec ];then
 		cp -r $BACKUPFOLDER/FEC/backup/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
 		echo -ne "Copied FecContainer.fec from M.I.B backup to unit\n" | $TEE -a $LOG
-	elif [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
-		cp -r /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		echo -ne "Copied FecContainer.fec /net/rcc/mnt/efs-persist/backup/FEC to unit \n" | $TEE -a $LOG
 	else
 		echo -ne "No backup FecContainer.fec found\n" | $TEE -a $LOG
 		echo -ne "Trying to copy FecContainer.fec from M.I.B patch folder\n" | $TEE -a $LOG
