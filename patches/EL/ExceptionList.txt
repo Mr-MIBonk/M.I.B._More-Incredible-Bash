@@ -1,0 +1,24 @@
+# Exception list for development purpose (MIB-High)
+
+
+# Boardbook data path  
+Destination = "/net/mmx/mnt/boardbook"
+
+# PPOI data path
+Destination = "/net/mmx/mnt/navdb/PersonalPOI"
+
+
+# List of supported FSCs
+
+[SupportedFSC]
+
+
+[Signature]
+signature1 = "8b7578817a3f0ae512f4d3e7cc52c0c2"
+signature2 = "d86089dec32d22f6f6d4cd2a6d1fafed"
+signature3 = "7e6bb811302deafef2974a5956dc74a1"
+signature4 = "75c9a52f8ff5211f27f068b6edd63318"
+signature5 = "2285de6bdbc51e4a22c17d43215a8b67"
+signature6 = "dcdcadd6f6cbaa3c4b6c3c3e592e7b1b"
+signature7 = "a8fb501242f2bb2a3cc48ff0659c48c7"
+signature8 = "b1eeb65c7e01aea0e65e00c32b63518d"

@@ -3558,14 +3558,19 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Multimedia System -> DVD/Blueray Region Coding
+# Main -> M.I.B. -> Multimedia System -> DVD Region Coding
 #
 ###########################################################################################
-screen dvd_blueray_region_coding multimedia_system
+screen dvd_region_coding multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
 	label	"                                                                          EDIT"
+	poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label	"If you see "no response" - reboot unit and try again"
 	poll    0
 
 BIOSCtrl       
@@ -3580,12 +3585,12 @@ BIOSCtrl
     entry   "Region 7" 7
     entry   "Region 8" 8
 
-BIOSCtrl       
-    value   int per 28442848 516
-    label   "Blueray region coding"
-    entry   "Region A" 1
-    entry   "Region B - EU" 2  
-    entry   "Region C" 3
+#BIOSCtrl       
+#    value   int per 28442848 516
+#    label   "Blueray region coding"
+#    entry   "Region A" 1
+#    entry   "Region B - EU" 2  
+#    entry   "Region C" 3
 
 slider
     value   per 28442848 517
@@ -3593,11 +3598,11 @@ slider
 	limits	absolute 0 5
     poll    500
 
-slider
-    value   per 28442848 518
-	label   "Reset Blueray region counter"
-	limits	absolute 0 5
-    poll    1000
+#slider
+#    value   per 28442848 518
+#	label   "Reset Blueray region counter"
+#	limits	absolute 0 5
+#    poll    1000
 
 keyValue
     value   String sys 0x00000000 0

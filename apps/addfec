@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.3.4 (2023-07-04 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.3.5 (2023-07-06 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -59,21 +59,21 @@ ADDFECSELECT ()
 
 ParseFecs ()
 {
-		#TODO add check if FecContainer.fec is 0 byte; in that case addFec will not work
-	if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+	if [ -s $BACKUPFOLDER/FEC/FecContainer.fec ];then # -s checks for file and if it is not 0 bytes
 		$XXD -u -p -c 99999 $BACKUPFOLDER/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
 		echo -ne "\nUsing /backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
-	elif [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
+	elif [ -s /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
 		echo -ne "\nUsing /net/rcc/mnt/efs-persist/FEC/FecContainer.fec\n" | $TEE -a $LOG
-	elif [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
+	elif [ -s /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
 		echo -ne "\n/net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	else
 		echo -ne "\nFecContainer.fec not found. Generating a new one...\n" | $TEE -a $LOG
+		[ ! -s $BACKUPFOLDER/FEC/FecContainer.fec ] && rm -f $BACKUPFOLDER/FEC/FecContainer.fec # remove 0 byte FecContainer.fec
 		CreateFec
 	fi
 
@@ -147,7 +147,7 @@ CreateFec ()
 		VIN=$(cat $TMP/VIN.txt 2> /dev/null | grep VIN | $SED 's/VIN: //g' | $SED -e 's|["'\'']||g' | $SED 's/\r//')
 	fi
 	if [ -z "$VIN" ]; then
-		 VIN=MIB123456789MAGIC
+		VIN=MIB123456789MAGIC
 	fi
 	VIN=$(echo -ne $VIN | $XXD -u -p -s 0 -l 17)
 	VCRNVIN=$VCRN$VIN
@@ -196,7 +196,7 @@ BuildFecContainer ()
 			(( 16#$FEC )) > /dev/null 2>&1
 			FecIsHex=$(echo $?)
 			if [[ $FecIsHex -eq 0 ]] && [[ ${#FEC} -eq 8 ]] && [[ $FecNotPresent -eq 1 ]] && [[ $FECCOUNT -le 254 ]]; then
-				BuildFec
+				BuildFec #creating AddedFecs.tmp
 			fi
 		done < $addFec
 		if [ -f $TMP/AddedFecs.tmp ];then
@@ -205,17 +205,10 @@ BuildFecContainer ()
 			cat $TMP/AddedFecs.tmp >> $TMP/FecContainer.fec
 			$DD if=$TMP/FecContainer.tmp skip=4 bs=2 2> /dev/null | $XXD -r -p >> $TMP/FecContainer.fec
 			echo -ne "FecContainer.fec is generated.\n" | $TEE -a $LOG
-			if [ -d $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH" ];then
-				cp -rf $TMP/FecContainer.fec $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec
-				echo -ne "FecContainer.fec is copied to /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH\n" | $TEE -a $LOG
-			else
-				echo -ne "/patches/$TRAINVERSION_"$MUVERSION"_PATCH folder not found!...\n" | $TEE -a $LOG
-				[ -f $VOLUME/common/tools/addFecs.txt ] && echo -ne "AIO detected.\n" | $TEE -a $LOG
-				echo "Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
-				[ -n "$GEM" ] && echo -ne "\n"
-				cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/ 2>> $LOG
-				ERROR
-			fi
+			echo "Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
+			[ -n "$GEM" ] && echo -ne "\n"
+			cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/ 2>> $LOG
+			ERROR
 		else
 			echo -ne "Generation of AddedFecs.tmp failed!\n\n" | $TEE -a $LOG
 		fi

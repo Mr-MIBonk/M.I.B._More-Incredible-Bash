@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="copy FEC/EL v0.1.6 (2023-07-04 by MIBonk)"
+revision="copy FEC/EL v0.1.7 (2023-07-06 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -65,23 +65,10 @@ MIBCAP=3
 	. $thisdir/addfec -a
 
 	# copy FEC to Unit, if no one in patch directory check backup folder
-	if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec ];then
-		echo -ne "copy FEC file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-		echo -ne "AIO detected - copy FEC file from /tmp" | $TEE -a $LOG
-		[ -n "$GEM" ] && echo -ne "\n"
-		cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	elif [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
-		echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
+	if [ ! -s /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ];then
+		echo -ne "!!! FEC file NOT found in /net/rcc/mnt/efs-persist/FEC/\n    Restoring from backup!" | $TEE -a $LOG
 		[ -n "$GEM" ] && echo -ne "\n"
 		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
-		ERROR
-	else
-		echo -ne "nothing there to copy!\n\n" | $TEE -a $LOG
 	fi
 
 	[ -z "$GEM" ] && echo -ne "\n"
