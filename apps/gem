@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="GEM v0.1.0 (2021-02-22 by MIBonk)"
+revision="GEM v0.1.1 (2023-07-06 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -25,8 +25,8 @@ fi
 	-i|-install) {
 
 	mount -uw /net/mmx/mnt/app 2> /dev/null
-	on -f mmx rm -rf /eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
-	on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-sda0.esd /eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
+	on -f mmx rm -rf /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
+	on -f mmx ln -s /net/mmx/fs/sda0/esd/Launcher-sda0.esd /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
 	mount -ur /net/mmx/mnt/app 2> /dev/null
 	echo "GEM now installed!"
 	
@@ -38,7 +38,7 @@ fi
 	-u|-uninstall) {
 
 	mount -uw /net/mmx/mnt/app 2> /dev/null
-	on -f mmx rm -rf /eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
+	on -f mmx rm -rf /net/mmx/mnt/app/eso/hmi/engdefs/z_Launcher-sda0.esd 2> /dev/null
 	mount -ur /net/mmx/mnt/app 2> /dev/null
 	echo "GEM now uninstalled!"
 
