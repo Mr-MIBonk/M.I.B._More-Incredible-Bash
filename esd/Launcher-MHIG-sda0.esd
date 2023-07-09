@@ -798,12 +798,7 @@ screen nav_activation navigation
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Enable navigation on MHI2 unit"
+	label 	"Enable navigation on unit"
 	poll    0
 
 keyValue
@@ -851,11 +846,6 @@ keyValue
 #
 ###########################################################################################
 screen check_coding navigation
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
 
 keyValue
     value   String sys 0x00000000 0
@@ -1011,11 +1001,6 @@ screen gps_antenna_installed navigation
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-
-keyValue
-    value   String sys 0x00000000 0
 	label 	"Check if GPS antenna is installed:"
 	poll    0
 
@@ -1066,11 +1051,6 @@ keyValue
 ###########################################################################################
 screen SVM_fix advanced_settings
 
-keyValue
-    value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
 keyValue
     value   String sys 0x00000000 0
     label	"Run to remove Check Software Version Management error in 5F"
@@ -1202,11 +1182,6 @@ script
 #
 ###########################################################################################
 screen SWDL_FW_Updates advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
 
 keyValue
     value   String sys 0x00000000 0
