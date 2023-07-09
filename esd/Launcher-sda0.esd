@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.7.0 MHI2 Edition"
+    label   "M.I.B. - More Incredible Bash - V3.7.0 MHIG Edition"
 	poll    0
 
 keyValue
@@ -318,7 +318,7 @@ script
 	
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rstorage.sh"
-	label   "restore storage .raw - datasets from backup"
+	label   "restore storage .raw - datasets from NAND backup"
 	
 script
 	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecrestore.sh"

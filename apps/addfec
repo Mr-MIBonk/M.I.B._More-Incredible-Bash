@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="add FEC's v0.3.5 (2023-07-06 by Duke, MIBonk & MIB-Wiki)"
+revision="add FEC's v0.3.6 (2023-07-09 by Duke, MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -33,20 +33,20 @@ ADDFECSELECT ()
 		addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
 		echo $addFec
 		if [[ -f $addFec ]]; then
-			echo -ne "--- Found addFec.txt for "$MODEL"_"$REGION"_"$BRAND" \nWill add following FECS:\n" | $TEE -a $LOG
+			echo -ne "--- Found addFec.txt for "$MODEL"_"$REGION"_"$BRAND" \n    Will add following FECS:\n    " | $TEE -a $LOG
 			cat $addFec | $TEE -a $LOG
 		else
 			echo -ne "--- addFec NOT found\nSupport for "$MODEL"_"$REGION"_"$BRAND" has to be added\n    Will stop here ...\n" | $TEE -a $LOG
 			exit 0
 		fi
 	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-		echo -ne "AIO detected\n" | $TEE -a $LOG
+		echo -ne "--- AIO detected\n" | $TEE -a $LOG
 		addFec=$VOLUME/common/tools/addFecs.txt
 	elif [ -f $VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
-		echo -ne "addFecs.txt found in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+		echo -ne "--- addFecs.txt found in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
 		addFec=$VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
 	else
-		echo -ne "addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
+		echo -ne "--- addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
 		exit 1
 	fi
 
@@ -62,24 +62,24 @@ ParseFecs ()
 	if [ -s $BACKUPFOLDER/FEC/FecContainer.fec ];then # -s checks for file and if it is not 0 bytes
 		$XXD -u -p -c 99999 $BACKUPFOLDER/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nUsing /backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
+		echo -ne "\n--- Using /backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	elif [ -s /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\nUsing /net/rcc/mnt/efs-persist/FEC/FecContainer.fec\n" | $TEE -a $LOG
+		echo -ne "\n--- Using /net/rcc/mnt/efs-persist/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	elif [ -s /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
 		$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 		VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
-		echo -ne "\n/net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
+		echo -ne "\n--- /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 	else
-		echo -ne "\nFecContainer.fec not found. Generating a new one...\n" | $TEE -a $LOG
+		echo -ne "\n--- FecContainer.fec not found. Generating a new one...\n" | $TEE -a $LOG
 		[ ! -s $BACKUPFOLDER/FEC/FecContainer.fec ] && rm -f $BACKUPFOLDER/FEC/FecContainer.fec # remove 0 byte FecContainer.fec
 		CreateFec
 	fi
 
 	FecCheck=$($DD if=$TMP/FecContainer.tmp skip=8 bs=2 count=2 2> /dev/null)
 	if [[ $FecCheck -ne 1102 ]] && [[ $FecCheck -ne 1107 ]]; then
-		echo -ne "\nInvalid FecContainer.fec. Generating a new one...\n" | $TEE -a $LOG
+		echo -ne "\n--- Invalid FecContainer.fec. Generating a new one...\n" | $TEE -a $LOG
 		rm $TMP/FecContainer.tmp
 		CreateFec
 	fi
@@ -93,7 +93,7 @@ ParseFecs ()
 		ParseFecContainer
 		((FecsParsed=FecsParsed+1))
 	done
-	echo -ne "Existing FecContainer parsed\n" | $TEE -a $LOG
+	echo -ne "--- Existing FecContainer parsed\n" | $TEE -a $LOG
 }
 
 ParseFecContainer ()
@@ -200,20 +200,20 @@ BuildFecContainer ()
 			fi
 		done < $addFec
 		if [ -f $TMP/AddedFecs.tmp ];then
-			echo -ne "AddedFecs.tmp is generated.\n" | $TEE -a $LOG
+			echo -ne "--- AddedFecs.tmp is generated.\n" | $TEE -a $LOG
 			echo -n $FECCOUNTHEX"000000" | $XXD -r -p > $TMP/FecContainer.fec
 			cat $TMP/AddedFecs.tmp >> $TMP/FecContainer.fec
 			$DD if=$TMP/FecContainer.tmp skip=4 bs=2 2> /dev/null | $XXD -r -p >> $TMP/FecContainer.fec
-			echo -ne "FecContainer.fec is generated.\n" | $TEE -a $LOG
-			echo "Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
+			echo -ne "--- FecContainer.fec is generated.\n" | $TEE -a $LOG
+			echo -ne "--- Copying /tmp/FecContainer.fec to /net/rcc/mnt/efs-persist/FEC/" | $TEE -a $LOG
 			[ -n "$GEM" ] && echo -ne "\n"
 			cp -rf $TMP/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/ 2>> $LOG
 			ERROR
 		else
-			echo -ne "Generation of AddedFecs.tmp failed!\n\n" | $TEE -a $LOG
+			echo -ne "!!! Generation of AddedFecs.tmp failed!\n\n" | $TEE -a $LOG
 		fi
 	else
-		echo -ne "Cannot generate AddedFecs.tmp as addFecs.txt is missing!\n\n" | $TEE -a $LOG
+		echo -ne "!!! Cannot generate AddedFecs.tmp as addFecs.txt is missing!\n\n" | $TEE -a $LOG
 	fi
 	rm $TMP/*.tmp
 }
@@ -255,7 +255,7 @@ BuildFecContainer ()
 
 		rm $TMP/*.tmp 2> /dev/null
 		if [ -f /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec ]; then
-			echo -ne "Stock FECs from /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
+			echo -ne "--- Stock FECs from /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec\n" | $TEE -a $LOG
 			$XXD -u -p -c 99999 /net/rcc/mnt/efs-system/backup/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 			VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
 			FECPOINTER
@@ -269,7 +269,7 @@ BuildFecContainer ()
 
 		rm $TMP/*.tmp 2> /dev/null
 		if [ -f /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ]; then
-			echo -ne "FECs in use from /net/rcc/mnt/efs-persist/FEC/FecContainer.fec:\n" | $TEE -a $LOG
+			echo -ne "--- FECs in use from /net/rcc/mnt/efs-persist/FEC/FecContainer.fec:\n" | $TEE -a $LOG
 			$XXD -u -p -c 99999 /net/rcc/mnt/efs-persist/FEC/FecContainer.fec > $TMP/FecContainer.tmp
 			VCRNVIN=$($DD if=$TMP/FecContainer.tmp skip=14 bs=2 count=23 2> /dev/null)
 			FECPOINTER

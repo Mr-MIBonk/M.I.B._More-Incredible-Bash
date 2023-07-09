@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="copy FEC/EL v0.1.7 (2023-07-06 by MIBonk)"
+revision="copy FEC/EL v0.2.0 (2023-07-09 by MIBonk)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -29,24 +29,23 @@ MIBCAP=3
 
 	$thisdir/mounts -w
 
-	# copy EL to Unit, if no one in patch directory check backup folder
-	if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
-		if [ -f $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt ];then
-			echo -ne "copy EL file from /patches/"$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
-			[ -n "$GEM" ] && echo -ne "\n"
-			cp -rf $thisdir/../patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
-			ERROR
-		elif [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
-			echo -ne "copy EL file from backup "$FAZIT"...." | $TEE -a $LOG
-			[ -n "$GEM" ] && echo -ne "\n"
-			cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
-			ERROR
+	checksum0="9089e2500e0faa8dc02c0e72b6e8b39ef50c220e" #STOCK MHIG/MHI2
+	checksum1="57e9e0a543f4f0aa80e48eb1c8de2500cbd8cba6" #RSDB
+
+		checksum_unit="$($SHA1 /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt | awk '{print $1}')" 2>> $LOG
+		echo "--- Checking if stock EL is installed" | $TEE -a $LOG
+		if [ $checksum0 = $checksum_unit ] || [ $checksum1 = $checksum_unit ]; then
+			echo "    Stock EL found on unit" | $TEE -a $LOG
 		else
-			echo -ne "nothing there to copy!\n" | $TEE -a $LOG
+			echo -ne "-- Custom EL found - (sha1=$checksum_unit)\n    Copy stock EL back to unit" | $TEE -a $LOG
+			if [[ "$TRAINVERSION" = *MHIG* ]]; then
+				cp -rf $VOLUME/patches/EL/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+			else
+				cp -rf $VOLUME/patches/EL/ExceptionList_RSDB.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+			fi
+			ERROR
+			echo "--- EL is restored" | $TEE -a $LOG
 		fi
-	else
-		echo -ne "please do EL backup 1st!\n" | $TEE -a $LOG
-	fi
 
 	[ -z "$GEM" ] && echo -ne "\n"
 
@@ -66,9 +65,14 @@ MIBCAP=3
 
 	# copy FEC to Unit, if no one in patch directory check backup folder
 	if [ ! -s /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ];then
-		echo -ne "!!! FEC file NOT found in /net/rcc/mnt/efs-persist/FEC/\n    Restoring from backup!" | $TEE -a $LOG
+		echo -ne "!!! FEC file NOT found in /net/rcc/mnt/efs-persist/FEC/\n    Try to restore from backup\n" | $TEE -a $LOG
 		[ -n "$GEM" ] && echo -ne "\n"
 		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		if [ -s /net/rcc/mnt/efs-persist/FEC/FecContainer.fec ];then
+			echo -ne "--- Restore Done!" | $TEE -a $LOG
+		else
+			echo -ne "!!! Restore Failed!\n    No FecContainer.fec found in SD backup\n" | $TEE -a $LOG
+		fi
 	fi
 
 	[ -z "$GEM" ] && echo -ne "\n"
@@ -84,26 +88,57 @@ MIBCAP=3
 	$thisdir/mounts -w
 
 	# copy FEC and EL from Backup to Unit
-	if [ -f $BACKUPFOLDER/FEC/ExceptionList.txt ];then
+	if [ -s $BACKUPFOLDER/FEC/ExceptionList.txt ];then
 		echo -ne "copy EL file from backup "$FAZIT"..." | $TEE -a $LOG
 		cp -rf $BACKUPFOLDER/FEC/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
 		ERROR
 		echo -ne "\n" | $TEE -a $LOG
 	else
-		echo -ne "there no EL in Backup!\n\n" | $TEE -a $LOG
+		echo -ne "there no EL in backup!\n\n" | $TEE -a $LOG
 	fi
 
-	if [ -f $BACKUPFOLDER/FEC/FecContainer.fec ];then
+	if [ -s $BACKUPFOLDER/FEC/FecContainer.fec ];then
 		echo -ne "copy FEC file from backup "$FAZIT"..." | $TEE -a $LOG
 		cp -rf $BACKUPFOLDER/FEC/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
 		ERROR
 		echo -ne "\n" | $TEE -a $LOG
 	else
-		echo -ne "there is no FEC in Backup!\n\n" | $TEE -a $LOG
+		echo -ne "there is no FEC in backup!\n\n" | $TEE -a $LOG
 	fi
 
 	$thisdir/mounts -r
 	return 2> /dev/null
+
+echo -ne "--- Please reboot for changes can take effect...\n" | $TEE -a $LOG
+
+};;
+
+-c) {
+
+	$thisdir/mounts -w
+
+	# copy FEC and EL from Backup to Unit
+	echo -ne "--- Place custom ExceptionList.txt and/or custom FecContainer.fec\n    in SD /patches/. They will be copied to unit.\n" | $TEE -a $LOG
+	if [ -s $VOLUME/patches/ExceptionList.txt ];then
+		echo -ne "--- copy EL file from /patches/ExceptionList.txt..." | $TEE -a $LOG
+		cp -rf $VOLUME/patches/ExceptionList.txt /net/rcc/mnt/efs-persist/FEC/ExceptionList.txt 2>> $LOG
+		ERROR
+	else
+		echo -ne "!!! there no ExceptionList.txt in /patches/\n\n" | $TEE -a $LOG
+	fi
+
+	if [ -s $VOLUME/patches/FecContainer.fec ];then
+		echo -ne "--- copy FEC file from /patches/FecContainer.fec..." | $TEE -a $LOG
+		cp -rf $VOLUME/patches/FecContainer.fec /net/rcc/mnt/efs-persist/FEC/FecContainer.fec 2>> $LOG
+		ERROR
+	else
+		echo -ne "!!! there is no FecContainer.fec in /patches/\n\n" | $TEE -a $LOG
+	fi
+
+	$thisdir/mounts -r
+	return 2> /dev/null
+
+echo -ne "--- Please reboot for changes can take effect...\n" | $TEE -a $LOG
 
 };;
 
@@ -115,9 +150,10 @@ MIBCAP=3
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -fec 			copy FEC to Unit"
-		echo "        -el 			copy EL to Unit"
-		echo "        -b 			copy FEC and EL from Backup to Unit"
+		echo "        -fec 			create FEC based on addFec.txt and copy to unit"
+		echo "        -el 			restore stock EL to unit"
+		echo "        -b 			copy FEC and EL from Backup to unit"
+		echo "        -c 			copy custom FEC and EL from /patches/ to unit"
 		echo "        --help			show this help"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"

@@ -67,7 +67,7 @@ rcc_version="${INFILE%%-*}"
 echo -ne "\n--- RCC-version: "$rcc_version"\n" | $TEE -i -a $LOG
 echo -ne "--- OFFSETPART2: "$OFFSETPART2"\n" | $TEE -i -a $LOG
 echo -ne "--- STAGE2SEIZE: "$STAGE2SIZE"\n\n" | $TEE -i -a $LOG
-
+#TODO: merge with if logic above
 if [[ "$INFILE" = *"0x"* ]]; then
 	echo -ne "--- Renaming input file\n" | $TEE -i -a $LOG
 	INFILE="$rcc_version-ifs-root-stage2-0x00$OFFSETPART2-$STAGE2SIZE.ifs"
@@ -78,6 +78,7 @@ else
 	SKIP=0 # seize RCC before start of ifs-root
 	COUNTBLOCKS="6144" # max. seize ifs-root
 	((COUNT=$COUNTBLOCKS-($SKIPBLOCKS-$SKIP)))
+	#TODO: switch to solution with head to get exact byte size!
 	$DD bs=4096 skip=$SKIPBLOCKS if=$INFILE_PATH count=$COUNT of=$VOLUME/$INFILE >> $LOG
 fi
 
