@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		1.0 - MHIG
-# Date:			16-06-2023
+# Date:			10-07-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -15,7 +15,7 @@ screen   =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.7.0 MHIG Edition"
+    label   "M.I.B. - More Incredible Bash - V3.7.1 MHIG Edition"
     poll    0
 
 keyValue
