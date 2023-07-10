@@ -11,7 +11,7 @@
 # Main -> M.I.B. - More Incredible Bash for sda0
 #
 ###########################################################################################
-screen   =>M.I.B.<= main
+screen =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
