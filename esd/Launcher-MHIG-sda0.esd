@@ -3,7 +3,7 @@
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
 # Version:		1.0 - MHIG
-# Date:			16-06-2023
+# Date:			10-07-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -11,65 +11,65 @@
 # Main -> M.I.B. - More Incredible Bash for sda0
 #
 ###########################################################################################
-screen   =>M.I.B.<= main
+screen =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.7.0 MHIG Edition"
-	poll    0
+    label   "M.I.B. - More Incredible Bash - V3.7.1 MHIG Edition"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "NOT FOR COMMERCIAL USE - IF YOU BOUGHT THIS YOU GOT RIPPED OFF"
-	poll    0
+    poll    0
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
-	label    "GPL License"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gpl.sh"
+    label   "GPL License"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "NOTE: NEVER interrupt the process with -Back- button or removing SD Card!!!"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-    label	"CAUTION: Ensure that external power is connected to the car on during any"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-	label 	"flash or programming process! Power failure during flashing/programming will"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"brick your unit! - All you do and use at your own risk!"
-	poll    0
-	
+    label   "CAUTION: Ensure that external power is connected to the car on during any"
+    poll    0
+
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "flash or programming process! Power failure during flashing/programming will"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "brick your unit! - All you do and use at your own risk!"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "NEXT SCREEN for more magic ..."
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr.sh"
-	label    "Check: QR links to MIB ressources - 15s duration"
+     value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/show_qr.sh"
+     label   "Check: QR links to MIB ressources - 15s duration"
 
 ###########################################################################################
 #
@@ -80,22 +80,22 @@ screen patch_unit_aio =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Always get latest M.I.B version"
-	poll    0
+    label   "Always get latest M.I.B version"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"AIO - ALL-IN-ONE Patch:"
-	poll    0
+    label   "AIO - ALL-IN-ONE Patch:"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
-	label   "PATCH NOW: Patch | add Fec | enable Nav"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/patch_aio.sh"
+    label   "PATCH NOW: Patch | add Fec | enable Nav"
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"For details on AIO functions, check below -> aio_patch_details"
-	poll    0
+    label   "For details on AIO functions, check below -> aio_patch_details"
+    poll    0
 
 ###########################################################################################
 #
@@ -106,32 +106,32 @@ screen add_FecContainer.fec patch_unit_aio
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Info: Part of AIO Patch function"
-	poll    0
+    label   "Info: Part of AIO Patch function"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Only run AFTER patch is applied --> patch_unit_aio"
-	poll    0
+    label   "Only run AFTER patch is applied --> patch_unit_aio"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Edit FecContainer.fec based on addFEC.txt in patch folder"
-	poll    0
+    label   "Edit FecContainer.fec based on addFEC.txt in patch folder"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecel.sh"
-	label   "Add FECs from addFEC.txt to FecContainer.fec"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecel.sh"
+    label   "Add FECs from addFEC.txt to FecContainer.fec"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -142,22 +142,22 @@ screen fec_list add_FecContainer.fec
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Outputs available FECs in FecContainer"
-	poll    0
+    label   "Outputs available FECs in FecContainer"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/feclist.sh"
-	label   "List FECs from FecContainer.fec"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/feclist.sh"
+    label   "List FECs from FecContainer.fec"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -169,47 +169,47 @@ screen backup_restore =>M.I.B.<=
 keyValue
     value   String sys 0x00000000 0
     label   "System backup - MANDATORY before patching and other operations"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "Always check for latest M.I.B version before start working"
-	poll    0
-	
+    poll    0
+
 keyValue
     value   String sys 0x00000000 0
     label   "Download from mib.mibsolution.one"
-	poll    0
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/abackup.sh"
-	label   "Backup ~5 minutes"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/abackup.sh"
+    label   "Backup ~5 minutes"
 
   
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "You want to support the project? --> upload your backup"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "Zip and upload backups to https://mibsolution.one/"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "folder /M.I.B._Backup/ - user:guest password:guest"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -221,56 +221,56 @@ screen restore_backup backup_restore
 keyValue
     value   String sys 0x00000000 0
     label   "Restore backup components to unit"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "Only required on request"
-	poll    0
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/revert.sh"
-	label   "Revert to ifs-root-stage2 from backup"
-	
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/revert.sh"
+    label   "Revert to ifs-root-stage2 from backup"
+
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rstorage.sh"
-	label   "restore storage .raw - datasets from backup"
-	
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rstorage.sh"
+    label   "restore storage .raw - datasets from backup"
+
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecrestore.sh"
-	label   "restore FecContainer.fec from backup"	
-	
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/fecrestore.sh"
+    label   "restore FecContainer.fec from backup"	
+
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rnand.sh"
-	label   "restore backup from unit to SD"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rnand.sh"
+    label   "restore backup from unit to SD"
 	
 keyValue
     value   String sys 0x00000000 0
     label   "If backup was created with M.I.B v3.0.0 and greater"
-	poll    0
+    poll    0
 keyValue
     value   String sys 0x00000000 0
     label   "core parts of M.I.B backup can be restored from unit to SD"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 #TODO: add script
 #script
-#	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/XXXX.sh"
-#	label   "Delete backup from unit (not recommended)"
+#    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/XXXX.sh"
+#    label   "Delete backup from unit (not recommended)"
 
 #script #add _X to folder name
-#	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/XXXX.sh"
-#	label   "create new backup folder on SD (old backup folder will be renamed)"
+#    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/XXXX.sh"
+#    label   "create new backup folder on SD (old backup folder will be renamed)"
 
 ###########################################################################################
 #
@@ -281,80 +281,80 @@ screen advanced_backup backup_restore
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
+
 keyValue
     value   String sys 0x00000000 0
     label   "Advanced backup function to dump system components to SD"
-	poll    0
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
     label   "Only run on request for troubleshooting or M.I.B. development"
-	poll    0
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_all.sh"
-	label   "ALL - standard backup/app/gndb/RSDB/bb/system/speech/more | 45+ min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_all.sh"
+    label   "ALL - standard backup/app/gndb/RSDB/bb/system/speech/more | 45+ min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_appf.sh"
-	label   "app.img to folder structure | 10-20 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_appf.sh"
+    label   "app.img to folder structure | 10-20 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_special.sh"
-	label   "special folders | 5-10 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_special.sh"
+    label   "special folders | 5-10 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_app.sh"
-	label   "app.img | 10-20 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_app.sh"
+    label   "app.img | 10-20 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_speech.sh"
-	label   "speech files | 10-15 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_speech.sh"
+    label   "speech files | 10-15 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_system.sh"
-	label   "system folder | 10-15 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_system.sh"
+    label   "system folder | 10-15 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_gndb.sh"
-	label   "GraceNote DB | 5-10 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_gndb.sh"
+    label   "GraceNote DB | 5-10 min"
 	
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_bb.sh"
-	label   "BoardBook | 5-10 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_bb.sh"
+    label   "BoardBook | 5-10 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_RSDB.sh"
-	label   "RadioStationDB | 5-10 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_RSDB.sh"
+    label   "RadioStationDB | 5-10 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_adb.sh"
-	label   "Address Book | 1-2 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_adb.sh"
+    label   "Address Book | 1-2 min"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_nav.sh"
-	label   "Navigation DB | ~1 hour"
-	
-script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_media.sh"
-	label   "net/mmx/mnt/media/ | ? hour"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_nav.sh"
+    label   "Navigation DB | ~1 hour"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_rcc.sh"
-	label   "RCC images | 5 min"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_media.sh"
+    label   "net/mmx/mnt/media/ | ? hour"
 
-#TODO	
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/backupplus_rcc.sh"
+    label   "RCC images | 5 min"
+
+#TODO
 #script
-#	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/xxx.sh"
-#	label   "MMX images"
+#    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/xxx.sh"
+#    label   "MMX images"
  
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -365,36 +365,36 @@ screen vim =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"VIM - Video In Motion"
-	poll    0
+    label   "VIM - Video In Motion"
+    poll    0
 
 bitvalue
     value   per 0 0xC0030002
-	range   0.0 0.7
-	label   "Currently set Video Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"3" 3
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-#	entry	"254" 254
+    range   0.0 0.7
+    label   "Currently set Video Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "3" 3
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+#    entry   "254" 254
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim199.sh"
-	label   "Set VIM to 199 km/h"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim199.sh"
+    label   "Set VIM to 199 km/h"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim06.sh"
-	label   "Set VIM to 6 km/h (Original)"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim06.sh"
+    label   "Set VIM to 6 km/h (Original)"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -405,13 +405,13 @@ screen advanced_coding vim
 
 keyValue
     value   String sys 0x00000000 0
-	label	"CAUTION: Advanced editing of VIM dataset - ON YOUR OWN RISK"
-	poll    0
+    label   "CAUTION: Advanced editing of VIM dataset - ON YOUR OWN RISK"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Make sure to run CALCULATE script after editing the values"
-	poll    0
+    label   "Make sure to run CALCULATE script after editing the values"
+    poll    0
 
 script
 	value  sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/vim.sh"
@@ -419,368 +419,367 @@ script
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
     value   per 0 0xC0030002
-	range   0.0 0.7
-	label   "Video Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"3" 3
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-#	entry	"254" 254
+    range   0.0 0.7
+    label   "Video Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "3" 3
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   1.0 1.7
-#	label   "Video Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   1.0 1.7
+#    label   "Video Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   2.0 2.7
-	label   "Car Menu Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry	"15" 15
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-#	entry	"254" 254
+    range   2.0 2.7
+    label   "Car Menu Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "15" 15
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
-#	value   per 0 0xC0030002
-#	range   3.0 3.7
-#	label   "Car Menu Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    value   per 0 0xC0030002
+#    range   3.0 3.7
+#    label   "Car Menu Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   4.0 4.7
-	label   "DAB Slideshow Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-	entry	"255" 255
+    range   4.0 4.7
+    label   "DAB Slideshow Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+    entry   "255" 255
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   5.0 5.7
-#	label   "DAB Slideshow Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   5.0 5.7
+#    label   "DAB Slideshow Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   6.0 6.7
-	label   "DAB Slideshow Update rate #1 [s]"
-	entry	"0" 0
-	entry	"5" 5
-	entry	"10" 10
-	entry	"20" 20
-	entry	"30" 30
-	entry	"60" 60
-	entry	"120" 120
-	entry	"240" 240
+    range   6.0 6.7
+    label   "DAB Slideshow Update rate #1 [s]"
+    entry   "0" 0
+    entry   "5" 5
+    entry   "10" 10
+    entry   "20" 20
+    entry   "30" 30
+    entry   "60" 60
+    entry   "120" 120
+    entry   "240" 240
 
 bitselect
     value   per 0 0xC0030002
-	range   7.0 7.7
-	label   "DAB Slideshow Update rate #2 [s]"
-	entry	"0" 0
-	entry	"5" 5
-	entry	"10" 10
-	entry	"20" 20
-	entry	"30" 30
-	entry	"60" 60
-	entry	"120" 120
-	entry	"240" 240
+    range   7.0 7.7
+    label   "DAB Slideshow Update rate #2 [s]"
+    entry   "0" 0
+    entry   "5" 5
+    entry   "10" 10
+    entry   "20" 20
+    entry   "30" 30
+    entry   "60" 60
+    entry   "120" 120
+    entry   "240" 240
 	
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   8.0 8.7
-#	label   "User Manual Speed limit [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   8.0 8.7
+#    label   "User Manual Speed limit [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   9.0 9.7
-#	label   "User Manual Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   9.0 9.7
+#    label   "User Manual Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   10.0 10.7
-#	label   "Road Guide Speed limit [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   10.0 10.7
+#    label   "Road Guide Speed limit [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   11.0 11.7
-#	label   "Road Guide Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   11.0 11.7
+#    label   "Road Guide Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   12.0 12.7
-#	label   "Web Browser Speed limit [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   12.0 12.7
+#    label   "Web Browser Speed limit [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   13.0 13.7
-#	label   "Web Browser Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   13.0 13.7
+#    label   "Web Browser Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   14.0 14.7
-#	label   "Destination input Speed limit [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   14.0 14.7
+#    label   "Destination input Speed limit [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   15.0 15.7
-#	label   "Byte 15 - Destination input Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   15.0 15.7
+#    label   "Byte 15 - Destination input Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   16.0 16.7
-	label   "Bluetooth/MirrorLink Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-	entry	"255" 255
+    range   16.0 16.7
+    label   "Bluetooth/MirrorLink Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+    entry   "255" 255
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   17.0 17.7
-#	label   "Bluetooth binding Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   17.0 17.7
+#    label   "Bluetooth binding Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   18.0 18.7
-	label   "SMS Editor Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry   "15" 15
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-#	entry	"254" 254
+    range   18.0 18.7
+    label   "SMS Editor Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "15" 15
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   19.0 19.7
-#	label   "SMS Editor Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   19.0 19.7
+#    label   "SMS Editor Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   20.0 20.7
-	label   "Radiotext Speed limit [km/h]"
-	entry	"0" 0
-	entry	"2" 2
-	entry	"5" 5
-	entry	"6" 6
-	entry	"10" 10
-	entry   "15" 15
-	entry	"30" 30
-	entry	"60" 60
-	entry	"199" 199
-#	entry	"254" 254
+    range   20.0 20.7
+    label   "Radiotext Speed limit [km/h]"
+    entry   "0" 0
+    entry   "2" 2
+    entry   "5" 5
+    entry   "6" 6
+    entry   "10" 10
+    entry   "15" 15
+    entry   "30" 30
+    entry   "60" 60
+    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   21.0 21.7
-#	label   "Radiotext Speed Hysterese [km/h]"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   21.0 21.7
+#    label   "Radiotext Speed Hysterese [km/h]"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 bitselect
     value   per 0 0xC0030002
-	range   22.0 22.7
-	label   "Radiotext refresh rate [s]"
-	entry	"0" 0
-	entry	"5" 5
-	entry	"10" 10
-	entry	"20" 20
-	entry	"30" 30
-	entry	"60" 60
-	entry	"120" 120
-	entry	"240" 240
-	entry	"255" 255
-	
-#bitvalue
-#   value   per 0 0xC0030002
-#	range   23.0 23.7
-#	label   "Reserved"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+    range   22.0 22.7
+    label   "Radiotext refresh rate [s]"
+    entry   "0" 0
+    entry   "5" 5
+    entry   "10" 10
+    entry   "20" 20
+    entry   "30" 30
+    entry   "60" 60
+    entry   "120" 120
+    entry   "240" 240
+    entry   "255" 255
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   24.0 24.7
-#	label   "Reserved"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   23.0 23.7
+#    label   "Reserved"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   25.0 25.7
-#	label   "Reserved"
-#	entry	"0" 0
-#	entry	"2" 2
-#	entry	"5" 5
-#	entry	"10" 10
-#	entry	"30" 30
-#	entry	"60" 60
-#	entry	"199" 199
-#	entry	"254" 254
+#    range   24.0 24.7
+#    label   "Reserved"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
 #bitvalue
 #   value   per 0 0xC0030002
-#	range   26.0 29.7
-#	label   "CRC-16/CCITT-FALSE"
+#    range   25.0 25.7
+#    label   "Reserved"
+#    entry   "0" 0
+#    entry   "2" 2
+#    entry   "5" 5
+#    entry   "10" 10
+#    entry   "30" 30
+#    entry   "60" 60
+#    entry   "199" 199
+#    entry   "254" 254
 
+#bitvalue
+#   value   per 0 0xC0030002
+#    range   26.0 29.7
+#    label   "CRC-16/CCITT-FALSE"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -798,47 +797,47 @@ screen nav_activation navigation
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Enable navigation on unit"
-	poll    0
+    label   "Enable navigation on unit"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"1. Select navigation region to activate:"
-	poll    0
+    label   "1. Select navigation region to activate:"
+    poll    0
 
 script
-	value	sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_1.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_1.sh"
     label   "Enable EU navigation"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_2.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_2.sh"
     label   "Enable NAR navigation"
-	
+
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_4.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_4.sh"
     label   "Enable KR navigation"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_5.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_5.sh"
     label   "Enable CN navigation"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_6.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_6.sh"
     label   "Enable JP navigation"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
     label   "Enable Australia navigation"
-
-	keyValue
-    value   String sys 0x00000000 0
-	label	""
-	poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   ""
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -849,148 +848,148 @@ screen check_coding navigation
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Currently set values:"
-	poll    0
+    label   "Currently set values:"
+    poll    0
 
 bitvalue
     value   per 0 4101
-	range   24.2 24.2
-	label   "Navigation"
-	entry	"OFF" 0
-	entry	"ON" 1
+    range   24.2 24.2
+    label   "Navigation"
+    entry   "OFF" 0
+    entry   "ON" 1
 
 bitvalue
     value   per 0 4101
-	range   3.0 3.7
-	label   "Navigation Country"
-	entry	"none" 0
-	entry	"EU" 1
-	entry	"NAR" 2
-	entry	"MSA" 3
-	entry	"Korea" 4
-	entry	"China" 5
-	entry	"Japan" 6
-	entry	"AsiaPacific" 7
-	entry	"Australia" 8
-	entry	"South Africa" 9
-	entry	"NEAST" 10
-	entry	"NMAfrica" 11
-	entry	"MEAST" 12
-	entry	"CentralAsia" 13
-	entry	"India" 14
-	entry	"Israel" 15
-	entry	"Taiwan" 16
-	entry	"MSA 2 (Chile)" 17
-	entry	"China 2" 18
-	entry	"China 3" 19
+    range   3.0 3.7
+    label   "Navigation Country"
+    entry   "none" 0
+    entry   "EU" 1
+    entry   "NAR" 2
+    entry   "MSA" 3
+    entry   "Korea" 4
+    entry   "China" 5
+    entry   "Japan" 6
+    entry   "AsiaPacific" 7
+    entry   "Australia" 8
+    entry   "South Africa" 9
+    entry   "NEAST" 10
+    entry   "NMAfrica" 11
+    entry   "MEAST" 12
+    entry   "CentralAsia" 13
+    entry   "India" 14
+    entry   "Israel" 15
+    entry   "Taiwan" 16
+    entry   "MSA 2 (Chile)" 17
+    entry   "China 2" 18
+    entry   "China 3" 19
 
 bitvalue
     value   per 0 3221356628
-	range   9.0 9.7
-	label   "SDS region Flag"
-	entry	"no region" 0
-	entry	"EU" 1
-	entry	"NAR" 2
-	entry	"MSA" 3
-	entry	"Korea" 4
-	entry	"China" 5
-	entry	"Japan" 6
-	entry	"AsiaPacific" 7
-	entry	"Australia" 8
-	entry	"South Africa" 9
-	entry	"NEAST" 10
-	entry	"NMAfrica" 11
-	entry	"MEAST" 12
-	entry	"CentralAsia" 13
-	entry	"India" 14
-	entry	"Israel" 15
-	entry	"Taiwan" 16
-	entry	"MSA 2 (Chile)" 17
-	entry	"China 2" 18
-	entry	"China 3" 19
+    range   9.0 9.7
+    label   "SDS region Flag"
+    entry   "no region" 0
+    entry   "EU" 1
+    entry   "NAR" 2
+    entry   "MSA" 3
+    entry   "Korea" 4
+    entry   "China" 5
+    entry   "Japan" 6
+    entry   "AsiaPacific" 7
+    entry   "Australia" 8
+    entry   "South Africa" 9
+    entry   "NEAST" 10
+    entry   "NMAfrica" 11
+    entry   "MEAST" 12
+    entry   "CentralAsia" 13
+    entry   "India" 14
+    entry   "Israel" 15
+    entry   "Taiwan" 16
+    entry   "MSA 2 (Chile)" 17
+    entry   "China 2" 18
+    entry   "China 3" 19
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Edit ONLY manually if you are outside EU, NAR or Australia"
-	poll    0
+    label   "Edit ONLY manually if you are outside EU, NAR or Australia"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                           EDIT"
-	poll    0
+    label   "                                                                           EDIT"
+    poll    0
 
 bitselect
     value   per 0 4101
-	range   3.0 3.7
-	label   "Navigation Country"
-	entry	"none" 0
-	entry	"EU" 1
-	entry	"NAR" 2
-	entry	"MSA" 3
-	entry	"Korea" 4
-	entry	"China" 5
-	entry	"Japan" 6
-	entry	"AsiaPacific" 7
-	entry	"Australia" 8
-	entry	"South Africa" 9
-	entry	"NEAST" 10
-	entry	"NMAfrica" 11
-	entry	"MEAST" 12
-	entry	"CentralAsia" 13
-	entry	"India" 14
-	entry	"Israel" 15
-	entry	"Taiwan" 16
-	entry	"MSA 2 (Chile)" 17
-	entry	"China 2" 18
-	entry	"China 3" 19
+    range   3.0 3.7
+    label   "Navigation Country"
+    entry   "none" 0
+    entry   "EU" 1
+    entry   "NAR" 2
+    entry   "MSA" 3
+    entry   "Korea" 4
+    entry   "China" 5
+    entry   "Japan" 6
+    entry   "AsiaPacific" 7
+    entry   "Australia" 8
+    entry   "South Africa" 9
+    entry   "NEAST" 10
+    entry   "NMAfrica" 11
+    entry   "MEAST" 12
+    entry   "CentralAsia" 13
+    entry   "India" 14
+    entry   "Israel" 15
+    entry   "Taiwan" 16
+    entry   "MSA 2 (Chile)" 17
+    entry   "China 2" 18
+    entry   "China 3" 19
 
 bitselect
     value   per 0 3221356628
-	range   9.0 9.7
-	label   "SDS region Flag"
-	entry	"no region" 0
-	entry	"EU" 1
-	entry	"NAR" 2
-	entry	"MSA" 3
-	entry	"Korea" 4
-	entry	"China" 5
-	entry	"Japan" 6
-	entry	"AsiaPacific" 7
-	entry	"Australia" 8
-	entry	"South Africa" 9
-	entry	"NEAST" 10
-	entry	"NMAfrica" 11
-	entry	"MEAST" 12
-	entry	"CentralAsia" 13
-	entry	"India" 14
-	entry	"Israel" 15
-	entry	"Taiwan" 16
-	entry	"MSA 2 (Chile)" 17
-	entry	"China 2" 18
-	entry	"China 3" 19
+    range   9.0 9.7
+    label   "SDS region Flag"
+    entry   "no region" 0
+    entry   "EU" 1
+    entry   "NAR" 2
+    entry   "MSA" 3
+    entry   "Korea" 4
+    entry   "China" 5
+    entry   "Japan" 6
+    entry   "AsiaPacific" 7
+    entry   "Australia" 8
+    entry   "South Africa" 9
+    entry   "NEAST" 10
+    entry   "NMAfrica" 11
+    entry   "MEAST" 12
+    entry   "CentralAsia" 13
+    entry   "India" 14
+    entry   "Israel" 15
+    entry   "Taiwan" 16
+    entry   "MSA 2 (Chile)" 17
+    entry   "China 2" 18
+    entry   "China 3" 19
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
     label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1001,31 +1000,31 @@ screen gps_antenna_installed navigation
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Check if GPS antenna is installed:"
-	poll    0
+    label   "Check if GPS antenna is installed:"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Antenna OK   --> GPS antenna is connected"
-	poll    0
+    label   "Antenna OK   --> GPS antenna is connected"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Antenna open --> no GPS antenna connected"
-	poll    0
+    label   "Antenna open --> no GPS antenna connected"
+    poll    0
 
 table
-    content			per 0x4B9 91
-	label			""
-	poll			3000
-	maxrows	        1
-	orientation     horizontal
-	columns 		( "GPS status information" String 690 )
+    content     per 0x4B9 91
+    label       ""
+    poll        3000
+    maxrows	    1
+    orientation horizontal
+    columns     ( "GPS status information" String 690 )
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1036,13 +1035,13 @@ screen advanced_settings =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Only use the functions within if you really know what you are doing!"
-	poll    0
+    label   "Only use the functions within if you really know what you are doing!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Chance to brick your units is higher the further down you go in this list!"
-	poll    0
+    label   "Chance to brick your units is higher the further down you go in this list!"
+    poll    0
 
 ###########################################################################################
 #
@@ -1053,17 +1052,17 @@ screen SVM_fix advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Run to remove Check Software Version Management error in 5F"
-	poll    0
+    label   "Run to remove Check Software Version Management error in 5F"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/svm.sh"
-	label   "Fix SVM error"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/svm.sh"
+    label   "Fix SVM error"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1074,30 +1073,30 @@ screen eu_conversion advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"This WILL mess up your unit, if you do not know what you are doing!"
-	poll    0
+    label   "This WILL mess up your unit, if you do not know what you are doing!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Train, variant, coding, adaptation & language will be converted to EU."
-	poll    0
+    label   "Train, variant, coding, adaptation & language will be converted to EU."
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"!!! Only use this to start converting unit to EU region !!!"
-	poll    0
+    label   "!!! Only use this to start converting unit to EU region !!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"_________________________________________________________________"
-	poll    0
+    label   "_________________________________________________________________"
+    poll    0
 
 keyValue
     value   String per 30 1966084
     label   "Your current train"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/aio_conversion_eu.sh"
     label   "Convert unit to EU"
 
 ###########################################################################################
@@ -1109,72 +1108,71 @@ screen tmc_settings advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 	
 keyValue
     value   String sys 0x00000000 0
-    label	"Change TMC settings:"
-	poll    0
+    label   "Change TMC settings:"
+    poll    0
 
 BIOSCtrl
-	value	int per 28442848 520
-	label	"Set TMC"
-	entry	"none" 0
-	entry	"Germany" 32771
-	entry	"France" 32788
-	entry	"Australia" 1024
-	entry	"China" 32782
-	entry	"Russia" 32785
-	poll	1000
+    value   int per 28442848 520
+    label   "Set TMC"
+    entry   "none" 0
+    entry   "Germany" 32771
+    entry   "France" 32788
+    entry   "Australia" 1024
+    entry   "China" 32782
+    entry   "Russia" 32785
+    poll    1000
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Install custom TMC profiles (EU/AUS) to unit"
-	poll    0
+    label   "Install custom TMC profiles (EU/AUS) to unit"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_replace.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_replace.sh"
     label   "Install custom TMC"
 
 keyValue
     value   String sys 0x00000000 0
-	label	""
-	poll    0
+    label   ""
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_restore.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/tmc_restore.sh"
     label   "Restore stock TMC"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_23.sh"
-   label    "Install Russia TMC Patch (Moscow, TMC23)"
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_23.sh"
+    label   "Install Russia TMC Patch (Moscow, TMC23)"
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_24.sh"
-   label    "Install Russia TMC Patch (Saint-Peterburg, TMC24)"
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_24.sh"
+    label   "Install Russia TMC Patch (Saint-Peterburg, TMC24)"
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_25.sh"
-   label    "Install Russia TMC Patch (Ekaterinburg, TMC25)"
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_25.sh"
+    label   "Install Russia TMC Patch (Ekaterinburg, TMC25)"
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_26.sh"
-   label    "Install Russia TMC Patch (N.Novgorod, TMC26)"
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_26.sh"
+    label   "Install Russia TMC Patch (N.Novgorod, TMC26)"
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_27.sh"
-   label    "Install Russia TMC Patch (Krasnodar, TMC27)"
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_27.sh"
+    label   "Install Russia TMC Patch (Krasnodar, TMC27)"
 
 script
-   value    sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_28.sh"
-   label    "Install Russia TMC Patch (Novosibirsk, TMC28)"
-    
+    value   sys 1 0x0100 "/eso/hmi/engdefs/scripts/mqb/install_tmc_patch_28.sh"
+    label   "Install Russia TMC Patch (Novosibirsk, TMC28)"
 
 ###########################################################################################
 #
@@ -1185,40 +1183,40 @@ screen SWDL_FW_Updates advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Enable things and go back to FW update screen without reboot"
-	poll    0
+    label   "Enable things and go back to FW update screen without reboot"
+    poll    0
 
 choice
-	value   per 30 1966081
-	label   "Enable user defined SWDL"
-	
+    value   per 30 1966081
+    label   "Enable user defined SWDL"
+
 choice
-	value   per 30 1966082
-	label   "Ignore Region and Variant"
+    value   per 30 1966082
+    label   "Ignore Region and Variant"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"--- ENABLED during M.I.B install ---"
-	poll    0
+    label   "--- ENABLED during M.I.B install ---"
+    poll    0
 	
 keyValue
     value   String sys 0x00000000 0
-	label	"Enable FW updates without MOST connected to MHI2 unit"
-	poll    0
-	
+    label   "Enable FW updates without MOST connected to MHI2 unit"
+    poll    0
+
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/most.sh"
-	label   "Toggle skipMostPopup"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/most.sh"
+    label   "Toggle skipMostPopup"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1229,31 +1227,31 @@ screen SWDL_cleaner advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-    label	"Removes remnants from FW updates (e.g. update.txt*, illegal/withdrawn FECs)"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Clears '1556 - Internal Control Module Memory Check Sum Error' from 5F"
-	poll    0
+    label   "Removes remnants from FW updates (e.g. update.txt*, illegal/withdrawn FECs)"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "Clears '1556 - Internal Control Module Memory Check Sum Error' from 5F"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cswdl.sh"
-	label   "Clean SWDL"	
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cswdl.sh"
+    label   "Clean SWDL"	
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
     label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1264,52 +1262,52 @@ screen add_usb_ethernet_devices advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Will add support for additional ASIX USB-Ethernet devices"
-	poll    0
+    label   "Will add support for additional ASIX USB-Ethernet devices"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"You can use many (cheap) alternatives to D-Link DUB-E100 now"
-	poll    0
+    label   "You can use many (cheap) alternatives to D-Link DUB-E100 now"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	" "
-	poll    0
+    label   " "
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Supported vid/pid:"
-	poll    0
+    label   "Supported vid/pid:"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"AX88179 0b95/1790 | AX88772 0b95/7720 & 0b95/772a"
-	poll    0
+    label   "AX88179 0b95/1790 | AX88772 0b95/7720 & 0b95/772a"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"AX88772B 0b95/772b | AX88772C 0b95/772c"
-	poll    0
+    label   "AX88772B 0b95/772b | AX88772C 0b95/772c"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/udevice.sh"
-	label   "Install devices (again)"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/udevice.sh"
+    label   "Install devices (again)"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"NOTE: Additional devices will be installed to unit permanently"
-	poll    0
+    label   "NOTE: Additional devices will be installed to unit permanently"
+    poll    0
 
 ###########################################################################################
 #
@@ -1320,42 +1318,42 @@ screen format_nav_DB advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"NOTE: This will format your navigation DB - all maps will be removed"
-	poll    0
+    label   "NOTE: This will format your navigation DB - all maps will be removed"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"This will help with map installation issues"
-	poll    0
+    label   "This will help with map installation issues"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Fixing errors like 136, 137 - pointing towards a corrupt navdb partition"
-	poll    0
+    label   "Fixing errors like 136, 137 - pointing towards a corrupt navdb partition"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Also helpful after region conversion to remove old maps"
-	poll    0
+    label   "Also helpful after region conversion to remove old maps"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value	sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/delnavdb.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/delnavdb.sh"
     label   "Format navigation DB"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1366,13 +1364,13 @@ screen install_sshd advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-    label	"In case shell access is required you can install a SSHD server on your MHI2 unit"
-	poll    0
+    label   "In case shell access is required you can install a SSHD server on your MHI2 unit"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Only needed if you know what you are doing or when asked b M.I.B team"
-	poll    0
+    label   "Only needed if you know what you are doing or when asked b M.I.B team"
+    poll    0
 
 ###########################################################################################
 #
@@ -1383,42 +1381,42 @@ screen run_install install_sshd
 
 keyValue
     value   String sys 0x00000000 0
-    label	"AGAIN: Only install if needed. Not just for fun!"
-	poll    0
+    label   "AGAIN: Only install if needed. Not just for fun!"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/sshd/scripts/sshd_install.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/sshd/scripts/sshd_install.sh"
     label   "install SSHD server on unit"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"You can connect to your unit via ssh clients for shell and file access"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-    label	"Connect with D-Link --> 172.16.250.248:22"
-	poll    0
+    label   "You can connect to your unit via ssh clients for shell and file access"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Connect without D-Link --> use WLAN in client or access point mode (use WLAN IP:22)"
-	poll    0
+    label   "Connect with D-Link --> 172.16.250.248:22"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "Connect without D-Link --> use WLAN in client or access point mode (use WLAN IP:22)"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Credits go to mib2toolbox and Andrew for making this possible!"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "Credits go to mib2toolbox and Andrew for making this possible!"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1429,22 +1427,22 @@ screen run_individual_script advanced_settings
 
 keyValue
     value   String sys 0x00000000 0
-	label	"ON YOUR OWN RISK"
-	poll    0
-	
+    label   "ON YOUR OWN RISK"
+    poll    0
+
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/individual.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/individual.sh"
     label   "Run individual script"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Place command.sh with script in /mod/ folder in M.I.B SD root"
-	poll    0
+    label   "Place command.sh with script in /mod/ folder in M.I.B SD root"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1462,60 +1460,61 @@ screen  WLAN_activation Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
-keyValue
-    value   String sys 0x00000000 0
-	label 	"Enabling WLAN coding and adaptations on MHI2 unit"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	" "
-	poll    0
+    label   "Enabling WLAN coding and adaptations on MHI2 unit"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Switch WLAN on, activate client mode"
-	poll    0
+    label   " "
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "Switch WLAN on, activate client mode"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/wlan.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/wlan.sh"
     label   "WLAN coding activated"
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Activate hotspot - ONLY useable on units with SIM card and data plan"
-	poll    0
+    label   "Activate hotspot - ONLY useable on units with SIM card and data plan"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/hotspot.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/hotspot.sh"
     label   "WLAN hotspot coding activated"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN STATUS
 #
 ###########################################################################################
+
 screen wlan_status Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
+
 bitvalue
     value   per 0 4101
-	range   24.3 24.3
-	label   "WLAN long coding enabled"
-	entry 	"OFF" 0
-	entry 	"ON" 1
+    range   24.3 24.3
+    label   "WLAN long coding enabled"
+    entry   "OFF" 0
+    entry   "ON" 1
 
 #replace with bitselect
 
@@ -1531,8 +1530,8 @@ choice
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String per 0x01b800e1 39
@@ -1546,8 +1545,8 @@ button
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 # Channel configuration ##########################################
 slider
@@ -1565,9 +1564,9 @@ slider
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN Information
@@ -1577,9 +1576,9 @@ screen wlan_information Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
+
 # WLAN configuration #############################################
 table # Current WLAN settings table 1
     content         per 0x01b800e1 40
@@ -1608,41 +1607,41 @@ table # Current connection table
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> NETWORK CONFIGURATION -> Ethernet Configuration
 #
 ###########################################################################################
-screen  ethernet_configuration Network_configuration
+screen ethernet_configuration Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
-	
-script
-   value    sys 1 0x0100 "/scripts/showIPaddress.sh"
-   label    "Show IP-Address"
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 script
-   value    sys 1 0x0100 "/scripts/setFixIPaddress.sh"
-   label    "Set unit to fixed IP-Address (172.16.250.248)"
+    value   sys 1 0x0100 "/scripts/showIPaddress.sh"
+    label   "Show IP-Address"
 
 script
-   value    sys 1 0x0100 "/scripts/activateDHCP.sh"
-   label    "Activate DHCP"
+    value   sys 1 0x0100 "/scripts/setFixIPaddress.sh"
+    label   "Set unit to fixed IP-Address (172.16.250.248)"
 
 script
-   value    sys 1 0x0100 "/scripts/showfixedIPstatus.sh"
-   label    "Check if a fixed IP or DHCP is used"
+    value   sys 1 0x0100 "/scripts/activateDHCP.sh"
+    label   "Activate DHCP"
+
+script
+    value   sys 1 0x0100 "/scripts/showfixedIPstatus.sh"
+    label   "Check if a fixed IP or DHCP is used"
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 # Internal IP settings ###################################################
 keyValue # Internal IP
@@ -1651,7 +1650,7 @@ keyValue # Internal IP
    poll    0
 
 keyValue # Internal subnet mask
-    value	String per 0x01b800e1 37
+    value   String per 0x01b800e1 37
     label   "Internal subnet mask"
     poll    0
 
@@ -1666,47 +1665,47 @@ table
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> Telephone
 #
 ###########################################################################################
-screen   telephone_coding =>M.I.B.<=
+screen telephone_coding =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
-	value 	per 0x0 3221356628
-	label 	"LTE module"
-	range 	2.6 2.6
-	entry 	"activated" 0
-	entry 	"deactivated" 1
-	
+    value   per 0x0 3221356628
+    label   "LTE module"
+    range   2.6 2.6
+    entry   "activated" 0
+    entry   "deactivated" 1
+
 choice
     value   per 28442848 510
     label   "Telefon activated"
-	poll	1000
+    poll    1000
 
 choice
     value   per 0 0x50183C10
     label   "Telefon Modul activated"
     poll    1000   
-   
+
 choice
     value   per 28442848 511
     label   "Tel. dataservices activated"
-	poll	1000	
+    poll    1000	
 
 choice
     value   per 0 0x50184004
@@ -1714,86 +1713,86 @@ choice
     poll    1000
 
 bitcheck
-	value 	per 0x0 3221356628
-	label 	"Activate second phone"
-	index   2 7
+    value   per 0x0 3221356628
+    label   "Activate second phone"
+    index   2 7
 
 bitcheck
-	value 	per 0x0 3221356628
-	label 	"Threeway Calling"
-	index   3 0
-
-bitcheck
-    value   per 0x0 0xC0020054
-	label   "DTMF without Active Call"
-	index   3 1
-
-bitcheck
-	value 	per 0x0 3221356628
-	label 	"Support for Response and Hold"
-	index   3 2
+    value   per 0x0 3221356628
+    label   "Threeway Calling"
+    index   3 0
 
 bitcheck
     value   per 0x0 0xC0020054
-	label   "Map SMS Support"
-	index   10 2
-	
+    label   "DTMF without Active Call"
+    index   3 1
+
 bitcheck
-    value   per 0x0 0xC0020054
-	label   "Map Email Support"
-	index   10 3
-	
-bitcheck
-    value   per 0x0 0xC0020054
-	label   "Map Instant Messaging Support"
-	index   10 4
+    value   per 0x0 3221356628
+    label   "Support for Response and Hold"
+    index   3 2
 
 bitcheck
     value   per 0x0 0xC0020054
-	label   "SIM Data Only SMS Support"
-	index   10 5
+    label   "Map SMS Support"
+    index   10 2
 
 bitcheck
     value   per 0x0 0xC0020054
-	label   "eSIM Data Only SMS Support"
-	index   10 6
+    label   "Map Email Support"
+    index   10 3
 
 bitcheck
     value   per 0x0 0xC0020054
-	label   "Allow Message Editing"
-	index   10 7
+    label   "Map Instant Messaging Support"
+    index   10 4
+
+bitcheck
+    value   per 0x0 0xC0020054
+    label   "SIM Data Only SMS Support"
+    index   10 5
+
+bitcheck
+    value   per 0x0 0xC0020054
+    label   "eSIM Data Only SMS Support"
+    index   10 6
+
+bitcheck
+    value   per 0x0 0xC0020054
+    label   "Allow Message Editing"
+    index   10 7
 
 bitselect
-	value 	per 0x0 3221356628
-	label 	"SIM Card Mode Switch"
-	range 	3.3 3.3
-	entry 	"disabled" 0  #not detected?
-	entry 	"detected" 1
+    value   per 0x0 3221356628
+    label   "SIM Card Mode Switch"
+    range   3.3 3.3
+    entry   "disabled" 0  #not detected?
+    entry   "detected" 1
 
 bitselect
-	value 	per 0x0 3221356628
-	label 	"Phone Module Operation Mode"
-	range 	3.4 3.4
-	entry 	"voice and data" 0
-	entry 	"data only" 1
+    value   per 0x0 3221356628
+    label   "Phone Module Operation Mode"
+    range   3.4 3.4
+    entry   "voice and data" 0
+    entry   "data only" 1
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
     label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -1807,196 +1806,193 @@ screen multimedia_system =>M.I.B.<=
 # Main -> M.I.B. -> Multimedia System -> Subwoofer
 #
 ###########################################################################################
-
 screen subwoofer multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"For units with internal sound system and subwoofer only - all brands"
-	poll    0
+    label   "For units with internal sound system and subwoofer only - all brands"
+    poll    0
 
 bitvalue
     value   per 0 4101
-	range   11.0 11.7
-	label   "Sound system - LC byte 11"
-	entry	"none" 0
-	entry	"internal" 1
-	entry	"NOT supported - external" 2
+    range   11.0 11.7
+    label   "Sound system - LC byte 11"
+    entry   "none" 0
+    entry   "internal" 1
+    entry   "NOT supported - external" 2
 
 bitvalue
     value   per 0 3221422100
-	range   684.0 684.7
-	label   "SUB EQ gain - 0x3000 byte 684"
-	entry	"0 dB" 0
-	entry	"2 dB" 25
-	entry	"4 dB" 50
-	entry	"6 dB" 75
-	entry	"8 dB" 125
-	entry	"10 dB" 150
-	entry	"12 dB" 175
-	entry	"14 dB" 200
+    range   684.0 684.7
+    label   "SUB EQ gain - 0x3000 byte 684"
+    entry   "0 dB" 0
+    entry   "2 dB" 25
+    entry   "4 dB" 50
+    entry   "6 dB" 75
+    entry   "8 dB" 125
+    entry   "10 dB" 150
+    entry   "12 dB" 175
+    entry   "14 dB" 200
 
 keyValue
     value   String sys 0x00000000 0
-    label	"INFO: Factory subwoofer gain can range between 0 - 6 dB"
-	poll    0
+    label   "INFO: Factory subwoofer gain can range between 0 - 6 dB"
+    poll    0
 
 bitvalue
     value   per 0 3221422100
-	range   0.0 0.7
-	label   "Soundsystem - 0x3000 byte 0"
-	entry	"none" 0
-	entry	"NOT supported - 2ch (4.0)" 16
-	entry	"NOT supported - 4ch (8.0)" 32
-	entry	"NOT supported - 4ch / 2ch compatible (8.0 / 4.0)" 33
-	entry	"6ch center sub (9.1)" 48
-	entry	"6ch center sub / 2/4ch compatible (9.1 / 8.0 / 4.0)" 49
-	entry	"6ch doublesub (8.2)" 50
-	entry	"6ch doublesub / 2/4ch compatible (8.2 / 8.0 / 4.0)" 51
-	entry	"6ch frontwoofer (9.1)" 52
-	entry	"6ch frontwoofer / 2/4ch compatible (9.1 / 8.0 / 4.0)" 53
+    range   0.0 0.7
+    label   "Soundsystem - 0x3000 byte 0"
+    entry   "none" 0
+    entry   "NOT supported - 2ch (4.0)" 16
+    entry   "NOT supported - 4ch (8.0)" 32
+    entry   "NOT supported - 4ch / 2ch compatible (8.0 / 4.0)" 33
+    entry   "6ch center sub (9.1)" 48
+    entry   "6ch center sub / 2/4ch compatible (9.1 / 8.0 / 4.0)" 49
+    entry   "6ch doublesub (8.2)" 50
+    entry   "6ch doublesub / 2/4ch compatible (8.2 / 8.0 / 4.0)" 51
+    entry   "6ch frontwoofer (9.1)" 52
+    entry   "6ch frontwoofer / 2/4ch compatible (9.1 / 8.0 / 4.0)" 53
 
 bitvalue
     value   per 0 3221422112
-	range   28.0 28.7
-	label   "EQ dials - 0x3B00 byte 28"
-	entry	"2 EQ dials - trebble/bass" 2
-	entry	"3 EQ dials - trebble/middle/bass" 3
-	entry	"5 EQ dials - trebble/midtrebble/middle/midbass/bass" 5
+    range   28.0 28.7
+    label   "EQ dials - 0x3B00 byte 28"
+    entry   "2 EQ dials - trebble/bass" 2
+    entry   "3 EQ dials - trebble/middle/bass" 3
+    entry   "5 EQ dials - trebble/midtrebble/middle/midbass/bass" 5
 
 keyValue
     value   String sys 0x00000000 0
-    label	"INFO: Not all FW GUI versions can show all dials. There might be more activated than visible/useable"
-	poll    0
+    label   "INFO: Not all FW GUI versions can show all dials. There might be more activated than visible/useable"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> Multimedia System -> Subwoofer -> Increase subwoofer EQ gain
 #
 ###########################################################################################
-
 screen EQ_subwoofer_gain subwoofer
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Increase subwoofer gain in EQ - 0x3000 dataset"
-	poll    0
+    label   "Increase subwoofer gain in EQ - 0x3000 dataset"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"WARNING: Too high gain will DAMAGE your subwoofer - change this on your own risk!"
-	poll    0
+    label   "WARNING: Too high gain will DAMAGE your subwoofer - change this on your own risk!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"This change will be fixed in dataset"
-	poll    0
+    label   "This change will be fixed in dataset"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Max. 8dB can be added to the base gain from factory dataset!"
-	poll    0
+    label   "Max. 8dB can be added to the base gain from factory dataset!"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub2.sh"
-	label   "+2 dB"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub2.sh"
+    label   "+2 dB"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub4.sh"
-	label   "+4 dB"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub4.sh"
+    label   "+4 dB"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub6.sh"
-	label   "+6 dB"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub6.sh"
+    label   "+6 dB"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub8.sh"
-	label   "+8 dB"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub8.sh"
+    label   "+8 dB"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
-	label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
+    label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> Multimedia System -> Subwoofer -> Enable control knob
 #
 ###########################################################################################
-
 screen enable_control_knob subwoofer
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Enabling subwoofer control knob - 0x3B00 dataset byte 24-26"
-	poll    0
+    label   "Enabling subwoofer control knob - 0x3B00 dataset byte 24-26"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Enables max EQ dials for brand - 0x3B00 dataset byte 28"
-	poll    0
+    label   "Enables max EQ dials for brand - 0x3B00 dataset byte 28"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Will not work on all units! For some FW versions the knob is not part of the GUI"
-	poll    0
+    label   "Will not work on all units! For some FW versions the knob is not part of the GUI"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_on.sh"
-	label   "Install SUBWOOFER Patch"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_on.sh"
+    label   "Install SUBWOOFER Patch"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Subwoofer gain via knob will not be stored between power cycle and source change"
-	poll    0
+    label   "Subwoofer gain via knob will not be stored between power cycle and source change"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"You will have to go back to menu and turn the knob one step to enable it again"
-	poll    0
+    label   "You will have to go back to menu and turn the knob one step to enable it again"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
-	label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/sub_off.sh"
+    label   "Revert to ORIGINAL Datasets (0x3000 & 0x3B000)"
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2014,65 +2010,65 @@ screen Radio_settings radio
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 choice
     value   per 0 0x50183802
     label   "AM lock activated"
-	poll	1000
+    poll    1000
 
 slider
     value   per 28442848 509
-	label   "Microphone sensitivity"
-	limits	absolute 0 21
+    label   "Microphone sensitivity"
+    limits  absolute 0 21
     poll    1000
 
 BIOSCtrl
-	value	int per 28442848 503
-	label	"summertime algo."
-	entry	"none" 0
-	entry	"manual" 1
-	entry	"MESZ" 2
-	entry	"USA" 3
-	entry	"NavDB/automatic" 4
-	poll	1000
+    value   int per 28442848 503
+    label   "summertime algo."
+    entry   "none" 0
+    entry   "manual" 1
+    entry   "MESZ" 2
+    entry   "USA" 3
+    entry   "NavDB/automatic" 4
+    poll    1000
 
 bitselect
-	value	per 0 4101
-	range	11.0 11.7
-	label	"Sound system"
-	entry	"none" 0
-	entry	"internal" 1
-	entry	"external" 2
+    value   per 0 4101
+    range   11.0 11.7
+    label   "Sound system"
+    entry   "none" 0
+    entry   "internal" 1
+    entry   "external" 2
 
 keyValue
     value   String sys 0x00000000 0
-    label	"Will be enabled after reboot again:"
-	poll    0
+    label   "Will be enabled after reboot again:"
+    poll    0
 
 choice
-	value	per 0xb 0x000b0002
-	label	"Loudness"
-	poll	100
+    value   per 0xb 0x000b0002
+    label   "Loudness"
+    poll    100
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2083,94 +2079,94 @@ screen radio_region_settings radio
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Adjust radio region settings"
-	poll    0
+    label   "Adjust radio region settings"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
     value   per 0 4101
-	range   9.0 9.3
-	label   "Band Settings FM Tuner"
-	entry	"none" 0
-	entry	"EU/RDW" 1
-	entry	"NAR" 2
-	entry	"Japan" 3
-	entry	"Korea" 4
-	entry	"China" 5
-	entry	"Brasilien" 6
-	entry	"Korea 2" 7
-	entry	"Japan 2" 8
+    range   9.0 9.3
+    label   "Band Settings FM Tuner"
+    entry   "none" 0
+    entry   "EU/RDW" 1
+    entry   "NAR" 2
+    entry   "Japan" 3
+    entry   "Korea" 4
+    entry   "China" 5
+    entry   "Brasilien" 6
+    entry   "Korea 2" 7
+    entry   "Japan 2" 8
 
 bitselect
     value   per 0 4101
-	range   9.4 9.7
-	label   "Band Settings AM Tuner"
-	entry	"none" 0
-	entry	"EU/RDW" 1
-	entry	"NAR" 2
-	entry	"Japan" 3
-	entry	"Korea" 4
-	entry	"Australia" 5
+    range   9.4 9.7
+    label   "Band Settings AM Tuner"
+    entry   "none" 0
+    entry   "EU/RDW" 1
+    entry   "NAR" 2
+    entry   "Japan" 3
+    entry   "Korea" 4
+    entry   "Australia" 5
 
 bitselect
     value   per 0 4101
-	range   10.0 10.3
-	label   "Band Settings DAB Tuner 1"
-	entry	"BAND_DAB1_OFF" 0
-	entry	"BAND_DAB1_EU_BAND_III-N" 1
-	entry	"BAND_DAB1_EU_BAND_III" 2
-	entry	"BAND_DAB1_CANADA_L_BAND" 3
-	entry	"BAND_DAB1_KOREA_BAND_III" 4
-	entry	"BAND_DAB1_CHINA_BAND_III" 5
-	entry	"BAND_DAB1_DOWNLOAD_TABLE_1" 6
-	entry	"BAND_DAB1_NEW_ZEALAND_BAND_III" 7
+    range   10.0 10.3
+    label   "Band Settings DAB Tuner 1"
+    entry   "BAND_DAB1_OFF" 0
+    entry   "BAND_DAB1_EU_BAND_III-N" 1
+    entry   "BAND_DAB1_EU_BAND_III" 2
+    entry   "BAND_DAB1_CANADA_L_BAND" 3
+    entry   "BAND_DAB1_KOREA_BAND_III" 4
+    entry   "BAND_DAB1_CHINA_BAND_III" 5
+    entry   "BAND_DAB1_DOWNLOAD_TABLE_1" 6
+    entry   "BAND_DAB1_NEW_ZEALAND_BAND_III" 7
 
 bitselect
     value   per 0 4101
-	range   10.4 10.7
-	label   "Band Settings DAB Tuner 2"
-	entry	"BAND_DAB2_OFF" 0
-	entry	"BAND_DAB2_L_BAND" 1
-	entry	"BAND_DAB2_DOWNLOAD_TABLE_2" 2
+    range   10.4 10.7
+    label   "Band Settings DAB Tuner 2"
+    entry   "BAND_DAB2_OFF" 0
+    entry   "BAND_DAB2_L_BAND" 1
+    entry   "BAND_DAB2_DOWNLOAD_TABLE_2" 2
 
 bitselect
     value   per 0 3221356628
-	range   6.0 6.7
-	label   "RSDB region"
-	entry	"none" 0
-	entry	"EU" 1
-	entry	"Taiwan" 234
-	entry	"Korea" 205
-	entry	"Hongkong" 102
-	entry	"China" 72
-	entry	"Macao" 103
+    range   6.0 6.7
+    label   "RSDB region"
+    entry   "none" 0
+    entry   "EU" 1
+    entry   "Taiwan" 234
+    entry   "Korea" 205
+    entry   "Hongkong" 102
+    entry   "China" 72
+    entry   "Macao" 103
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2181,59 +2177,59 @@ screen RadioStation_db radio
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 #TODO: create upload script (RSDB und ringtones); check available space on disk
 
 keyValue
     value   String sys 0x00000000 0
-	label	"place RSDB file(s) - VW_STL_DB.sqlite - on SD in /mod/RSDB/"
-	poll    0
-	
+    label   "place RSDB file(s) - VW_STL_DB.sqlite - on SD in /mod/RSDB/"
+    poll    0
+
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rsdb.sh"
-	label   "Copy RSDB to unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/rsdb.sh"
+    label   "Copy RSDB to unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
     value   per 0 3221356628
-	range   6.0 6.7
-	label   "RSDB region"
-	entry	"none" 0
-	entry	"EU" 1
-	entry	"Taiwan" 234
-	entry	"Korea" 205
-	entry	"Hongkong" 102
-	entry	"China" 72
-	entry	"Macao" 103
+    range   6.0 6.7
+    label   "RSDB region"
+    entry   "none" 0
+    entry   "EU" 1
+    entry   "Taiwan" 234
+    entry   "Korea" 205
+    entry   "Hongkong" 102
+    entry   "China" 72
+    entry   "Macao" 103
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
-	
+    label   "___________________________________________________________________________"
+    poll    0
+
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2251,17 +2247,17 @@ keyValue
     # value   String sys 0x00000000 0
 	# label	"Upload language dataset to unit"
 	# poll    0
-	
+
 # keyValue
     # value   String sys 0x00000000 0
 	# label	"Maximum available languages in FW will be enabled"
 	# poll    0
-	
+
 # keyValue
     # value   String sys 0x00000000 0
 	# label	"each FW version/region comes with their own set of included languages"
 	# poll    0
-	
+
 # script
 	# value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setlang_eu.sh"
 	# label    "EU"
@@ -2308,7 +2304,6 @@ keyValue
 	# label	"___________________________________________________________________________"
 	# poll    0
 
-
 ###########################################################################################
 #
 # Main -> M.I.B. -> Multimedia System -> Skin & Screen
@@ -2325,76 +2320,76 @@ screen skin_select skin_screen
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Not used by Audi/Porsche - VW/Skoda/Seat only"
-	poll    0
+    label   "Not used by Audi/Porsche - VW/Skoda/Seat only"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Correct value is depending on FW and car model"
-	poll    0
+    label   "Correct value is depending on FW and car model"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Wrong setting can lead to BIG issues, like non booting system"
-	poll    0
+    label   "Wrong setting can lead to BIG issues, like non booting system"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Same like long coding byte 17 - skinning"
-	poll    0
+    label   "Same like long coding byte 17 - skinning"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
     value   per 0 4101
-	range   17.0 17.7
-	label   "Select Skin #"
-	entry	"0" 0
-	entry	"1" 1
-	entry	"2" 2
-	entry	"3" 3
-	entry	"4" 4
-	entry	"5" 5
-	entry	"6" 6
-	entry	"7" 7
-	entry	"8" 8
-	entry	"2" 9
-	entry	"10" 10
-	entry	"11" 11
-	entry	"12" 12
-	entry	"13" 13
-	entry	"14" 14
-	entry	"15" 15
-	entry	"16" 16
-	entry	"17" 17
-	entry	"18" 18
-	entry	"19" 19
+    range   17.0 17.7
+    label   "Select Skin #"
+    entry   "0" 0
+    entry   "1" 1
+    entry   "2" 2
+    entry   "3" 3
+    entry   "4" 4
+    entry   "5" 5
+    entry   "6" 6
+    entry   "7" 7
+    entry   "8" 8
+    entry   "2" 9
+    entry   "10" 10
+    entry   "11" 11
+    entry   "12" 12
+    entry   "13" 13
+    entry   "14" 14
+    entry   "15" 15
+    entry   "16" 16
+    entry   "17" 17
+    entry   "18" 18
+    entry   "19" 19
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2405,214 +2400,214 @@ screen screen_select skin_screen
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Not used by VW/Skoda/Seat - Audi/Porsche only"
-	poll    0
+    label   "Not used by VW/Skoda/Seat - Audi/Porsche only"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Correct value is depending on FW and car model"
-	poll    0
+    label   "Correct value is depending on FW and car model"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Check MUXXXX-StartupImageConfig.txt in backup folder on SD"
-	poll    0
+    label   "Check MUXXXX-StartupImageConfig.txt in backup folder on SD"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"for details on available screens for your FW"
-	poll    0
+    label   "for details on available screens for your FW"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Same like long coding byte 18 - screenings"
-	poll    0
+    label   "Same like long coding byte 18 - screenings"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitselect
     value   per 0 4101
-	range   18.0 18.7
-	label   "Select Screen #"
-	entry	"1"		1
-	entry	"2"		2
-	entry	"3"		3
-	entry	"4"		4
-	entry	"5"		5
-	entry	"6"		6
-	entry	"7"		7
-	entry	"8"		8
-	entry	"9"		9
-	entry	"10"	10
-	entry	"11"	11
-	entry	"12"	12
-	entry	"13"	13
-	entry	"14"	14
-	entry	"15"	15
-	entry	"16"	16
-	entry	"17"	17
-	entry	"18"	18
-	entry	"19"	19
-	entry	"20"	20
-	entry	"21"	21
-	entry	"22"	22
-	entry	"23"	23
-	entry	"24"	24
-	entry	"25"	25
-	entry	"26"	26
-	entry	"27"	27
-	entry	"28"	28
-	entry	"29"	29
-	entry	"30"	30
-	entry	"31"	31
-	entry	"32"	32
-	entry	"33"	33
-	entry	"34"	34
-	entry	"35"	35
-	entry	"36"	36
-	entry	"37"	37
-	entry	"38"	38
-	entry	"39"	39
-	entry	"40"	40
-	entry	"41"	41
-	entry	"42"	42
-	entry	"43"	43
-	entry	"44"	44
-	entry	"45"	45
-	entry	"46"	46
-	entry	"47"	47
-	entry	"48"	48
-	entry	"49"	49
-	entry	"50"	50
-	entry	"51"	51
-	entry	"52"	52
-	entry	"53"	53
-	entry	"54"	54
-	entry	"55"	55
-	entry	"56"	56
-	entry	"57"	57
-	entry	"58"	58
-	entry	"59"	59
-	entry	"60"	60
-	entry	"61"	61
-	entry	"62"	62
-	entry	"63"	63
-	entry	"64"	64
-	entry	"65"	65
-	entry	"66"	66
-	entry	"67"	67
-	entry	"68"	68
-	entry	"69"	69
-	entry	"70"	70
-	entry	"71"	71
-	entry	"72"	72
-	entry	"73"	73
-	entry	"74"	74
-	entry	"75"	75
-	entry	"76"	76
-	entry	"77"	77
-	entry	"78"	78
-	entry	"79"	79
-	entry	"80"	80
-	entry	"81"	81
-	entry	"82"	82
-	entry	"83"	83
-	entry	"84"	84
-	entry	"85"	85
-	entry	"86"	86
-	entry	"87"	87
-	entry	"88"	88
-	entry	"89"	89
-	entry	"90"	90
-	entry	"91"	91
-	entry	"92"	92
-	entry	"93"	93
-	entry	"94"	94
-	entry	"95"	95
-	entry	"96"	96
-	entry	"97"	97
-	entry	"98"	98
-	entry	"99"	99
-	entry	"100"	100
-	entry	"101"	101
-	entry	"102"	102
-	entry	"103"	103
-	entry	"104"	104
-	entry	"105"	105
-	entry	"106"	106
-	entry	"107"	107
-	entry	"108"	108
-	entry	"109"	109
-	entry	"110"	110
-	entry	"111"	111
-	entry	"112"	112
-	entry	"113"	113
-	entry	"114"	114
-	entry	"115"	115
-	entry	"116"	116
-	entry	"117"	117
-	entry	"118"	118
-	entry	"119"	119
-	entry	"120"	120
-	entry	"121"	121
-	entry	"122"	122
-	entry	"123"	123
-	entry	"124"	124
-	entry	"125"	125
-	entry	"126"	126
-	entry	"127"	127
-	entry	"128"	128
-	entry	"129"	129
-	entry	"130"	130
-	entry	"131"	131
-	entry	"132"	132
-	entry	"133"	133
-	entry	"134"	134
-	entry	"135"	135
-	entry	"136"	136
-	entry	"137"	137
-	entry	"138"	138
-	entry	"139"	139
-	entry	"140"	140
-	entry	"141"	141
-	entry	"142"	142
-	entry	"143"	143
-	entry	"144"	144
-	entry	"145"	145
-	entry	"146"	146
-	entry	"147"	147
-	entry	"148"	148
-	entry	"149"	149
-	entry	"150"	150
+    range   18.0 18.7
+    label   "Select Screen #"
+    entry   "1"		1
+    entry   "2"		2
+    entry   "3"		3
+    entry   "4"		4
+    entry   "5"		5
+    entry   "6"		6
+    entry   "7"		7
+    entry   "8"		8
+    entry   "9"		9
+    entry   "10"	10
+    entry   "11"	11
+    entry   "12"	12
+    entry   "13"	13
+    entry   "14"	14
+    entry   "15"	15
+    entry   "16"	16
+    entry   "17"	17
+    entry   "18"	18
+    entry   "19"	19
+    entry   "20"	20
+    entry   "21"	21
+    entry   "22"	22
+    entry   "23"	23
+    entry   "24"	24
+    entry   "25"	25
+    entry   "26"	26
+    entry   "27"	27
+    entry   "28"	28
+    entry   "29"	29
+    entry   "30"	30
+    entry   "31"	31
+    entry   "32"	32
+    entry   "33"	33
+    entry   "34"	34
+    entry   "35"	35
+    entry   "36"	36
+    entry   "37"	37
+    entry   "38"	38
+    entry   "39"	39
+    entry   "40"	40
+    entry   "41"	41
+    entry   "42"	42
+    entry   "43"	43
+    entry   "44"	44
+    entry   "45"	45
+    entry   "46"	46
+    entry   "47"	47
+    entry   "48"	48
+    entry   "49"	49
+    entry   "50"	50
+    entry   "51"	51
+    entry   "52"	52
+    entry   "53"	53
+    entry   "54"	54
+    entry   "55"	55
+    entry   "56"	56
+    entry   "57"	57
+    entry   "58"	58
+    entry   "59"	59
+    entry   "60"	60
+    entry   "61"	61
+    entry   "62"	62
+    entry   "63"	63
+    entry   "64"	64
+    entry   "65"	65
+    entry   "66"	66
+    entry   "67"	67
+    entry   "68"	68
+    entry   "69"	69
+    entry   "70"	70
+    entry   "71"	71
+    entry   "72"	72
+    entry   "73"	73
+    entry   "74"	74
+    entry   "75"	75
+    entry   "76"	76
+    entry   "77"	77
+    entry   "78"	78
+    entry   "79"	79
+    entry   "80"	80
+    entry   "81"	81
+    entry   "82"	82
+    entry   "83"	83
+    entry   "84"	84
+    entry   "85"	85
+    entry   "86"	86
+    entry   "87"	87
+    entry   "88"	88
+    entry   "89"	89
+    entry   "90"	90
+    entry   "91"	91
+    entry   "92"	92
+    entry   "93"	93
+    entry   "94"	94
+    entry   "95"	95
+    entry   "96"	96
+    entry   "97"	97
+    entry   "98"	98
+    entry   "99"	99
+    entry   "100"	100
+    entry   "101"	101
+    entry   "102"	102
+    entry   "103"	103
+    entry   "104"	104
+    entry   "105"	105
+    entry   "106"	106
+    entry   "107"	107
+    entry   "108"	108
+    entry   "109"	109
+    entry   "110"	110
+    entry   "111"	111
+    entry   "112"	112
+    entry   "113"	113
+    entry   "114"	114
+    entry   "115"	115
+    entry   "116"	116
+    entry   "117"	117
+    entry   "118"	118
+    entry   "119"	119
+    entry   "120"	120
+    entry   "121"	121
+    entry   "122"	122
+    entry   "123"	123
+    entry   "124"	124
+    entry   "125"	125
+    entry   "126"	126
+    entry   "127"	127
+    entry   "128"	128
+    entry   "129"	129
+    entry   "130"	130
+    entry   "131"	131
+    entry   "132"	132
+    entry   "133"	133
+    entry   "134"	134
+    entry   "135"	135
+    entry   "136"	136
+    entry   "137"	137
+    entry   "138"	138
+    entry   "139"	139
+    entry   "140"	140
+    entry   "141"	141
+    entry   "142"	142
+    entry   "143"	143
+    entry   "144"	144
+    entry   "145"	145
+    entry   "146"	146
+    entry   "147"	147
+    entry   "148"	148
+    entry   "149"	149
+    entry   "150"	150
 
 #TODO
 #output MXXXX-StartupImageConfig.txt to screen
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2623,36 +2618,36 @@ screen voice_control multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 bitcheck
-	value 	per 0 4101
-	label 	"Voice Control System"
-	index 	24 1
+    value   per 0 4101
+    label   "Voice Control System"
+    index    24 1
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2663,61 +2658,61 @@ screen bluetooth_settings multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"Check and enable Bluetooth functions"
-	poll    0
+    label   "Check and enable Bluetooth functions"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"default: all enabled"
-	poll    0
+    label   "default: all enabled"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 choice    
-    value 	per 0 0x50184001
-    label 	"BT available"
+    value   per 0 0x50184001
+    label   "BT available"
     poll    1000
 
 choice    
-    value 	per 0 0x50184002
-    label 	"BT Multimedia"
+    value   per 0 0x50184002
+    label   "BT Multimedia"
     poll    1000
 
 choice    
-    value 	per 0 0x50184004
-    label 	"BT Phone"
+    value   per 0 0x50184004
+    label   "BT Phone"
     poll    1000
 	
 choice    
-    value 	per 0 0x50184008
-    label 	"BT Audio"
+    value   per 0 0x50184008
+    label   "BT Audio"
     poll    1000
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2728,41 +2723,41 @@ screen aux_in multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label 	"enable AUX in"
-	poll    0
+    label   "enable AUX in"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 choice    
-    value 	per 0 0x50182010
-    label 	"AUX in"
+    value   per 0 0x50182010
+    label   "AUX in"
     poll    1000
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2773,107 +2768,107 @@ screen media_import_ripping multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
 choice    
-    value 	per 0 0x50186010	
-    label 	"Import media"
+    value   per 0 0x50186010	
+    label   "Import media"
     poll    1000        
 
 choice     
-    value 	per 0 0x50186020	
-    label 	"Ripping"
+    value   per 0 0x50186020	
+    label   "Ripping"
     poll    1000    
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> Multimedia System -> DVD/Blueray Region Coding
 #
 ###########################################################################################
-screen dvd_blueray_region_coding multimedia_system
+screen dvd_region_coding multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 
-BIOSCtrl       
+BIOSCtrl
     value   int per 28442848 515
     label   "DVD region coding"
     entry   "Region 1 - US, CA" 1
-    entry   "Region 2 - EU" 2  
+    entry   "Region 2 - EU" 2
     entry   "Region 3 - S. Asia" 3
     entry   "Region 4 - S. America" 4 
     entry   "Region 5 - Afica, India" 5
-    entry   "Region 6 - China" 6   
+    entry   "Region 6 - China" 6
     entry   "Region 7" 7
     entry   "Region 8" 8
 
-BIOSCtrl       
-    value   int per 28442848 516
-    label   "Blueray region coding"
-    entry   "Region A" 1
-    entry   "Region B - EU" 2  
-    entry   "Region C" 3
+#BIOSCtrl
+#    value   int per 28442848 516
+#    label   "Blueray region coding"
+#    entry   "Region A" 1
+#    entry   "Region B - EU" 2  
+#    entry   "Region C" 3
 
 slider
     value   per 28442848 517
-	label   "Reset DVD region counter"
-	limits	absolute 0 5
+    label   "Reset DVD region counter"
+    limits  absolute 0 5
     poll    500
 
-slider
-    value   per 28442848 518
-	label   "Reset Blueray region counter"
-	limits	absolute 0 5
-    poll    1000
+#slider
+#    value   per 28442848 518
+#    label   "Reset Blueray region counter"
+#    limits  absolute 0 5
+#    poll    1000
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2884,11 +2879,11 @@ screen DAB_settings multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 choice
-    value	per 17 0x0011006D
+    value   per 17 0x0011006D
     label   "Mute Handling"
  
 slider
@@ -2918,21 +2913,21 @@ slider
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2943,34 +2938,34 @@ screen DABLinkList multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 choice
-    value	per 17 0x0011011B #DABTUNER_UPDATE_LINKLIST
+    value   per 17 0x0011011B #DABTUNER_UPDATE_LINKLIST
     label   "Enable updates"
-	
+
 table
     content		per 17 0x00110104 #DABTUNER_DAB_DAB_LINKING_LIST
     label    	"DAB Linking AF"
     poll     	2000
     columns  	( "Service Label" String 180 ) ( "SID" String 80 ) ( "EnsID" String 80 ) ( "Freq" String 110 ) ( "QS" String 50 ) ( "QA" String 50 ) ( "Ltype" String 80 )
     maxrows  	10
-	
+
 table
     content		per 17 0x00110105 #DABTUNER_DAB_DAB_LINKING_LIST_2
     label    	""
     poll     	2000
     columns  	( "Service Label" String 200 ) ( "Delay" String 70 ) ( "ALA" String 70 ) ( "Rel" String 70 )
     maxrows  	10
-	
+
 table
     content  	per 17 0x0011006C #DABTUNER_DAB_DAB_FM_LINKING_LIST
     label    	"DAB FM Linking AF"
     poll     	2000
     columns  	( "PS" String 200 ) ( "PI" String 80 ) ( "Freq" String 110 ) ( "QS" String 50 ) ( "QA" String 50 ) ( "Ltype" String 80 )
     maxrows  	10
-	
+
 table
     content  	per 17 0x00110106 #DABTUNER_DAB_DAB_FM_LINKING_LIST_2
     label    	""
@@ -2980,8 +2975,8 @@ table
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -2992,8 +2987,8 @@ screen DABServiceList multimedia_system
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 table
     content  	per 17 0x0011008C
@@ -3004,20 +2999,20 @@ table
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> System Information
 #
 ###########################################################################################
-screen   system_information =>M.I.B.<=
+screen system_information =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String per 30 1966084
@@ -3045,40 +3040,40 @@ keyValue
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
 # Main -> M.I.B. -> System Information -> VariantInfo
 #
 ###########################################################################################
-screen  VariantInfo  system_information
+screen VariantInfo system_information
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
-    value    String sys 0x00000000 0
-    label    "NOTE: Changes can render your unit useless!"
+     value   string sys 0x00000000 0
+     label   "NOTE: Changes can render your unit useless!"
     poll     0  
 
 keyValue
-    value    String sys 0x00000000 0
-    label    "Only edit, if you really know what you are doing."
+     value   string sys 0x00000000 0
+     label   "Only edit, if you really know what you are doing."
     poll     0  
     
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"                                                                          EDIT"
-	poll    0
+    label   "                                                                          EDIT"
+    poll    0
 	
 keyValue
     value   String per 0x286f058c 12
@@ -3089,8 +3084,8 @@ keyValue
     label   "Diagnosis Variant"    
     
 BIOSCtrl
-	value	int per 0x286f058c 3
-    label	"Main Unit Type"
+    value   int per 0x286f058c 3
+    label   "Main Unit Type"
     entry	"FMU - Front MU" 1
     entry	"Rear MU" 2	
     entry	"ExBox MU" 3
@@ -3099,31 +3094,31 @@ BIOSCtrl
     entry   "EX2 - ExBox MU MIB2" 6
     entry   "FMQ - Front MU MIB2Q" 7
 
-#BIOSCtrl		
-#	value	int per 0x286f058c 14
-#	label	"Keypanel Type"
-#	entry	"DEFAULT_TYPE" 0
-#	entry	"MIBCAN_MIB1" 1             
+#BIOSCtrl
+#    value   int per 0x286f058c 14
+#    label   "Keypanel Type"
+#    entry   "DEFAULT_TYPE" 0
+#    entry   "MIBCAN_MIB1" 1             
 
-BIOSCtrl				
-	value	int per 0x286f058c 4
-	label	"Type"
+BIOSCtrl
+    value   int per 0x286f058c 4
+    label   "Type"
     entry	"High" 1
     entry	"Entry" 2	
     entry	"Standard" 3
     entry	"Premium" 4	 
-    
-BIOSCtrl		
-	value	int per 0x286f058c 11
-	label	"Topology"
+
+BIOSCtrl
+    value   int per 0x286f058c 11
+    label   "Topology"
     entry	"MQB" 1
     entry	"MQBTT" 2	
     entry	"MLB" 3
     entry	"MLBEVO" 4	
     entry	"MLBPO" 5
     entry   "MSS" 6
-  
-BIOSCtrl       
+
+BIOSCtrl
     value   int per 0x286f058c 9
     label   "Region"
     entry   "Europe/ROW" 1
@@ -3135,8 +3130,8 @@ BIOSCtrl
     entry   "Korea" 7
     entry   "Asia" 8
     entry   "Taiwan" 9
-   
-BIOSCtrl      
+
+BIOSCtrl
     value   int per 0x286f058c 10
     label   "Brand"
     entry   "Volkswagen" 1
@@ -3146,7 +3141,7 @@ BIOSCtrl
     entry   "Porsche" 5
     entry   "Bentley" 6 
     entry   "Lamborghini" 7
-  
+
 choice
     value   per 0x286f058c 5
     label   "Feature Tel"
@@ -3154,15 +3149,15 @@ choice
 choice
     value   per 0x286f058c 6
     label   "Feature Navi"
-   
+
 choice
     value   per 0x286f058c 7
     label   "Feature DAB"
-    
+
 choice
     value   per 0x286f058c 8
     label   "Feature Sirius"
- 
+
 choice
     value   per 0x286f058c 17
     label   "Feature LTE"  
@@ -3177,29 +3172,29 @@ choice
 
 #choice
 #    value    per 0x286f058c 15
-#    label    "ICAN Msg Activation"
+#     label   "ICAN Msg Activation"
 
 #choice
 #    value    per 0x286f058c 16
-#    label    "MIBCAN Msg Activation" 
+#     label   "MIBCAN Msg Activation" 
 
 keyValue
     value   String sys 0x00000000 0
-    label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
-	label   "Set Variant_1 based on coding above"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/setvariant.sh"
+    label   "Set Variant_1 based on coding above"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -3210,161 +3205,161 @@ screen  CarInfo  system_information
 
 keyValue
     value   String sys 0x00000000 0
-    label	"NOT tested on MHIG yet. Might work or BREAK stuff!!"
-	poll    0
+    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"This is a collection of car specific codings - long coding byte 0,1,2"
-	poll    0
+    label   "This is a collection of car specific codings - long coding byte 0,1,2"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Useful for brand conversions and retrofits. As always, use with care!"
-	poll    0
+    label   "Useful for brand conversions and retrofits. As always, use with care!"
+    poll    0
 
 bitselect
     value   per 0 4101
-	range   0.0 2.7
-	label   "Audi"
-	entry	"none"						0
-	entry	"e-tron (GEN) "				7738625	#011576
-	entry	"Q3 (F3B) "					402177	#012306
-	entry	"Q8 (4MN) "					3552513	#013536
-	entry	"A8L (4N8) "				87553	#015601
-	entry	"A1 (GBA) "					29185	#017200
-	entry	"A6 (4GC) "					95489	#017501
-	entry	"A6 Avant (4GD) "			161025	#017502
-	entry	"A7 Sportback (4GF) "		226561	#017503
-	entry	"A6 Avant allroad (4GJ) "	4355329	#017542
-	entry	"S6 (4GC) "					5338369	#017551
-	entry	"S7 Sportback (4GF) "		5469441	#017553
-	entry	"RS6 Avant (4GD) "			6452481	#017562
-	entry	"A6 (4A2) "					99585	#018501
-	entry	"A6 (4A5) "					165121	#018502
-	entry	"A7 (4KA) "					230657	#018503
-	entry	"Audi Q7 (4M0)"				407297	#013706
-	entry	"Audi A4 B9 (8W0)"			103425	#019401
-	entry	"Audi A4 (8W0)"				168961	#019402
-	entry	"Audi A5 (8W5)"				234497	#019403
-	entry	"Audi RSQ3"					397570	#021106
+    range   0.0 2.7
+    label   "Audi"
+    entry   "none"						0
+    entry   "e-tron (GEN) "				7738625	#011576
+    entry   "Q3 (F3B) "					402177	#012306
+    entry   "Q8 (4MN) "					3552513	#013536
+    entry   "A8L (4N8) "				87553	#015601
+    entry   "A1 (GBA) "					29185	#017200
+    entry   "A6 (4GC) "					95489	#017501
+    entry   "A6 Avant (4GD) "			161025	#017502
+    entry   "A7 Sportback (4GF) "		226561	#017503
+    entry   "A6 Avant allroad (4GJ) "	4355329	#017542
+    entry   "S6 (4GC) "					5338369	#017551
+    entry   "S7 Sportback (4GF) "		5469441	#017553
+    entry   "RS6 Avant (4GD) "			6452481	#017562
+    entry   "A6 (4A2) "					99585	#018501
+    entry   "A6 (4A5) "					165121	#018502
+    entry   "A7 (4KA) "					230657	#018503
+    entry   "Audi Q7 (4M0)"				407297	#013706
+    entry   "Audi A4 B9 (8W0)"			103425	#019401
+    entry   "Audi A4 (8W0)"				168961	#019402
+    entry   "Audi A5 (8W5)"				234497	#019403
+    entry   "Audi RSQ3"					397570	#021106
 
 bitselect
     value   per 0 4101
-	range   0.0 2.7
-	label   "VW"
-	entry	"none"										0
-	entry	"Passat Variant/Wagon (3G5) "				164866	#028402
-	entry	"Passat (A33) "								70658	#021401
-	entry	"Beetle (5C1) "								271106	#022304
-	entry	"Caddy (SAJ) "								471814	#063307
-	entry	"Golf (5G1/BN2) "							29442	#027300
-	entry	"Golf Variant (BX5) "						160514	#027302
-	entry	"Golf Sportsvan (AM1) "						619266	#027309
-	entry	"Golf Sportsvan (AN1) "						1667842	#027319
-	entry	"Golf (BQ1) "								1078018	#027310
-	entry	"Golf Variant/Wagon (BV5/BX6) "				1209090	#027312
-	entry	"e-Golf (BE2) "								8418050	#027380
-	entry	"Jetta (163) "								90882	#026301
-	entry	"Passat CC (358) "							291842	#027404
-	entry	"Passat Sedan (3G2) "						99330	#028401
-	entry	"Passat Variant/Wagon (3G5) "				164866	#028402
-	entry	"Arteon (3H7) "								230402	#028403
-	entry	"Polo (6C1) "								25090	#026200
-	entry	"Polo (AW1) "								29186	#027200
-	entry	"Tiguan (5N2) "								398082	#021306
-	entry	"Tiguan (AD1) "								422658	#027306
-	entry	"Touran (5T1) "								553730	#027308
-	entry	"Sharan (7N2) "								533506	#022408
-	entry	"T-Roc (A11) "								422402	#027206
-	entry	"Atlas (CA) "								398338	#021406
-	entry	"Atlas Atlas Cross Sport (CMC) "			3548162	#022436
-	entry	"Amarok (S6B) "								464902	#061807
-	entry	"Crafter (SYB) "							17670	#064500
-	entry	"Transporter/Multivan (SGA/SGF/SGJ/SGM) "	22278	#065700
+    range   0.0 2.7
+    label   "VW"
+    entry   "none"										0
+    entry   "Passat Variant/Wagon (3G5) "				164866	#028402
+    entry   "Passat (A33) "								70658	#021401
+    entry   "Beetle (5C1) "								271106	#022304
+    entry   "Caddy (SAJ) "								471814	#063307
+    entry   "Golf (5G1/BN2) "							29442	#027300
+    entry   "Golf Variant (BX5) "						160514	#027302
+    entry   "Golf Sportsvan (AM1) "						619266	#027309
+    entry   "Golf Sportsvan (AN1) "						1667842	#027319
+    entry   "Golf (BQ1) "								1078018	#027310
+    entry   "Golf Variant/Wagon (BV5/BX6) "				1209090	#027312
+    entry   "e-Golf (BE2) "								8418050	#027380
+    entry   "Jetta (163) "								90882	#026301
+    entry   "Passat CC (358) "							291842	#027404
+    entry   "Passat Sedan (3G2) "						99330	#028401
+    entry   "Passat Variant/Wagon (3G5) "				164866	#028402
+    entry   "Arteon (3H7) "								230402	#028403
+    entry   "Polo (6C1) "								25090	#026200
+    entry   "Polo (AW1) "								29186	#027200
+    entry   "Tiguan (5N2) "								398082	#021306
+    entry   "Tiguan (AD1) "								422658	#027306
+    entry   "Touran (5T1) "								553730	#027308
+    entry   "Sharan (7N2) "								533506	#022408
+    entry   "T-Roc (A11) "								422402	#027206
+    entry   "Atlas (CA) "								398338	#021406
+    entry   "Atlas Atlas Cross Sport (CMC) "			3548162	#022436
+    entry   "Amarok (S6B) "								464902	#061807
+    entry   "Crafter (SYB) "							17670	#064500
+    entry   "Transporter/Multivan (SGA/SGF/SGJ/SGM) "	22278	#065700
 
 bitselect
     value   per 0 4101
-	range   0.0 2.7
-	label   "Skoda"
-	entry	"none"							0
-	entry	"Octavia Limousine (5E3) "		94979	#037301
-	entry	"Octavia Limousine vRS (5E3) "	5337859	#037351
-	entry	"Octavia Combi (5E5) "			160515	#037302
-	entry	"Octavia Combi Scout (5E5) "	4354819	#037342
-	entry	"Octavia Combi vRS (5E5) "		5403395	#037352
-	entry	"Superb Limousine (3V3) "		99331	#038401
-	entry	"Superb Combi (3V5) "			164867	#038402
-	entry	"Fabia (NJ3) "					25091	#036200
-	entry	"Fabia Combi (NJ5) "			156163	#036202
-	entry	"Yeti (5L6) "					398083	#031306
+    range   0.0 2.7
+    label   "Skoda"
+    entry   "none"							0
+    entry   "Octavia Limousine (5E3) "		94979	#037301
+    entry   "Octavia Limousine vRS (5E3) "	5337859	#037351
+    entry   "Octavia Combi (5E5) "			160515	#037302
+    entry   "Octavia Combi Scout (5E5) "	4354819	#037342
+    entry   "Octavia Combi vRS (5E5) "		5403395	#037352
+    entry   "Superb Limousine (3V3) "		99331	#038401
+    entry   "Superb Combi (3V5) "			164867	#038402
+    entry   "Fabia (NJ3) "					25091	#036200
+    entry   "Fabia Combi (NJ5) "			156163	#036202
+    entry   "Yeti (5L6) "					398083	#031306
 
 bitselect
     value   per 0 4101
-	range   0.0 2.7
-	label   "Seat"
-	entry	"none"						0
-	entry	"Ateca (KH7) "				402180	#042306
-	entry	"Leon Stylance (5F1) "		29444	#047300
-	entry	"Leon ST Cupra (5F8) "		160516	#047302
-	entry	"Leon ST X-Perience (5F8) "	226052	#047303
-	entry	"Leon FR (5F1) "			8418052	#047380
-	entry	"Leon ST FR (5F8) "			8549124	#047382
-	entry	"Alhambra (711) "			533508	#042408
-	entry	"Ateca (KH7) "				402180	#042306
-	entry	"Ateca Xcellence (KH7) "	8790788	#042386
-	entry	"Ibiza (6P1) "				20996	#045200
-	entry	"Ibiza Cupra/FR (6P5) "		283140	#045204
-	entry	"Ibiza Cupra (6P5) "		1069572	#045210
-	entry	"Ibiza (KJ1) "				29188	#047200
-	entry	"Leon Stylance (5F1) "		29444	#047300
-	entry	"Leon ST Cupra (5F8) "		160516	#047302
-	entry	"Leon ST (5F8) "			226052	#047303
-	entry	"Leon SC FR (5F5) "			6320900	#047360
-	entry	"Leon FR (5F1) "			8418052	#047380
-	entry	"Leon ST FR (5F8) "			8549124	#047382
-	entry	"Tarraco Xcellence (KN2) "	1450756	#042316
-	entry	"Toledo (KG3) "				86532	#045201
-	entry	"Toledo (KG3) "				86788	#045301
+    range   0.0 2.7
+    label   "Seat"
+    entry   "none"						0
+    entry   "Ateca (KH7) "				402180	#042306
+    entry   "Leon Stylance (5F1) "		29444	#047300
+    entry   "Leon ST Cupra (5F8) "		160516	#047302
+    entry   "Leon ST X-Perience (5F8) "	226052	#047303
+    entry   "Leon FR (5F1) "			8418052	#047380
+    entry   "Leon ST FR (5F8) "			8549124	#047382
+    entry   "Alhambra (711) "			533508	#042408
+    entry   "Ateca (KH7) "				402180	#042306
+    entry   "Ateca Xcellence (KH7) "	8790788	#042386
+    entry   "Ibiza (6P1) "				20996	#045200
+    entry   "Ibiza Cupra/FR (6P5) "		283140	#045204
+    entry   "Ibiza Cupra (6P5) "		1069572	#045210
+    entry   "Ibiza (KJ1) "				29188	#047200
+    entry   "Leon Stylance (5F1) "		29444	#047300
+    entry   "Leon ST Cupra (5F8) "		160516	#047302
+    entry   "Leon ST (5F8) "			226052	#047303
+    entry   "Leon SC FR (5F5) "			6320900	#047360
+    entry   "Leon FR (5F1) "			8418052	#047380
+    entry   "Leon ST FR (5F8) "			8549124	#047382
+    entry   "Tarraco Xcellence (KN2) "	1450756	#042316
+    entry   "Toledo (KG3) "				86532	#045201
+    entry   "Toledo (KG3) "				86788	#045301
 
 bitselect
     value   per 0 4101
-	range   0.0 2.7
-	label   "Porsche"
-	entry	"none"					0
-	entry	"Cayenne_s_e-hybrid"	402695	#072506
-	entry	"Panamera"				3352071	#072633
-	entry	"Boxter"				345095	#074405
+    range   0.0 2.7
+    label   "Porsche"
+    entry   "none"					0
+    entry   "Cayenne_s_e-hybrid"	402695	#072506
+    entry   "Panamera"				3352071	#072633
+    entry   "Boxter"				345095	#074405
 	#entry	"Macan (?)"				410631	#074406
-	entry	"Macan (95B)"			398343	#071406
-	entry	"Cayman"				279559	#074404
-	entry	"Cayman_gt4"			5522439	#074454
-	entry	"911_Carerra_coupe"		292359	#077604
-	entry	"911_carerra_4_coupe"	1340935	#077614
-	entry	"911_Turbo_Coupe"		3438087	#077634
+    entry   "Macan (95B)"			398343	#071406
+    entry   "Cayman"				279559	#074404
+    entry   "Cayman_gt4"			5522439	#074454
+    entry   "911_Carerra_coupe"		292359	#077604
+    entry   "911_carerra_4_coupe"	1340935	#077614
+    entry   "911_Turbo_Coupe"		3438087	#077634
 
 keyValue
     value   String sys 0x00000000 0
-	label	"This list is by far not complete! Not all models will be supported"
-	poll    0
+    label   "This list is by far not complete! Not all models will be supported"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0
-	label	"Share more/your backup with us to get them included"
-	poll    0
+    label   "Share more/your backup with us to get them included"
+    poll    0
 	
 button
     value   per 0 1 1
     label   "Press to save changes | Changes will apply after reboot"
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
-	label   "Reboot unit"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
 
 ###########################################################################################
 #
@@ -3374,28 +3369,28 @@ keyValue
 screen config =>M.I.B.<=
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
     label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pwset.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/pwset.sh"
     label   "Set root password to harman_f"
 
 keyValue
     value   String sys 0x00000000 0
-	label	" "
-	poll    0
+    label   " "
+    poll    0
 
 script
-	value    sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gem.sh"
-    label    "Uninstall M.I.B. from GEM"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/gem.sh"
+     label   "Uninstall M.I.B. from GEM"
    
 keyValue
     value   String sys 0x00000000 0
-	label	"___________________________________________________________________________"
-	poll    0
+    label   "___________________________________________________________________________"
+    poll    0
