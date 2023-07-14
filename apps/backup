@@ -400,7 +400,7 @@ case $1 in
 		echo -ne "$TRAINVERSION $MUVERSION\n"
 		echo -ne "In case of errors, please check Log file on SD card.\n"
 		[ -z "$GEM" ] && echo -ne "\n"
-		echo -ne "\n$ME-$thisname-done!" | $TEE -i -a $LOG
+		echo -ne "\n$ME-$thisname-done!\n" | $TEE -i -a $LOG
 
 		rm -rf $TMP/backup.mib 2>/dev/null
 
