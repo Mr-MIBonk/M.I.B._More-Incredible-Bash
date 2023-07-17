@@ -46,7 +46,7 @@ ADDFECSELECT ()
 		echo -ne "--- addFecs.txt found in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
 		addFec=$VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
 	else
-		echo -ne "--- addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
+		echo -ne "--- /patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt not found!\nStopping here....\n" | $TEE -a $LOG
 		exit 1
 	fi
 
