@@ -26,16 +26,16 @@ echo -ne "\nStarting EU conversion.\nMultiple scripts will be run in series. Ple
 /net/mmx/fs/sda0/apps/setvariant -var -noboot
 
 if [[ $? -eq 0 ]]; then
-	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
-	VARIANT2="$($SED -n 's/Variant = '\''\(.*\)'\''/\1/p' /net/rcc/dev/shmem/version.txt | $SED 's/[^a-zA-Z0-9._-]//g')" 2>> $LOG
-	if [[ "$COMPONENT" = *EU* ]] && [[ "$VARIANT2" = *EU* ]]; then
-		echo -ne "\nNow you can insert FAT32 formatted SD card \n" | $TEE -i -a $LOG
+	#COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
+	VARREG=$($E2P r E0 1 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p') 2>> $LOG #Region: 02=EU
+	if [[ "$COMPONENT" = *EU* ]] && [[ "$VARREG" = 02 ]]; then
+		echo -ne "\nNow reboot, insert FAT32 formatted SD card \n" | $TEE -i -a $LOG
 		echo -ne "with FW $TRAINVERSION and update.\n" | $TEE -i -a $LOG
 		echo -ne "IMPORTANT! If available use AIO FW version from mibsolution.one\n" | $TEE -i -a $LOG
 		echo -ne "Good luck!\n"
 	else
-		echo -ne "\n$COMPONENT or $VARIANT2 is not EU!!!\n" | $TEE -i -a $LOG
-		echo -ne "Reboot with long press power button and run conversion again!\n" | $TEE -i -a $LOG
+		echo -ne "\nConversion failed!!! Variant2 of the unit is not EU!\n" | $TEE -i -a $LOG
+		echo -ne "Reboot the unit and try to run conversion again!\n" | $TEE -i -a $LOG
 	fi
 fi
 
