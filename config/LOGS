@@ -1,4 +1,4 @@
-# LOGS settings v0.1.6 (2023-06-20 by MIBonk)
+# LOGS settings v0.1.7 (2023-07-22 by MIBonk)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 if [[ ! -e "$BACKUPFOLDER" ]]; then
 	mkdir -p "$BACKUPFOLDER"
 fi
-LOG="$BACKUPFOLDER/$MUVERSION-$FAZIT.log"
+LOG="$BACKUPFOLDER/$MUVERSION-LOG.txt"
 if [ ! -f $LOG ]; then
 	cat $thisdir/../config/LOGO > $LOG
 	echo $VERSION >> $LOG
