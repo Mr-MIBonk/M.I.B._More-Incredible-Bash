@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.5 (2023-07-04 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.6 (2023-07-22 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
