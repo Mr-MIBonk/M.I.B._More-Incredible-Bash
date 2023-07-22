@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd patch_aio.sh v0.2.4 (2023-07-02 by MIBonk & MIB-Wiki)
+# esd patch_aio.sh v0.2.5 (2023-07-22 by MIBonk & MIB-Wiki)
 
 if [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -23,6 +23,8 @@ echo "CAUTION: Ensure that a external power is connected to the car on during an
 echo "flash or programming process! Power failure during flashing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
+
+/net/mmx/fs/sda0/apps/backup -a
 
 . /net/mmx/fs/sda0/config/BASICS
 

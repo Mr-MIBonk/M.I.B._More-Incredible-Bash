@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd aio_conversion_eu.sh v0.1.3 (2023-06-23 by @MIB-Wiki)
+# esd aio_conversion_eu.sh v0.1.4 (2023-07-22 by @MIB-Wiki)
 
 trap '' 2
 
@@ -16,6 +16,8 @@ echo "WARNING! NEVER interrupt the process with -Back- button or remove SD card!
 echo "CAUTION: Make sure the external power is connected to the car during any"
 echo "flash or programming process! Power failure during flashing/programming will"
 echo "brick your unit! - All you do and use at your own risk!"
+
+/net/mmx/fs/sda0/apps/backup -a
 
 . /net/mmx/fs/sda0/config/BASICS
 
