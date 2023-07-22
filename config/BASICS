@@ -26,9 +26,8 @@ FAZIT="$($E2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S
 BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
 LOG="$BACKUPFOLDER/$MUVERSION-$FAZIT.log"
 
-if [ -z $LOG ]; then
+if [ ! -e $LOG ]; then
 	. $thisdir/../config/GLOBALS
-	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
 
 return 2> /dev/null
