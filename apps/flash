@@ -56,21 +56,22 @@ function IFSstage2 {
 		#TODO: case sensitive HEX ba vs BA has to be fixed for all
 		#      Or delete this check completly, as offset is now determined very well from unit.
 		if [[ "$OFFSETPART2" = "ba0000" ]] || [[ "$OFFSETPART2" = "BA0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "c20000" ]] || [[ "$OFFSETPART2" = "C20000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "c00000" ]] || [[ "$OFFSETPART2" = "C00000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "be0000" ]] || [[ "$OFFSETPART2" = "BE0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "bc0000" ]] || [[ "$OFFSETPART2" = "BC0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
 		else
 			echo -ne "\nFlash offset unknown, flashing aborted!\nGet in contact with M.I.B team and share your backup\nSupport will be added\n\n" | $TEE -i -a $LOG
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			exit 0
 		fi
-
+		echo -ne "There will be no further output until flash is finished!\n" | $TEE -i -a $LOG
+		echo -ne "It will take about 5 minutes. PLEASE WAIT!\n" | $TEE -i -a $LOG
 		FLASHLOG="/net/rcc/tmp/flash.log"
 		echo "\n" > $FLASHLOG
 		$FLASHIT -v -d -x -a $OFFSETPART2 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
