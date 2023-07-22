@@ -29,7 +29,7 @@ echo ""
 . /net/mmx/fs/sda0/config/BASICS
 
 if [[ "$TRAINVERSION" = *MHI2* ]] ; then
-	on -f rcc /net/mmx/fs/sda0/apps/carp -b
+	on -f rcc /net/mmx/fs/sda0/apps/carp -a -noboot
 fi
 if [[ "$TRAINVERSION" = *POG24* ]] || [[ "$TRAINVERSION" = *BYG24* ]]; then
 	/net/mmx/fs/sda0/apps/installjava -g24wide -noboot
