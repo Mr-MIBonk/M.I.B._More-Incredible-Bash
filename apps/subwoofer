@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.4 (2023-07-04 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.5 (2023-07-23 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -18,6 +18,9 @@ if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
 
 DSEDIT()
 {

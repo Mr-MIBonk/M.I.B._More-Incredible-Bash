@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="WLAN hotspot activation v0.1.1 (2023-06-10 by @MIB-Wiki)"
+revision="WLAN hotspot activation v0.1.2 (2023-07-23 by @MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,11 +20,8 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
-if [ ! -z $2 ]; then
-VALUE=$2
-else
-VALUE=0
-fi
+MIBCAP=3
+. $thisdir/../config/MIBCHECK
 
 	case $1 in
 
@@ -35,8 +32,7 @@ echo -ne "WLAN  hotspot is activated now\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[m"
 
-$PC b:0:3221356628:0.6 $VALUE >> $LOG
-$PC b:0:1 0 >> $LOG
+$PERSW -t blob -P -L 1 -O 1 -f 0 3221356628 F # WLAN hotspot 0.6 1
 
 . $thisdir/reboot -t 10
 
@@ -51,7 +47,7 @@ return 2> /dev/null
 echo -ne "WLAN hotspot Status\n\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 echo -ne "\nCoding: " | $TEE -a $LOG
-on -f mmx /eso/bin/dumb_persistence_reader 3221356628 0.6 | $TEE -a $LOG
+$PC b:0:3221356628:0.6 | $TEE -a $LOG
 
 return 2> /dev/null
 
@@ -66,7 +62,7 @@ return 2> /dev/null
 		echo "Usage: "$thisname" [OPTION]"
 		echo ""
 		echo "Options:"
-		echo "        -a 			activated <VALUE>"
+		echo "        -a 			activated"
 		echo "        -s 			status"
 		echo "        --help		show this help"
 		echo ""

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="WLAN activation v0.1.2 (2023-06-10 by @MIB-Wiki)"
+revision="WLAN activation v0.1.3 (2023-07-23 by @MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -19,6 +19,9 @@ if [ -f $TMP/reboot.mib ]; then
 	echo "Reboot running..."
 	return 2> /dev/null
 fi
+
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
 
 if [ "$3" = "-noboot" ]; then
 	noboot=$3
@@ -40,12 +43,12 @@ fi
 echo -ne "WLAN is activated now\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\n"
 [ -z "$GEM" ] && echo -ne "\033[m"
-
-on -f mmx /eso/bin/dumb_persistence_reader 0 4101 >> $LOG | $TEE -a $LOG
+echo -ne "Long coding: "
+$UDP -key 4101 -ns 0 -type b | $SED -n "s/^.*'\(.*\)'.*$/\1/p" | $SED 's/ //g' | $TEE -a $LOG
 $PC i:0:0x50186008 $VALUE >> $LOG
 $PC i:28442848:514 $VALUE >> $LOG
 $PC b:0:3221356628:8.2 $VALUE >> $LOG
-$PC b:0:1 0 >> $LOG
+$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG #Store changes to Persistence
 
 [ -z "$noboot" ] && . $thisdir/reboot -t 10
 
@@ -65,7 +68,7 @@ fi
 echo -ne "WLAN Status\n\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 echo -ne "\nCoding: " | $TEE -a $LOG
-on -f mmx /eso/bin/dumb_persistence_reader 0 4101 | $TEE -a $LOG
+$UDP -key 4101 -ns 0 -type b | $SED -n "s/^.*'\(.*\)'.*$/\1/p" | $SED 's/ //g' | $TEE -a $LOG
 	
 return 2> /dev/null
 
