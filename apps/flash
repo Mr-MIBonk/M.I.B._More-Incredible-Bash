@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.6 (2023-07-22 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.7 (2023-07-23 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -228,6 +228,7 @@ function LITTLE2BIG {
 			IFS2=$IFS2_new
 			if [ ! -f $IFS2 ]; then
 				echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
+				top -i 1 | $TEE -i -a $LOG
 				FreeRAM=$(top -i 1 | grep Memory: | $SED -n 's/.* \([0-9]\+\)M avail.*/\1/p')
 				if [ $FreeRAM -lt 240 ]; then
 					echo -ne "--- Free RAM on unit: "$FreeRAM"MB\n" | $TEE -i -a $LOG
