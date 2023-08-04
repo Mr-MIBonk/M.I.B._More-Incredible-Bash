@@ -210,12 +210,12 @@ if [ ! -z "$DATASET_280" ]; then
 	$PERSW -f -P 0 3221422086 $DATASET_2D00 >> $LOG
 	echo -ne "Dataset 2D00 after the change: " >> $LOG
 	$UDP -key 3221422086 -ns 0 -type b | sed -n "s/^.*'\(.*\)'.*$/\1/p" | sed 's/ //g' 2> /dev/null >> $LOG
-	echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 	echo -ne "Dataset 280 before the change:" >> $LOG
 	$UDP -key 3221422085 -ns 0 -type b | sed -n "s/^.*'\(.*\)'.*$/\1/p" | sed 's/ //g' 2> /dev/null >> $LOG
 	$PERSW -f -P 0 3221422085 $DATASET_280 >> $LOG
 	echo -ne "Dataset 280 after the change: " >> $LOG
 	$UDP -key 3221422085 -ns 0 -type b | sed -n "s/^.*'\(.*\)'.*$/\1/p" | sed 's/ //g' 2> /dev/null >> $LOG
+	echo -ne "\n$thisname done!\n" | $TEE -i -a $LOG
 fi
 
 trap 2
