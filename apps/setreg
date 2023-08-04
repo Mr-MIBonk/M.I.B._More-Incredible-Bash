@@ -37,8 +37,6 @@ case $1 in
 		trap '' 2
 		mount -uw /net/rcc/mnt/efs-persist
 		if [[ "$TRAINVERSION" = *ER* || "$TRAINVERSION" = *EU* ]]; then
-			echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
-			/net/mmx/fs/sda0/apps/setlang -eu -noboot
 			echo -ne "\nChanging coding and adaptations to EU:" | $TEE -a $LOG
 			echo -ne "\n--- Summer time algo\n" | $TEE -a $LOG
 			# 0=none, 1=manual, 2=MESZ, 3=USA
@@ -131,6 +129,10 @@ case $1 in
 
 			echo -ne "--- Disable variant feature byte sirius\n"
 			$PERSW -f -t int 678364556 8 0 2>> $LOG
+
+			echo -ne "Writing EU language datasets to 5F...\n" | $TEE -a $LOG
+			/net/mmx/fs/sda0/apps/setlang -eu -noboot
+
 			CODING="$($E2P r F1 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g')"
 			echo "5F Long Coding: $CODING" >> $LOG
 
