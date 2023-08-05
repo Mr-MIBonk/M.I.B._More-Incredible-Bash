@@ -26,8 +26,8 @@ thisdir="$(dirname $0)"
 echo -ne "\nStarting EU conversion.\nMultiple scripts will be run in series. Please wait...\n\n" | $TEE -i -a $LOG
 
 /net/mmx/fs/sda0/apps/settrain -eu -noboot && \
-/net/mmx/fs/sda0/apps/setvariant -var -noboot && \
-/net/mmx/fs/sda0/apps/setreg -eu -noboot
+/net/mmx/fs/sda0/apps/setreg -eu -noboot && \
+/net/mmx/fs/sda0/apps/setvariant -var -noboot
 
 if [[ $? -eq 0 ]]; then
 	COMPONENT="$($E2P r BA D | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )" 2>> $LOG
