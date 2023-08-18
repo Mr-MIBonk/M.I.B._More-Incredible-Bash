@@ -2,8 +2,8 @@
 #
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
-# Version:		4.0 - 9.2'' - MHI2
-# Date:			10-07-2023
+# Version:		4.1 - 9.2'' - MHI2
+# Date:			23-07-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -1772,29 +1772,50 @@ keyValue
 ###########################################################################################
 screen wlan_status Network_configuration
 
-bitvalue
+bitselect
     value   per 0 4101
     range   24.3 24.3
-    label   "WLAN long coding enabled"
+    label   "WLAN long coding"
     entry   "OFF" 0
     entry   "ON" 1
 
-#replace with bitselect
-
-keyValue
+BIOSCtrl
     value   int per 28442848 514
-    label   "Adaptations WLAN off/on  1 = ON | 0 = OFF"
-    poll    0
+    label   "WLAN adaptions"
+    entry   "ON" 1
+    entry   "OFF" 2
+
+bitselect
+    value   per 0 3221356628
+    label   "Hotspot"
+    range   0.6 0.6
+    entry   "OFF" 0
+    entry   "ON" 1
 
 choice
     value   per 0x01b800e1 41
     label   "WLAN activation (also with ignition off)"
     poll    1000
 
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
+
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
     poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN PASSWORD
+#
+###########################################################################################
+screen wlan_password Network_configuration
 
 keyValue
     value   String per 0x01b800e1 39
@@ -1811,6 +1832,13 @@ keyValue
     label   "___________________________________________________________________________"
     poll    0
 
+###########################################################################################
+#
+# Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN CHANNEL
+#
+###########################################################################################
+screen wlan_channel Network_configuration
+
 # Channel configuration ##########################################
 slider
     value   per 0x3F57B91D 3
@@ -1825,11 +1853,19 @@ slider
     limits  absolute 0 20
     poll    0
 
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
+
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
     poll    0
-	
+
 ###########################################################################################
 #
 # Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN Information
@@ -3785,13 +3821,13 @@ screen  VariantInfo  system_information
 keyValue
     value    String sys 0x00000000 0
     label    "NOTE: Changes can render your unit useless!"
-    poll     0  
+    poll     0
 
 keyValue
     value    String sys 0x00000000 0
     label    "Only edit, if you really know what you are doing."
-    poll     0  
-    
+    poll     0
+
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
@@ -3809,7 +3845,7 @@ keyValue
 keyValue
     value   String per 0x286f058c 13
     label   "Diagnosis Variant"    
-    
+
 BIOSCtrl
     value   int per 0x286f058c 3
     label   "Main Unit Type"
@@ -3834,7 +3870,7 @@ BIOSCtrl
     entry   "Entry" 2	
     entry   "Standard" 3
     entry   "Premium" 4	 
-    
+
 BIOSCtrl
     value   int per 0x286f058c 11
     label   "Topology"

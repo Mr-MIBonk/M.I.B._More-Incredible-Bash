@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Navigation activation v0.1.4 (2023-06-10 by Mibonk & MIB-Wiki)"
+revision="Navigation activation v0.1.5 (2023-07-23 by Mibonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -26,6 +26,9 @@ else
 	noboot=""
 fi
 
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
+
 if [ ! -z $2 ]; then
 VALUE=$2
 else
@@ -45,7 +48,7 @@ echo -ne "Navigation is activated now\n" | $TEE -a $LOG
 
 echo "Nav region selected: $VALUE"
 echo -ne "long coding: "
-on -f mmx /eso/bin/dumb_persistence_reader 0 4101 2>> $LOG | $TEE -a $LOG 
+$PERSR 0 4101 2>> $LOG | $TEE -a $LOG 
 echo "LC byte_3_Country_Navigation changed"
 $PC i:0:0x50180CFF $VALUE 2>> $LOG
 echo "SDS Region Flag"
@@ -70,10 +73,10 @@ return 2> /dev/null
 	-s) {
 
 [ -z "$GEM" ] && echo -ne "\033[36m"
-echo -ne "Navigation Status\n\n" | $TEE -a $LOG ### der Funktion ändern
+echo -ne "Navigation Status\n\n" | $TEE -a $LOG
 [ -z "$GEM" ] && echo -ne "\033[m"
 echo -ne "\nCoding: " | $TEE -a $LOG
-on -f mmx /eso/bin/dumb_persistence_reader 0 4101 | $TEE -a $LOG ### nur die Adresse ändern
+$PERSR 0 4101 | $TEE -a $LOG
 
 trap 2
 

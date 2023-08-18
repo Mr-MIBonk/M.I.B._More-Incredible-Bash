@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd (standard) backup.sh v0.1.3 (2021-04-06 by MIBonk)
+# esd (standard) backup.sh v0.1.4 (2023-07-22 by MIBonk)
 
 if [ -f /net/rcc/dev/shmem/backup.mib ] || [ -f /net/rcc/dev/shmem/reboot.mib ] || [ -f /net/rcc/dev/shmem/flash.mib ]; then
 	echo "Some process is already running in background, don't interrupt!"
@@ -24,7 +24,7 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-on -f rcc /net/mmx/fs/sda0/apps/backup -a
+/net/mmx/fs/sda0/apps/backup -a
 sleep 3
 
 echo "There is no patch for your train version available?"
