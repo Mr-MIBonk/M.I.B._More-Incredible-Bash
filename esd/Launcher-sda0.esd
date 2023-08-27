@@ -1659,7 +1659,7 @@ keyValue
     poll    0
 
 script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/ssh/sshd_install.sh"
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/mod/sshd/scripts/sshd_install.sh"
     label   "install SSHD server on unit"
 
 keyValue
