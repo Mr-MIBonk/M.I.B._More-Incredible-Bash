@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="flash v0.3.5 (2023-07-04 by MIBonk & MIB-Wiki)"
+revision="flash v0.3.7 (2023-07-23 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -56,22 +56,21 @@ function IFSstage2 {
 		#TODO: case sensitive HEX ba vs BA has to be fixed for all
 		#      Or delete this check completly, as offset is now determined very well from unit.
 		if [[ "$OFFSETPART2" = "ba0000" ]] || [[ "$OFFSETPART2" = "BA0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "c20000" ]] || [[ "$OFFSETPART2" = "C20000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "c00000" ]] || [[ "$OFFSETPART2" = "C00000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "be0000" ]] || [[ "$OFFSETPART2" = "BE0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		elif [[ "$OFFSETPART2" = "bc0000" ]] || [[ "$OFFSETPART2" = "BC0000" ]]; then
-			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n" | $TEE -i -a $LOG
+			echo -ne "Flashing on OFFSET 0x00"$OFFSETPART2"...\n\nThere will be no further output until flash is finished!\n" | $TEE -i -a $LOG
 		else
 			echo -ne "\nFlash offset unknown, flashing aborted!\nGet in contact with M.I.B team and share your backup\nSupport will be added\n\n" | $TEE -i -a $LOG
 			rm -rf $TMP/$thisname.mib 2>/dev/null
 			exit 0
 		fi
-		echo -ne "There will be no further output until flash is finished!\n" | $TEE -i -a $LOG
-		echo -ne "It will take about 5 minutes. PLEASE WAIT!\n" | $TEE -i -a $LOG
+
 		FLASHLOG="/net/rcc/tmp/flash.log"
 		echo "\n" > $FLASHLOG
 		$FLASHIT -v -d -x -a $OFFSETPART2 -p /net/rcc/dev/fs0 -f $IFS2 >> $FLASHLOG
@@ -170,7 +169,7 @@ function LITTLE2BIG {
 			[ -n "$GEM" ] && touch $TMP/$thisname.mib
 
 		 . $thisdir/backup -a
-
+		echo -ne "Train: $TRAINVERSION\n"
 		if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 			echo -ne "\n" >> $LOG
 			echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG
@@ -229,6 +228,17 @@ function LITTLE2BIG {
 			IFS2=$IFS2_new
 			if [ ! -f $IFS2 ]; then
 				echo -ne "--- Patching dumped root-stage2.ifs.\n" | $TEE -i -a $LOG
+				top -i 1 | $TEE -i -a $LOG
+				FreeRAM=$(top -i 1 | grep Memory: | $SED -n 's/.* \([0-9]\+\)M avail.*/\1/p')
+				if [ $FreeRAM -lt 240 ]; then
+					echo -ne "--- Free RAM on unit: "$FreeRAM"MB\n" | $TEE -i -a $LOG
+					echo -ne "!!! Not enough RAM - Minimum required 240MB available\n   Patch can not be generated.\n!!! Reboot unit and try to run the patch again." | $TEE -i -a $LOG
+					echo -ne "\nYou can go back now...\n"
+					rm -rf $TMP/$thisname.mib 2>/dev/null
+					DEBUG
+					exit 0
+				fi
+				echo -ne "--- Free RAM on unit: "$FreeRAM"MB\n" | $TEE -i -a $LOG
 				echo -ne "    It will take about 2 minutes. Please wait...\n" | $TEE -i -a $LOG
 				$PATCHER -m ifs -v patch --pattern $VOLUME/mod/patch_pattern/patch_2_3_FEC_CP.pattern $STAGE2 | $TEE -i -a $LOG
 				if [[ -f ${STAGE2%????}_patched.ifs ]]; then

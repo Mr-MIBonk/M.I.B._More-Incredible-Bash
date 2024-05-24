@@ -34,6 +34,7 @@ ADDFECSELECT ()
 			BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3 | head -c 2)
 			addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
 			if [[ ! -f $addFec ]]; then
+				echo -ne "--- Train: $TRAINVERSION" | $TEE -a $LOG
 				echo -ne "--- $addFec not found!\nStopping here....\n" | $TEE -a $LOG
 				exit 1
 			fi
@@ -41,6 +42,7 @@ ADDFECSELECT ()
 	fi
 	echo -ne "--- Found $addFec\n    Adding following FECs:\n" | $TEE -a $LOG
 	cat $addFec | $TEE -a $LOG
+	echo -ne "--- Train: $TRAINVERSION\n" | $TEE -a $LOG
 	#remove CR EOL from addFecs.txt
 	$SED 's/\r//g' $addFec > $TMP/addFecs.txt
 	addFec=$TMP/addFecs.txt
