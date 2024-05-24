@@ -39,7 +39,7 @@ ADDFECSELECT ()
 			fi
 		fi
 	fi
-	echo -ne "--- Found $addFec\n    Will add following FECs:\n    " | $TEE -a $LOG
+	echo -ne "--- Found $addFec\n    Adding following FECs:\n" | $TEE -a $LOG
 	cat $addFec | $TEE -a $LOG
 	#remove CR EOL from addFecs.txt
 	$SED 's/\r//g' $addFec > $TMP/addFecs.txt
