@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd individual.sh v0.1.0 (2021-02-22 by MIBonk)
+# esd custom.sh v0.1.0 (2021-02-22 by MIBonk)
 
 trap '' 2
 
@@ -23,11 +23,11 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-if [ -f /net/mmx/fs/sda0/mod/command.sh ]; then
-	/net/mmx/fs/sda0/mod/command.sh
-	echo "it is all done!"
+if [ -f /net/mmx/fs/sda0/mod/custom.sh ]; then
+	/net/mmx/fs/sda0/mod/custom.sh
+	echo "/net/mmx/fs/sda0/mod/custom.sh execution finished!"
 else
-	echo "Nothing to do!"
+	echo "/net/mmx/fs/sda0/mod/custom.sh is not found!"
 fi
 echo ""
 echo "Now you can go back..."
