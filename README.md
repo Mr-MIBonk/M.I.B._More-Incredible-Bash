@@ -71,7 +71,7 @@ There is also a example video guide available now:<br />
 
 ## [Old way, D-Link Method: Connect to MHI2 and start M.I.B.](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki/About-M.I.B#mib-classic---putty-interface-not-maintained):
 - This method is still available in M.I.B, but no longer fully supported.
-- Basic functions are still available - Full functionallity is only given via GEM
+- Basic functions are still available - Full functionality is only given via GEM
 -  D-Link - e.g. DUB-E100 HW rev. D1 - USB-Ethernet adapter is required to connect to your MHI2 unit.
 -  Use Putty/Kitty to connect via UART or Telnet (MIB IP:172.16.250.248) and login into RCC (recommended: port:123) or MMX (port:23).
 -  Login and password for your units SW train has to be known.
