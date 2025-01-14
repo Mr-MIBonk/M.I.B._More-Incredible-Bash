@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="MIB2 subwoofer control enabler v0.3.4 (2023-07-04 by Mib-Wiki)"
+revision="MIB2 subwoofer control enabler v0.3.6 (2023-07-23 by Mib-Wiki)"
 # use --help for more info
 # Thanks a lot for brucemiranda starting this topic and NumberOneBot for analyzing these datasets
 # https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/issues/99
@@ -18,6 +18,9 @@ if [ -z $LOG ]; then
 	. $thisdir/../config/GLOBALS
 	echo -ne "\n$ME-$thisname---->\n" >> $LOG
 fi
+
+MIBCAP=1
+. $thisdir/../config/MIBCHECK
 
 DSEDIT()
 {
@@ -147,7 +150,7 @@ echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 
 if [ "$AMP" = 1 ]; then
 	echo -ne "Internal sound system coding found!\n" | $TEE -a $LOG
-	SOUND="$($PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
+	SOUND="$($PC b:0:3221422080:0)" # 0x3000 byte 00 - type of sound system
 	echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
 	if [ $SOUND -ge 30 ]; then
 		echo -ne "Sound system is supported\n\n" | $TEE -a $LOG
@@ -358,7 +361,7 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 
 	echo -ne "Backup 0x3B00............" | $TEE -i -a $LOG
 	if [ -f $NAND/0x3B00 ] && [ -f $NAND/0x3000 ]; then
-		echo -ne "Dataset backups found\n" | $TEE -i -a $LOG
+		echo -ne "Dataset backups found on NAND\n" | $TEE -i -a $LOG
 		echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
 		$PC b:0:3221422112 $(cat $NAND/0x3B00) 2>> $LOG
@@ -369,6 +372,21 @@ echo -ne "Install ORIGINAL dataset\n" | $TEE -a $LOG
 		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
 		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
 		$PC b:0:3221422100 $(cat $NAND/0x3000) 2>> $LOG | $TEE -i -a $LOG
+		$PC b:0:1 0 2>> $LOG
+		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
+		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG
+	elif [ -f $BACKUPFOLDER/0x3B00 ] && [ -f $BACKUPFOLDER/0x3000 ]; then
+		echo -ne "Dataset backups found on SD\n" | $TEE -i -a $LOG
+		echo -ne "Write dataset 0x3B00 to unit\n" | $TEE -a $LOG
+		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
+		$PC b:0:3221422112 $(cat $BACKUPFOLDER/0x3B00) 2>> $LOG
+		$PC b:0:1 0 2>> $LOG
+		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422112)" >> $LOG
+		echo -ne "0x3B00 DONE\n\n" | $TEE -a $LOG
+
+		echo -ne "Write dataset 0x3000 to unit\n" | $TEE -a $LOG
+		echo "Dataset on unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
+		$PC b:0:3221422100 $(cat $BACKUPFOLDER/0x3000) 2>> $LOG | $TEE -i -a $LOG
 		$PC b:0:1 0 2>> $LOG
 		echo "Dataset restored to unit:\n$(on -f mmx /eso/bin/dumb_persistence_reader 0 3221422100)" >> $LOG
 		echo -ne "0x3000 DONE\n\n" | $TEE -a $LOG

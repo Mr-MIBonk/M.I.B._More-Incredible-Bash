@@ -2,8 +2,8 @@
 #
 # Custom Green Engineering Menu (GEM) screen
 # Author:		MIBonk & MIB-Wiki
-# Version:		1.0 - MHIG
-# Date:			10-07-2023
+# Version:		1.1 - MHIG
+# Date:			23-07-2023
 # Disclaimer:	THIS SCREEN WILL VOID YOUR WARRANTY
 #
 ###########################################################################################
@@ -790,57 +790,6 @@ screen navigation =>M.I.B.<=
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> NAVIGATION -> Activate NAVIGATION
-#
-###########################################################################################
-screen nav_activation navigation
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "Enable navigation on unit"
-    poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "1. Select navigation region to activate:"
-    poll    0
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_1.sh"
-    label   "Enable EU navigation"
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_2.sh"
-    label   "Enable NAR navigation"
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_4.sh"
-    label   "Enable KR navigation"
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_5.sh"
-    label   "Enable CN navigation"
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_6.sh"
-    label   "Enable JP navigation"
-
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/navon_8.sh"
-    label   "Enable Australia navigation"
-
-keyValue
-    value   String sys 0x00000000 0
-    label   ""
-    poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "___________________________________________________________________________"
-    poll    0
-
-###########################################################################################
-#
 # Main -> M.I.B. -> NAVIGATION -> NAVIGATION STATUS
 #
 ###########################################################################################
@@ -883,30 +832,30 @@ bitvalue
     entry   "China 2" 18
     entry   "China 3" 19
 
-bitvalue
-    value   per 0 3221356628
-    range   9.0 9.7
-    label   "SDS region Flag"
-    entry   "no region" 0
-    entry   "EU" 1
-    entry   "NAR" 2
-    entry   "MSA" 3
-    entry   "Korea" 4
-    entry   "China" 5
-    entry   "Japan" 6
-    entry   "AsiaPacific" 7
-    entry   "Australia" 8
-    entry   "South Africa" 9
-    entry   "NEAST" 10
-    entry   "NMAfrica" 11
-    entry   "MEAST" 12
-    entry   "CentralAsia" 13
-    entry   "India" 14
-    entry   "Israel" 15
-    entry   "Taiwan" 16
-    entry   "MSA 2 (Chile)" 17
-    entry   "China 2" 18
-    entry   "China 3" 19
+#bitvalue
+#    value   per 0 3221356628
+#    range   9.0 9.7
+#    label   "SDS region Flag"
+#    entry   "no region" 0
+#    entry   "EU" 1
+#    entry   "NAR" 2
+#    entry   "MSA" 3
+#    entry   "Korea" 4
+#    entry   "China" 5
+#    entry   "Japan" 6
+#    entry   "AsiaPacific" 7
+#    entry   "Australia" 8
+#    entry   "South Africa" 9
+#    entry   "NEAST" 10
+#    entry   "NMAfrica" 11
+#    entry   "MEAST" 12
+#    entry   "CentralAsia" 13
+#    entry   "India" 14
+#    entry   "Israel" 15
+#    entry   "Taiwan" 16
+#    entry   "MSA 2 (Chile)" 17
+#    entry   "China 2" 18
+#    entry   "China 3" 19
 
 keyValue
     value   String sys 0x00000000 0
@@ -948,30 +897,30 @@ bitselect
     entry   "China 2" 18
     entry   "China 3" 19
 
-bitselect
-    value   per 0 3221356628
-    range   9.0 9.7
-    label   "SDS region Flag"
-    entry   "no region" 0
-    entry   "EU" 1
-    entry   "NAR" 2
-    entry   "MSA" 3
-    entry   "Korea" 4
-    entry   "China" 5
-    entry   "Japan" 6
-    entry   "AsiaPacific" 7
-    entry   "Australia" 8
-    entry   "South Africa" 9
-    entry   "NEAST" 10
-    entry   "NMAfrica" 11
-    entry   "MEAST" 12
-    entry   "CentralAsia" 13
-    entry   "India" 14
-    entry   "Israel" 15
-    entry   "Taiwan" 16
-    entry   "MSA 2 (Chile)" 17
-    entry   "China 2" 18
-    entry   "China 3" 19
+#bitselect
+#    value   per 0 3221356628
+#    range   9.0 9.7
+#    label   "SDS region Flag"
+#    entry   "no region" 0
+#    entry   "EU" 1
+#    entry   "NAR" 2
+#    entry   "MSA" 3
+#    entry   "Korea" 4
+#    entry   "China" 5
+#    entry   "Japan" 6
+#    entry   "AsiaPacific" 7
+#    entry   "Australia" 8
+#    entry   "South Africa" 9
+#    entry   "NEAST" 10
+#    entry   "NMAfrica" 11
+#    entry   "MEAST" 12
+#    entry   "CentralAsia" 13
+#    entry   "India" 14
+#    entry   "Israel" 15
+#    entry   "Taiwan" 16
+#    entry   "MSA 2 (Chile)" 17
+#    entry   "China 2" 18
+#    entry   "China 3" 19
 
 keyValue
     value   String sys 0x00000000 0
@@ -1450,12 +1399,7 @@ screen  WLAN_activation Network_configuration
 
 keyValue
     value   String sys 0x00000000 0
-    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
-    poll    0
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "Enabling WLAN coding and adaptations on MHI2 unit"
+    label   "Enabling WLAN coding and adaptations on unit"
     poll    0
 
 keyValue
@@ -1491,37 +1435,52 @@ keyValue
 # Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN STATUS
 #
 ###########################################################################################
-
 screen wlan_status Network_configuration
 
-keyValue
-    value   String sys 0x00000000 0
-    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
-    poll    0
-
-bitvalue
+bitselect
     value   per 0 4101
     range   24.3 24.3
-    label   "WLAN long coding enabled"
+    label   "WLAN long coding"
     entry   "OFF" 0
     entry   "ON" 1
 
-#replace with bitselect
-
-keyValue
+BIOSCtrl
     value   int per 28442848 514
-    label   "Adaptations WLAN off/on  1 = ON | 0 = OFF"
-    poll    0
+    label   "WLAN adaptions"
+    entry   "ON" 1
+    entry   "OFF" 2
+
+bitselect
+    value   per 0 3221356628
+    label   "Hotspot"
+    range   0.6 0.6
+    entry   "OFF" 0
+    entry   "ON" 1
 
 choice
     value   per 0x01b800e1 41
     label   "WLAN activation (also with ignition off)"
     poll    1000
 
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
+
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
     poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN PASSWORD
+#
+###########################################################################################
+screen wlan_password Network_configuration
 
 keyValue
     value   String per 0x01b800e1 39
@@ -1538,6 +1497,13 @@ keyValue
     label   "___________________________________________________________________________"
     poll    0
 
+###########################################################################################
+#
+# Main -> M.I.B. -> NETWORK CONFIGURATION -> WLAN CHANNEL
+#
+###########################################################################################
+screen wlan_channel Network_configuration
+
 # Channel configuration ##########################################
 slider
     value   per 0x3F57B91D 3
@@ -1552,6 +1518,14 @@ slider
     limits  absolute 0 20
     poll    0
 
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
+
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
@@ -1563,11 +1537,6 @@ keyValue
 #
 ###########################################################################################
 screen wlan_information Network_configuration
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
-    poll    0
 
 # WLAN configuration #############################################
 table # Current WLAN settings table 1
@@ -3000,11 +2969,6 @@ keyValue
 screen system_information =>M.I.B.<=
 
 keyValue
-    value   String sys 0x00000000 0
-    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
-    poll    0
-
-keyValue
     value   String per 30 1966084
     label   "Train Info"
 
@@ -3012,17 +2976,17 @@ keyValue
     value   String per 30 1966083
     label   "MU Version"
 
-keyValue
-    value   String per 0x286f058c 12
-    label   "Variant Info"
-    
+#keyValue
+#    value   String per 0x286f058c 12
+#    label   "Variant Info"
+
 keyValue
     value   String per 0x286f058c 13
     label   "Diagnosis Variant"
 
 keyValue
     value   String per 1501 5
-    label   "MHI2 unit VIN"
+    label   "Unit VIN"
 
 keyValue
     value   String per 1501 30
@@ -3042,19 +3006,14 @@ screen VariantInfo system_information
 
 keyValue
     value   String sys 0x00000000 0
-    label   "NOT tested on MHIG yet. Might work or BREAK stuff!!"
+    label   "NOTE: Changes can render your unit useless!"
     poll    0
 
 keyValue
-     value   string sys 0x00000000 0
-     label   "NOTE: Changes can render your unit useless!"
-    poll     0  
+    value   String sys 0x00000000 0
+    label   "Only edit, if you really know what you are doing."
+    poll    0
 
-keyValue
-     value   string sys 0x00000000 0
-     label   "Only edit, if you really know what you are doing."
-    poll     0  
-    
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
@@ -3064,15 +3023,15 @@ keyValue
     value   String sys 0x00000000 0
     label   "                                                                          EDIT"
     poll    0
-	
+
 keyValue
     value   String per 0x286f058c 12
     label   "Variant Info"
-    
+
 keyValue
     value   String per 0x286f058c 13
     label   "Diagnosis Variant"    
-    
+
 BIOSCtrl
     value   int per 0x286f058c 3
     label   "Main Unit Type"

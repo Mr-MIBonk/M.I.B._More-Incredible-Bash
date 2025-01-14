@@ -14,7 +14,7 @@ else
 	echo -ne "TRAIN: $TRAINVERSION\n" >> $LOG
 	echo -ne "MIB model: $MIBMO\n" >> $LOG
 	echo -ne "Script capability: $MIBCAP\n" >> $LOG
-	echo -ne "Will stope here\nYou can go back now\n"
+	echo -ne "Will stop here\nYou can go back now\n"
 	exit 1
 fi
 

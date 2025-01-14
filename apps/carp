@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="Car Play activation v0.1.2 (2023-06-17 by MIBonk & MIB-Wiki)"
+revision="Car Play activation v0.1.3 (2023-07-22 by MIBonk & MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -20,54 +20,44 @@ if [ -f $TMP/reboot.mib ]; then
 	return 2> /dev/null
 fi
 
-MIBCAP=1
+if [ "$2" = "-noboot" ]; then
+	noboot=$2
+else
+	noboot=""
+fi
+
+MIBCAP=2 #new and old MHI2
 . $thisdir/../config/MIBCHECK
 
 	case $1 in
 
 	-a) {
 
-[ -z "$GEM" ] && echo -ne "\033[36m"
-echo -ne "CarPlay and Android Auto activated now\n" | $TEE -a $LOG
-[ -z "$GEM" ] && echo -ne "\n"
-[ -z "$GEM" ] && echo -ne "\033[m"
-if [[ "$TRAINVERSION" = *CN* ]]; then
-	echo -ne "BAIDU CarLife activated now\n" | $TEE -a $LOG
-	$PC b:0:3221356628:7.6 1 2>> $LOG
+if [[ "$TRAINVERSION" = *MHIG* ]]; then
+	echo -ne "!!! Can not be enabled on MHIG\n    Stopping here\n" | $TEE -a $LOG
+else
+	if [[ "$TRAINVERSION" = *CN* ]]; then
+		echo -ne "--- BAIDU CarLife activated now\n" | $TEE -a $LOG
+		$PERSW -t blob -P -L 1 -O 57 -f 0 3221356628 F # 7.6 1
+	fi
+	$PERSW -t blob -P -L 1 -O 56 -f 0 3221356628 F # Android Auto 7.7 1
+	$PERSW -t blob -P -L 1 -O 71 -f 0 3221356628 F # CarPlay 8.0 1
+	$PERSW -t blob -P -L 1 -O 66 -f 0 3221356628 F # MirrorLink 8.5 1
+	$PERSW -t int -f 0 1343769792 3 # USB configuration 3
+	[ -z "$GEM" ] && echo -ne "\033[36m"
+	echo -ne "--- CarPlay and Android Auto activated now\n" | $TEE -a $LOG
+	[ -z "$GEM" ] && echo -ne "\n"
+	[ -z "$GEM" ] && echo -ne "\033[m"
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 fi
-$PC b:0:3221356628:7.7 1 2>> $LOG
-$PC b:0:3221356628:8.0 1 2>> $LOG
-$PC b:0:3221356628:8.5 1 2>> $LOG
-$PC i:0:1343769792 3 2>> $LOG
-$PC b:0:1 0 2>> $LOG
-
-. $thisdir/reboot -t 10
-
-return 2> /dev/null
-
-	};;
-
-	-b) {
-
-[ -z "$GEM" ] && echo -ne "\033[36m"
-echo -ne "CarPlay and Android Auto activated now\n" | $TEE -a $LOG
-[ -z "$GEM" ] && echo -ne "\n"
-[ -z "$GEM" ] && echo -ne "\033[m"
-if [[ "$TRAINVERSION" = *CN* ]]; then
-	echo -ne "BAIDU CarLife activated now\n" | $TEE -a $LOG
-	$PC b:0:3221356628:7.6 1 2>> $LOG
-fi
-$PC b:0:3221356628:7.7 1 2>> $LOG
-$PC b:0:3221356628:8.0 1 2>> $LOG
-$PC b:0:3221356628:8.5 1 2>> $LOG
-$PC i:0:1343769792 3 2>> $LOG
-$PC b:0:1 0 2>> $LOG
 
 return 2> /dev/null
 
 	};;
 
 	-s) {
+
+# Only working on MHI2 units with pc binary
 
 [ -z "$GEM" ] && echo -ne "\033[36m"
 echo -ne "CarPlay and Android Auto Status\n\n" | $TEE -a $LOG
@@ -89,13 +79,15 @@ return 2> /dev/null
 		echo ""
 		echo $revision
 		echo ""
-		echo "Usage: "$thisname" [OPTION]"
+		echo "Usage: "$thisname" [OPTION1] [-noboot]"
 		echo ""
-		echo "Options:"
+		echo "Options 1:"
 		echo "        -a 			activated"
-		echo "        -b 			activated - no reboot"
 		echo "        -s 			status"
 		echo "        --help			show this help"
+		echo ""
+		echo "Option 2:"
+		echo "        -noboot	no reboot triggered by script"
 		echo ""
 		echo "This program is free software; you can redistribute it and/or"
 		echo "modify it under the terms of the GNU General Public License"

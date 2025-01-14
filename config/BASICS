@@ -1,4 +1,4 @@
-# BASICS v0.1.0 (2023-06-23 by MIB-Wiki)
+# BASICS v0.1.1 (2023-07-22 by MIB-Wiki)
 #
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ TRAINVERSION="$($E2P r 3A0 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:
 MUVERSION="MU$($E2P r 3B9 4 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p | $SED 's/[^a-zA-Z0-9_-]//g' )"
 FAZIT="$($E2P r 9E 17 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p' | $XXD -r -p )"
 BACKUPFOLDER="$VOLUME/backup/$MUVERSION-$TRAINVERSION-$FAZIT"
-LOG="$BACKUPFOLDER/$MUVERSION-$FAZIT.log"
+LOG="$BACKUPFOLDER/$MUVERSION-LOG.txt"
 
 if [ ! -e $LOG ]; then
 	. $thisdir/../config/GLOBALS

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# esd aio_conversion_eu.sh v0.1.3 (2023-06-23 by @MIB-Wiki)
+# esd aio_conversion_eu.sh v0.1.4 (2023-07-22 by @MIB-Wiki)
 
 trap '' 2
 
@@ -21,6 +21,8 @@ echo "All you do is at your own risk!"
 
 thisname="$(basename $0)"
 thisdir="$(dirname $0)"
+
+/net/mmx/fs/sda0/apps/backup -a
 . /net/mmx/fs/sda0/config/BASICS
 
 echo -ne "\nStarting EU conversion.\nMultiple scripts will be run in series. Please wait...\n\n" | $TEE -i -a $LOG

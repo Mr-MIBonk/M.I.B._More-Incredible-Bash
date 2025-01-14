@@ -107,7 +107,7 @@ case $1 in
 		echo "-- activating Development Mode (GEM)..." | $TEE -a $LOG
 		mount -uw /net/mmx/mnt/app
 		$UDP -key 3221356557 -ns 0 -type b -value 1 2>> $LOG # Enable GEM
-		$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG #Store change to Persistence
+		$UDP -key 1 -ns 0 -type b -value 0 2>> $LOG #Store changes to Persistence
 
 		# Run user's script if found
 		mount -uw $VOLUME
