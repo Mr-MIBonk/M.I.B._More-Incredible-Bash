@@ -87,11 +87,17 @@ case $1 in
 			# 11=NMAfrica, 12=MEAST, 13=CentralAsia, 14=India, 15=Israel, 16=Taiwan, 17=MSA 2 (Chile)
 			$PERSW -f -t int 0 1343753471 1 2>> $LOG
 
+			echo -ne "--- Navigation on\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343774724 1 2>> $LOG
+
 			echo -ne "--- Import media\n" | $TEE -a $LOG
 			$PERSW -f -t int 0 1343774736 1 2>> $LOG
 
 			echo -ne "--- Media Ripping\n" | $TEE -a $LOG
 			$PERSW -f -t int 0 1343774752 1 2>> $LOG
+
+			echo -ne "--- Traffic signs on the map\n" | $TEE -a $LOG
+			$PERSW -f -t int 0 1343774784 1 2>> $LOG
 
 			echo -ne "--- Regional Codes DVD\n" | $TEE -a $LOG
 			$PERSW -f -t int 28442848 515 2 2>> $LOG
@@ -131,6 +137,7 @@ case $1 in
 
 			echo -ne "--- Disable variant feature byte sirius\n"
 			$PERSW -f -t int 678364556 8 0 2>> $LOG
+
 			CODING="$($E2P r F1 19 | $SED -rn 's/^0x\S+\W+(.*?)$/\1/p' | $SED -rn 's:\W*(\S\S)\W*:0x\1\n:pg' | $SED -rn '/^0x/p'  | $SED -e 's/0x//g' | $SED -e ':a;N;$!ba;s/\n//g')"
 			echo "5F Long Coding: $CODING" >> $LOG
 

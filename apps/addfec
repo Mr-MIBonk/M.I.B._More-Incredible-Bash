@@ -25,31 +25,24 @@ MIBCAP=3
 
 ADDFECSELECT ()
 {
-	if [[ "$TRAINVERSION" = *MHIG* ]]; then
-		#e.g. MHIG_EU_VW_K1550
-		MODEL=$(echo "$TRAINVERSION" | cut -d "_" -f 1)
-		REGION=$(echo "$TRAINVERSION" | cut -d "_" -f 2)
-		BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3)
-		addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
-		echo $addFec
-		if [[ -f $addFec ]]; then
-			echo -ne "--- Found addFec.txt for "$MODEL"_"$REGION"_"$BRAND" \n    Will add following FECS:\n    " | $TEE -a $LOG
-			cat $addFec | $TEE -a $LOG
-		else
-			echo -ne "--- addFec NOT found\nSupport for "$MODEL"_"$REGION"_"$BRAND" has to be added\n    Will stop here ...\n" | $TEE -a $LOG
-			exit 0
-		fi
-	elif [ -f $VOLUME/common/tools/addFecs.txt ];then
-		echo -ne "--- AIO detected\n" | $TEE -a $LOG
-		addFec=$VOLUME/common/tools/addFecs.txt
-	elif [ -f $VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt ];then
-		echo -ne "--- addFecs.txt found in "$TRAINVERSION"_"$MUVERSION"_PATCH..." | $TEE -a $LOG
+	addFec=$VOLUME/common/tools/addFecs.txt
+	if [[ ! -f $addFec ]]; then
 		addFec=$VOLUME/patches/$TRAINVERSION"_"$MUVERSION"_PATCH"/addFecs.txt
-	else
-		echo -ne "--- addFecs.txt or patch folder missing!\nStopping here....\n" | $TEE -a $LOG
-		exit 1
+		if [[ ! -f $addFec ]]; then
+			MODEL=$(echo "$TRAINVERSION" | cut -d "_" -f 1 | head -c 4)
+			REGION=$(echo "$TRAINVERSION" | cut -d "_" -f 2)
+			BRAND=$(echo "$TRAINVERSION" | cut -d "_" -f 3 | head -c 2)
+			addFec=$VOLUME/patches/addFec/$MODEL/$BRAND/$REGION/addFecs.txt
+			if [[ ! -f $addFec ]]; then
+				echo -ne "--- Train: $TRAINVERSION" | $TEE -a $LOG
+				echo -ne "--- $addFec not found!\nStopping here....\n" | $TEE -a $LOG
+				exit 1
+			fi
+		fi
 	fi
-
+	echo -ne "--- Found $addFec\n    Adding following FECs:\n" | $TEE -a $LOG
+	cat $addFec | $TEE -a $LOG
+	echo -ne "--- Train: $TRAINVERSION\n" | $TEE -a $LOG
 	#remove CR EOL from addFecs.txt
 	$SED 's/\r//g' $addFec > $TMP/addFecs.txt
 	addFec=$TMP/addFecs.txt

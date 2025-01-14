@@ -24,7 +24,7 @@ echo ""
 /net/mmx/fs/sda0/apps/fecel -el
 /net/mmx/fs/sda0/apps/addfec -l #output FECs after addfec
 
-echo "All done! now you can go back..."
+echo "All done! Please reboot the unit!"
 
 trap '' 2
 

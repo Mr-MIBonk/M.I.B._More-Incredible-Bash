@@ -15,7 +15,7 @@ screen =>M.I.B.<= main
 
 keyValue
     value   String sys 0x00000000 0
-    label   "M.I.B. - More Incredible Bash - V3.7.1 MHIG Edition"
+    label   "M.I.B. - More Incredible Bash - V3.7.2 MHIG Edition"
     poll    0
 
 keyValue
@@ -1369,24 +1369,14 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> Advanced Settings -> Individual Script
+# Main -> M.I.B. -> Advanced Settings -> Run Custom Script
 #
 ###########################################################################################
-screen run_individual_script advanced_settings
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "ON YOUR OWN RISK"
-    poll    0
+screen run_custom_script advanced_settings
 
 script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/individual.sh"
-    label   "Run individual script"
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "Place command.sh with script in /mod/ folder in M.I.B SD root"
-    poll    0
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/custom.sh"
+    label   "Run /mod/custom.sh from m.i.b. SD"
 
 keyValue
     value   String sys 0x00000000 0

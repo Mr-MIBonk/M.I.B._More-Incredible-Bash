@@ -169,7 +169,7 @@ function LITTLE2BIG {
 			[ -n "$GEM" ] && touch $TMP/$thisname.mib
 
 		 . $thisdir/backup -a
-
+		echo -ne "Train: $TRAINVERSION\n"
 		if [ ! -f $BACKUPFOLDER/$MUVERSION-EEProm.txt ] || [ ! -f $BACKUPFOLDER/$MUVERSION-RCC_fs0.bin ]; then
 			echo -ne "\n" >> $LOG
 			echo -ne "!!! Backup is not complete, it is not flash to continue with flash!\n\n" | $TEE -i -a $LOG

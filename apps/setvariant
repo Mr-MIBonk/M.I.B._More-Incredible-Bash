@@ -249,7 +249,7 @@ convertvar2hex
 
 
 if [ $VARERROR = 0 ]; then
-	echo -ne "---- Clean Variant_1 - 13 bytes 0x20\n" | $TEE -i -a $LOG
+	echo -ne "---- Writing 13 spaces to Variant_1\n" | $TEE -i -a $LOG
 	$E2P w BA 20 20 20 20 20 20 20 20 20 20 20 20 20 >> $LOG
 	#Build variant 1 string
 	#TNDL in Variant_2 is LND in Variant_1 - no T and order is different
