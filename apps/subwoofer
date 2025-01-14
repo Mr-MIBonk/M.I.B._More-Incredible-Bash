@@ -150,7 +150,7 @@ echo -ne "Long coding byte 11:\n$AMP\n" | $TEE -a $LOG
 
 if [ "$AMP" = 1 ]; then
 	echo -ne "Internal sound system coding found!\n" | $TEE -a $LOG
-	SOUND="$($PC b:0:3221422100:0)" # 0x3000 byte 00 - type of sound system
+	SOUND="$($PC b:0:3221422080:0)" # 0x3000 byte 00 - type of sound system
 	echo -ne "Sound system in 0x3000 byte 00 coding:\n$SOUND\n" | $TEE -a $LOG
 	if [ $SOUND -ge 30 ]; then
 		echo -ne "Sound system is supported\n\n" | $TEE -a $LOG
