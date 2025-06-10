@@ -304,7 +304,7 @@ function LITTLE2BIG {
 				# /net/mmx/fs/sda0/patches/MHI2_ER_SKG13_P4526_MU1440_PATCH/MU1440-ifs-root-part2-0x00ba0000-1C06F300.ifs
 				STAGE2SIZE_PATCH=$(dd bs=4 skip=9 count=1 if=$STAGE2FILE_SD_PATH 2> /dev/null | $XXD -u -ps) # Patched ifs-root-stage2 header size
 				echo -ne "File "$STAGE2FILE_SD" found in patch folder\n" | $TEE -i -a $LOG
-				echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" nedded to patch this unit\n" | $TEE -i -a $LOG
+				echo -ne "File "$MUVERSION-ifs-root-part2-0x00$OFFSETPART2-$STAGE2SIZE.ifs" needed to patch this unit\n" | $TEE -i -a $LOG
 				if [[ $STAGE2SIZE_PATCH = $STAGE2SIZE ]]; then 
 					echo -ne "\nUnit is already patched!\nHeader size on unit - $STAGE2SIZE - matches patch file - $STAGE2SIZE_PATCH -\n" | $TEE -i -a $LOG
 					echo -ne "No need to patch unit again!\n\nYou can go back now...\n"
