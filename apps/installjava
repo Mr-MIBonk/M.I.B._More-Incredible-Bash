@@ -32,7 +32,7 @@ BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
 
 mount -uw /net/mmx/mnt/app
 
-if [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+if [[ "$TRAINVERSION" = *POG* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	if ! grep -q "Find and append jar files" ${LSD}; then
 		if [ ! -e $BU ]; then
 			echo "Backup lsd.sh" | $TEE -a $LOG
