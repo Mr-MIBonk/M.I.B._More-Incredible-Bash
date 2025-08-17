@@ -1,7 +1,7 @@
 #!/bin/sh
 # copy into /mod/ on M.I.B. SD
 
-echo "command.sh is running - " # put here some information about the commands
+echo "custom.sh is running - " # put here some information about the custom.sh
 
 # put commands here...
 
