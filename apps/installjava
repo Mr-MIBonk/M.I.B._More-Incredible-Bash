@@ -32,7 +32,7 @@ BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
 
 mount -uw /net/mmx/mnt/app
 
-if [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+if [[ "$TRAINVERSION" = *POG* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	if ! grep -q "Find and append jar files" ${LSD}; then
 		if [ ! -e $BU ]; then
 			echo "Backup lsd.sh" | $TEE -a $LOG
@@ -103,7 +103,7 @@ elif [[ "$TRAINVERSION" = *AU57x* ]]; then
 	echo -ne "AU57x FW train detected\n" | $TEE -a $LOG
 	echo -ne "Due to the old internal java structure the patch is not working on any FW of this train.\n"
 	echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
-elif [[ "$TRAINVERSION" = *POG1* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+elif [[ "$TRAINVERSION" = *POG* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
 		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
