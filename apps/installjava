@@ -1,6 +1,6 @@
 #!/bin/sh
 
-revision="installjava v0.3.7 (2023-06-17 MIB-Wiki)"
+revision="installjava v0.3.8 (2026-04-02 MIB-Wiki)"
 # use --help for more info
 
 export PATH=:/proc/boot:/sbin:/bin:/usr/bin:/usr/sbin:/net/mmx/bin:/net/mmx/usr/bin:/net/mmx/usr/sbin:/net/mmx/sbin:/net/mmx/mnt/app/armle/bin:/net/mmx/mnt/app/armle/sbin:/net/mmx/mnt/app/armle/usr/bin:/net/mmx/mnt/app/armle/usr/sbin
@@ -32,7 +32,21 @@ BU=/net/mmx/mnt/app/eso/hmi/lsd/lsd.sh.bu
 
 mount -uw /net/mmx/mnt/app
 
-if [[ "$TRAINVERSION" = *POG* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
+if [[ "$TRAINVERSION" = *AU57x* ]]; then
+	if grep -q "M.I.B. NavActiveIgnore AU57x" ${LSD}; then
+		echo "lsd.sh is already patched for AU57x NavActiveIgnore" | $TEE -a $LOG
+	elif ! grep -Fq 'BOOTCLASSPATH="$BOOTCLASSPATH:$LSD_DIR/lsd.jxe"' ${LSD}; then
+		echo "AU57x: lsd.sh anchor not found; NavActiveIgnore bootclasspath line not added" | $TEE -a $LOG
+	else
+		if [ ! -e $BU ]; then
+			echo "Backup lsd.sh" | $TEE -a $LOG
+			cp -v $LSD $BU 2>> $LOG
+		fi
+		echo "Patching lsd.sh for AU57x NavActiveIgnore" | $TEE -a $LOG
+		cp -r $LSD $BACKUPFOLDER/$MUVERSION-lsd.sh 2>> $LOG
+		$SED -ir 's,^BOOTCLASSPATH="\$BOOTCLASSPATH:\$LSD_DIR/lsd.jxe",# M.I.B. NavActiveIgnore AU57x\nBOOTCLASSPATH="\$BOOTCLASSPATH:/eso/hmi/lsd/jars/NavActiveIgnore.jar"\nBOOTCLASSPATH="\$BOOTCLASSPATH:\$LSD_DIR/lsd.jxe",g' $LSD 2>> $LOG
+	fi
+elif [[ "$TRAINVERSION" = *POG* ]] || ([[ "$TRAINVERSION" = *AU* ]] && [[ "$TRAINVERSION" != *AU57x* ]]) || [[ "$TRAINVERSION" = *BY* ]]; then
 	if ! grep -q "Find and append jar files" ${LSD}; then
 		if [ ! -e $BU ]; then
 			echo "Backup lsd.sh" | $TEE -a $LOG
@@ -101,8 +115,13 @@ if [[ "$TRAINVERSION" = MHI2_ER_VWG11_K334* ]] || [[ "$TRAINVERSION" = MHI2_ER_V
 	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 elif [[ "$TRAINVERSION" = *AU57x* ]]; then
 	echo -ne "AU57x FW train detected\n" | $TEE -a $LOG
-	echo -ne "Due to the old internal java structure the patch is not working on any FW of this train.\n"
-	echo -ne "no supported train found - will stop here\n" | $TEE -a $LOG
+	echo -ne "Update FW to latest version is recommended.\n"
+	if [ -f $APP$JAR ]; then
+		echo -ne "$JAR already present on unit.\nWill be updated with file from SD now\n" | $TEE -a $LOG
+	fi
+	cp -r $VOLUME/mod/java/navignore_audi.jar $APP$JAR 2>> $LOG
+	echo -ne "navignore_audi.jar installed.\nUnit will reboot now\n" | $TEE -a $LOG
+	[ -z "$noboot" ] && . $thisdir/reboot -t 10
 elif [[ "$TRAINVERSION" = *POG* ]] || [[ "$TRAINVERSION" = *AU* ]] || [[ "$TRAINVERSION" = *BY* ]]; then
 	echo -ne "Update FW to latest version is recommended.\n"
 	if [ -f $APP$JAR ]; then
