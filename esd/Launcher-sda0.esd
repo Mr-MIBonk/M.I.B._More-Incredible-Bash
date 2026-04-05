@@ -1661,6 +1661,61 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. --> Advanced Settings --> Clean Navigation Cache
+#
+###########################################################################################
+screen nav_cache advanced_settings
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "NOTE: MHI2 units ONLY!"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "NOTE: This will list and empty the map Cache"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "This will help with navigation startup issue"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   " "
+    poll    0
+    
+keyValue
+    value   String sys 0x00000000 0
+    label   "Fix error 11 percent startup lockup issue"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   " "
+    poll    0
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/dumpnavcache.sh"
+    label   "Dump navigation Cache"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   " "
+    poll    0
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/emptynavcache.sh"
+    label   "Empty navigation Cache"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> Advanced Settings -> Install SSHD
 #
 ###########################################################################################
