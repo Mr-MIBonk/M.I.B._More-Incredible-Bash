@@ -158,7 +158,7 @@ fi
 COUNT=`grep -c 'CarPlayClusterControls.jar' "$LSD" 2>/dev/null`
 case "$COUNT" in
     0)
-        $AWK '
+        "$AWK" '
             BEGIN { done=0 }
             {
                 if (!done && $0 ~ /^BOOTCLASSPATH="\$BOOTCLASSPATH -Xbootclasspath\/p:/) {
