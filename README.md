@@ -14,7 +14,7 @@ M.I.B. is distributed under the GNU General Public License v2.0. See [LICENSE](h
 - Minimum requirement to run M.I.B. in GEM is GEM version 4.1+.
 - Old GEM of most units with old FW versions will automatically be updated to GEM 4.12 during M.I.B installation.
 
-- Make sure, that you always run latest M.I.B version --> https://mib.mibsolution.one & https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash
+- Make sure, that you always run latest M.I.B version --> https://mibsolution.one & https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash
 - For additional Information check https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash/wiki & https://mibwiki.one
 
 ## CAUTION:
