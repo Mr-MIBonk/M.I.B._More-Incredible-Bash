@@ -150,13 +150,15 @@ else
 fi
 
 if ! command -v awk >/dev/null 2>&1; then
-    AWK="$PAYLOAD/apps/bin/awk"
+    AWK="$PAYLOAD/apps/sbin/awk"
+else
+	AWK="awk"
 fi
 
 COUNT=`grep -c 'CarPlayClusterControls.jar' "$LSD" 2>/dev/null`
 case "$COUNT" in
     0)
-        awk '
+        $AWK '
             BEGIN { done=0 }
             {
                 if (!done && $0 ~ /^BOOTCLASSPATH="\$BOOTCLASSPATH -Xbootclasspath\/p:/) {
