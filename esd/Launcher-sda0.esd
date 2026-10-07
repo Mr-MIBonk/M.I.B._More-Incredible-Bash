@@ -571,6 +571,66 @@ keyValue
 
 ###########################################################################################
 #
+# Main -> M.I.B. -> CarPlay Maps VC by omonob (QCDWJ)
+#
+###########################################################################################
+screen carplay-maps-vc =>M.I.B.<=
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "CarPlay Maps VC"
+    poll    0
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "Author: omonob (QCDWJ)"
+    poll    0
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cpmap_status.sh"
+    label   "Show CarPlay Maps VC status"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cpmap_install_790.sh"
+    label   "Install 790 AID 10.5 (AUTO MU)"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cpmap_install_791.sh"
+    label   "Install 791 AID 12.3 (AUTO MU)"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/NavActiveIgnore_on.sh"
+    label   "Enable dual navigation"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "Unit will reboot after last patch is installed"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cpmap_restore.sh"
+    label   "Restore factory files"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "Unit will reboot after restore is finished"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+
+###########################################################################################
+#
 # Main -> M.I.B. -> CarPlay -> AndroidAuto Dev
 #
 ###########################################################################################

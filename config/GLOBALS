@@ -31,6 +31,7 @@ FLASHLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashlock" # /usr/bin/
 FLASHIT="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashit" # /usr/bin/
 FLASHUNLOCK="on -f rcc /net/mmx/fs/sda0/apps/sbin/flashunlock" # /usr/bin/
 VERSIONS="/net/rcc/dev/shmem/version.txt"
+AWK="$VOLUME/apps/sbin/awk" # not on any unit
 XXD="$VOLUME/apps/sbin/xxd" # not on any unit
 GZIP="$VOLUME/apps/sbin/gzip" # /net/mmx/mnt/app/armle/bin
 TEE="$VOLUME/apps/sbin/tee" # /net/mmx/usr/bin
