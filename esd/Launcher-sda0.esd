@@ -571,14 +571,14 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> CarPlay Maps VC by omonob (QCDWJ)
+# Main -> M.I.B. -> CarPlay Maps VC for VW and Skoda by omonob (QCDWJ)
 #
 ###########################################################################################
-screen carplay-maps-vc =>M.I.B.<=
+screen carplay-maps-vc-vw-skoda =>M.I.B.<=
 
 keyValue
     value   String sys 0x00000000 0
-    label   "CarPlay Maps VC"
+    label   "CarPlay Maps VC for VW and Skoda"
     poll    0
 
 keyValue
