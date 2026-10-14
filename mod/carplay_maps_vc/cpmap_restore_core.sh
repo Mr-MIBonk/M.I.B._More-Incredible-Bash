@@ -16,6 +16,7 @@ ROOT="$APP/carplaymaps"
 DIO="$APP/eso/bin/apps/dio_manager"
 LSD="$APP/eso/hmi/lsd/lsd.sh"
 JAR="$APP/eso/hmi/lsd/jars/CarPlayClusterControls.jar"
+NAV_JAR="$APP/eso/hmi/lsd/jars/CarPlayNavigationPatch.jar"
 
 [ -s "$ROOT/stock_first/dio_manager.real" ] || { echo "CPMAP_RESTORE_FAIL=STOCK_MISSING"; exit 1; }
 [ -s "$ROOT/rollback/lsd.sh" ] || { echo "CPMAP_RESTORE_FAIL=LSD_BACKUP_MISSING"; exit 1; }
@@ -48,6 +49,14 @@ if [ -s "$ROOT/rollback/CarPlayClusterControls.jar" ]; then
     mv "$JAR.restore" "$JAR" || exit 1
 elif [ -e "$ROOT/rollback/JAR_ABSENT" ]; then
     rm -f "$JAR"
+fi
+
+if [ -s "$ROOT/rollback/CarPlayNavigationPatch.jar" ]; then
+    cp "$ROOT/rollback/CarPlayNavigationPatch.jar" "$NAV_JAR.restore" || exit 1
+    chmod 644 "$NAV_JAR.restore"
+    mv "$NAV_JAR.restore" "$NAV_JAR" || exit 1
+elif [ -e "$ROOT/rollback/NAV_JAR_ABSENT" ]; then
+    rm -f "$NAV_JAR"
 fi
 
 rm -rf "$ROOT"

@@ -3,7 +3,13 @@
 PAYLOAD="$1"
 EXPECTED_MU="$2"
 INSTRUMENT="$3"
-VERSION="V7.2.2-PLAINTEXT-TOOLBOX-1"
+VERSION="V70-PLAINTEXT-TOOLBOX-1.1.0"
+
+if ! command -v awk >/dev/null 2>&1; then
+    AWK="$PAYLOAD/apps/sbin/awk"
+else
+	AWK="awk"
+fi
 
 fail() {
     echo "CPMAP_INSTALL_FAIL=$1"
@@ -70,15 +76,78 @@ fi
 CORE="$PAYLOAD/profiles/$EXPECTED_MU/$INSTRUMENT/core.so"
 WRAPPER="$PAYLOAD/common/dio_manager.wrapper.sh"
 CONTROL_JAR="$PAYLOAD/common/CarPlayClusterControls.jar"
+if [ "$EXPECTED_MU" = "MU1440" ] && [ -s "$PAYLOAD/profiles/MU1440/790/CarPlayClusterControls.jar" ]; then
+    CONTROL_JAR="$PAYLOAD/profiles/MU1440/790/CarPlayClusterControls.jar"
+fi
+NAV_JAR="$PAYLOAD/common/CarPlayNavigationPatch.jar"
+NAV_TARGET="$JARS/CarPlayNavigationPatch.jar"
 BRIDGE="$PAYLOAD/common/altscreen-most-bridge"
 SUPERVISOR="$PAYLOAD/common/carplay-cluster-supervisor"
 SEC="$PAYLOAD/common/libcarplay-security-bridge.so"
 PAIR_HELPER="$PAYLOAD/common/carplay-pairing-helper"
 PAIR_CORE="$PAYLOAD/common/libCarPlayPairingCore.so"
 
-for required in "$CORE" "$WRAPPER" "$CONTROL_JAR" "$BRIDGE" "$SUPERVISOR" "$SEC" "$PAIR_HELPER" "$PAIR_CORE"; do
+for required in "$CORE" "$WRAPPER" "$CONTROL_JAR" "$NAV_JAR" "$BRIDGE" "$SUPERVISOR" "$SEC" "$PAIR_HELPER" "$PAIR_CORE"; do
     [ -s "$required" ] || fail "PAYLOAD_MISSING_`basename "$required"`"
 done
+
+# ZIP central-directory entry names are plaintext even for compressed classes.
+# Check the seven navigation-ignore classes, not just the JAR filename. This
+# also recognizes a navigation patch merged with another user's metadata JAR.
+has_navigation_patch() {
+    [ -s "$1" ] || return 1
+    for nav_class in \
+        de/esolutions/fw/comm/dsi/carplay/impl/DSICarplayProxy.class \
+        de/esolutions/fw/dsi/androidauto2/DSIAndroidAuto2Dispatcher.class \
+        de/esolutions/fw/dsi/androidauto/DSIAndroidAutoDispatcher.class \
+        de/vw/mib/asl/internal/androidauto/target/NavigationListener.class \
+        de/vw/mib/asl/internal/androidauto/target/RequestHandler.class \
+        de/vw/mib/asl/internal/carplay/common/CarPlayModeHandling.class \
+        de/vw/mib/asl/internal/exboxm/api/impl/guidance/ExboxGuidanceManagerImpl.class; do
+        grep -q "$nav_class" "$1" 2>/dev/null || return 1
+    done
+    return 0
+}
+has_navigation_patch "$NAV_JAR" || fail "NAVIGATION_PAYLOAD_INVALID"
+NAV_INSTALL=yes
+NAV_EXISTING=""
+BOOT_JARS=`awk '
+    /^[ \t]*#/ { next }
+    {
+        line=$0
+        while (match(line, /-Xbootclasspath\/p:[^" \t]+/)) {
+            value=substr(line, RSTART+18, RLENGTH-18)
+            gsub(/:/, " ", value)
+            print value
+            line=substr(line, RSTART+RLENGTH)
+        }
+    }
+' "$LSD"`
+NAV_CONFLICT=no
+for boot_jar in $BOOT_JARS; do
+    case "$boot_jar" in
+        '$BASE_DIR/'*) boot_file="$APP/eso/hmi/${boot_jar#\$BASE_DIR/}" ;;
+        '${BASE_DIR}/'*) boot_file="$APP/eso/hmi/${boot_jar#\$\{BASE_DIR\}/}" ;;
+        /mnt/app/*) boot_file="$MMX$boot_jar" ;;
+        *) continue ;;
+    esac
+    if has_navigation_patch "$boot_file"; then
+        NAV_INSTALL=no
+        NAV_EXISTING="$boot_jar"
+        break
+    fi
+    if [ -s "$boot_file" ] && grep -q 'de/esolutions/fw/comm/dsi/carplay/impl/DSICarplayProxy.class' "$boot_file" 2>/dev/null; then
+        NAV_CONFLICT=yes
+    fi
+done
+if [ "$NAV_INSTALL" = yes ] && [ "$NAV_CONFLICT" = yes ]; then
+    fail "CUSTOM_CARPLAY_PATCH_REQUIRES_REVIEW"
+fi
+if [ "$NAV_INSTALL" = no ]; then
+    echo "CPMAP_NAVIGATION_PATCH=KEEP_EXISTING ($NAV_EXISTING)"
+else
+    echo "CPMAP_NAVIGATION_PATCH=INSTALL_MISSING"
+fi
 
 echo "CarPlay Maps VC"
 echo "Free open-source project by omonob (QCDWJ)"
@@ -105,6 +174,14 @@ fi
 
 rm -rf "$STAGE" "$NEW" "$OLD" 2>/dev/null
 mkdir -p "$STAGE" "$NEW/stock_first" "$NEW/rollback" "$NEW/security_bridge" || fail "STAGE_CREATE_FAILED"
+cp "$LSD" "$STAGE/lsd.sh.current" || fail "CURRENT_LSD_SNAPSHOT_FAILED"
+cp "$DIO" "$STAGE/dio_manager.current" || fail "CURRENT_DIO_SNAPSHOT_FAILED"
+if [ -s "$JARS/CarPlayClusterControls.jar" ]; then
+    cp "$JARS/CarPlayClusterControls.jar" "$STAGE/control.current" || fail "CURRENT_CONTROL_SNAPSHOT_FAILED"
+fi
+if [ -s "$NAV_TARGET" ]; then
+    cp "$NAV_TARGET" "$STAGE/nav.current" || fail "CURRENT_NAV_SNAPSHOT_FAILED"
+fi
 
 STOCK=""
 for candidate in \
@@ -149,30 +226,48 @@ else
     touch "$NEW/rollback/JAR_ABSENT" || fail "JAR_ABSENT_MARK_FAILED"
 fi
 
-if ! command -v awk >/dev/null 2>&1; then
-    AWK="$PAYLOAD/apps/sbin/awk"
+if [ -e "$ROOT/rollback/NAV_JAR_ABSENT" ]; then
+    touch "$NEW/rollback/NAV_JAR_ABSENT" || fail "NAV_ABSENT_MARK_FAILED"
+elif [ -s "$ROOT/rollback/CarPlayNavigationPatch.jar" ]; then
+    cp "$ROOT/rollback/CarPlayNavigationPatch.jar" "$NEW/rollback/CarPlayNavigationPatch.jar" || fail "NAV_BACKUP_FAILED"
+elif [ -s "$NAV_TARGET" ]; then
+    cp "$NAV_TARGET" "$NEW/rollback/CarPlayNavigationPatch.jar" || fail "NAV_BACKUP_FAILED"
 else
-	AWK="awk"
+    touch "$NEW/rollback/NAV_JAR_ABSENT" || fail "NAV_ABSENT_MARK_FAILED"
 fi
 
 COUNT=`grep -c 'CarPlayClusterControls.jar' "$LSD" 2>/dev/null`
-case "$COUNT" in
-    0)
-        "$AWK" '
-            BEGIN { done=0 }
-            {
-                if (!done && $0 ~ /^BOOTCLASSPATH="\$BOOTCLASSPATH -Xbootclasspath\/p:/) {
-                    sub(/-Xbootclasspath\/p:/, "-Xbootclasspath/p:$BASE_DIR/lsd/jars/CarPlayClusterControls.jar:")
-                    done=1
-                }
-                print
+[ "$COUNT" -le 1 ] || fail "DUPLICATE_CONTROL_JAR_REFERENCE"
+ADD_CLASSPATH=""
+[ "$COUNT" -eq 1 ] || ADD_CLASSPATH='$BASE_DIR/lsd/jars/CarPlayClusterControls.jar'
+NAV_COUNT=`grep -c 'CarPlayNavigationPatch.jar' "$LSD" 2>/dev/null`
+[ "$NAV_COUNT" -le 1 ] || fail "DUPLICATE_NAVIGATION_JAR_REFERENCE"
+if [ "$NAV_INSTALL" = yes ] && [ "$NAV_COUNT" -eq 0 ]; then
+    [ -z "$ADD_CLASSPATH" ] || ADD_CLASSPATH="$ADD_CLASSPATH:"
+    ADD_CLASSPATH="$ADD_CLASSPATH"'$BASE_DIR/lsd/jars/CarPlayNavigationPatch.jar'
+fi
+if [ -z "$ADD_CLASSPATH" ]; then
+    cp "$LSD" "$STAGE/lsd.sh.patched" || fail "LSD_STAGE_FAILED"
+else
+    # Extend the existing prepend option if present. Do not emit a second
+    # -Xbootclasspath/p option: some J9 builds keep only its last occurrence.
+    # On a stock script, add one line immediately before J9 instead.
+    awk -v prepend="$ADD_CLASSPATH" '
+        BEGIN { done=0 }
+        {
+            if (!done && $0 ~ /^[ \t]*BOOTCLASSPATH="\$BOOTCLASSPATH -Xbootclasspath\/p:/) {
+                sub(/-Xbootclasspath\/p:/, "-Xbootclasspath/p:" prepend ":")
+                done=1
             }
-            END { if (!done) exit 9 }
-        ' "$LSD" > "$STAGE/lsd.sh.patched" || fail "BOOTCLASSPATH_STRUCTURE_UNSUPPORTED"
-        ;;
-    1) cp "$LSD" "$STAGE/lsd.sh.patched" || fail "LSD_STAGE_FAILED" ;;
-    *) fail "DUPLICATE_CONTROL_JAR_REFERENCE" ;;
-esac
+            if (!done && $0 ~ /^[ \t]*\$J9[ \t]/) {
+                print "BOOTCLASSPATH=\"$BOOTCLASSPATH -Xbootclasspath/p:" prepend "\""
+                done=1
+            }
+            print
+        }
+        END { if (!done) exit 9 }
+    ' "$LSD" > "$STAGE/lsd.sh.patched" || fail "BOOTCLASSPATH_STRUCTURE_UNSUPPORTED"
+fi
 
 if [ -n "${CPMAP_TEST_ROOT:-}" ]; then
     /bin/sh -n "$STAGE/lsd.sh.patched" >/dev/null 2>&1 || fail "PATCHED_LSD_SYNTAX_FAILED"
@@ -198,6 +293,10 @@ cp "$CONTROL_JAR" "$JARS/CarPlayClusterControls.jar.new" || fail "CONTROL_JAR_ST
 cp "$STAGE/lsd.sh.patched" "$LSD.cpmap-new" || fail "LSD_ACTIVATION_STAGE_FAILED"
 chmod 644 "$JARS/CarPlayClusterControls.jar.new"
 chmod 755 "$LSD.cpmap-new"
+if [ "$NAV_INSTALL" = yes ]; then
+    cp "$NAV_JAR" "$NAV_TARGET.new" || fail "NAV_JAR_STAGE_FAILED"
+    chmod 644 "$NAV_TARGET.new"
+fi
 
 if [ -d "$ROOT" ]; then
     mv "$ROOT" "$OLD" || fail "OLD_ROOT_MOVE_FAILED"
@@ -208,24 +307,31 @@ mv "$NEW" "$ROOT" || {
 }
 
 rollback_commit() {
-    cp "$ROOT/stock_first/dio_manager.real" "$DIO" 2>/dev/null || true
-    cp "$ROOT/rollback/lsd.sh" "$LSD" 2>/dev/null || true
-    if [ -s "$ROOT/rollback/CarPlayClusterControls.jar" ]; then
-        cp "$ROOT/rollback/CarPlayClusterControls.jar" "$JARS/CarPlayClusterControls.jar" 2>/dev/null || true
-    elif [ -e "$ROOT/rollback/JAR_ABSENT" ]; then
+    cp "$STAGE/dio_manager.current" "$DIO" 2>/dev/null || true
+    cp "$STAGE/lsd.sh.current" "$LSD" 2>/dev/null || true
+    if [ -s "$STAGE/control.current" ]; then
+        cp "$STAGE/control.current" "$JARS/CarPlayClusterControls.jar" 2>/dev/null || true
+    else
         rm -f "$JARS/CarPlayClusterControls.jar" 2>/dev/null
+    fi
+    if [ -s "$STAGE/nav.current" ]; then
+        cp "$STAGE/nav.current" "$NAV_TARGET" 2>/dev/null || true
+    else
+        rm -f "$NAV_TARGET" 2>/dev/null
     fi
     rm -rf "$ROOT" 2>/dev/null
     [ -d "$OLD" ] && mv "$OLD" "$ROOT" 2>/dev/null
 }
 
 mv "$JARS/CarPlayClusterControls.jar.new" "$JARS/CarPlayClusterControls.jar" || { rollback_commit; fail "CONTROL_JAR_ACTIVATION_FAILED"; }
+if [ "$NAV_INSTALL" = yes ]; then
+    mv "$NAV_TARGET.new" "$NAV_TARGET" || { rollback_commit; fail "NAV_JAR_ACTIVATION_FAILED"; }
+fi
 mv "$LSD.cpmap-new" "$LSD" || { rollback_commit; fail "LSD_ACTIVATION_FAILED"; }
 cp "$ROOT/dio_manager.wrapper.sh" "$DIO.new" || { rollback_commit; fail "DIO_WRAPPER_STAGE_FAILED"; }
 chmod 755 "$DIO.new"
 mv "$DIO.new" "$DIO" || { rollback_commit; fail "DIO_WRAPPER_ACTIVATION_FAILED"; }
 
-rm -rf "$OLD" "$STAGE" 2>/dev/null
 rm -f "$ROOT/cpmap-guard" "$ROOT/cpmap-auth" "$ROOT/cpmap-provision" "$ROOT/intro.eft" "$ROOT"/*.eft "$ROOT"/k1 "$ROOT"/k2 2>/dev/null
 
 [ -s "$DIO" ] || fail "DIO_WRAPPER_VERIFY_FAILED"
@@ -233,6 +339,11 @@ rm -f "$ROOT/cpmap-guard" "$ROOT/cpmap-auth" "$ROOT/cpmap-provision" "$ROOT/intr
 [ -s "$ROOT/stock_first/dio_manager.real" ] || fail "STOCK_VERIFY_FAILED"
 [ -s "$JARS/CarPlayClusterControls.jar" ] || fail "CONTROL_JAR_VERIFY_FAILED"
 [ `grep -c 'CarPlayClusterControls.jar' "$LSD" 2>/dev/null` -eq 1 ] || fail "BOOTCLASSPATH_VERIFY_FAILED"
+if [ "$NAV_INSTALL" = yes ]; then
+    has_navigation_patch "$NAV_TARGET" || { rollback_commit; fail "NAVIGATION_VERIFY_FAILED"; }
+    [ `grep -c 'CarPlayNavigationPatch.jar' "$LSD" 2>/dev/null` -eq 1 ] || { rollback_commit; fail "NAVIGATION_CLASSPATH_VERIFY_FAILED"; }
+fi
+rm -rf "$OLD" "$STAGE" 2>/dev/null
 
 sync 2>/dev/null || true
 echo "CPMAP_PROFILE=$DETECTED_MU/$INSTRUMENT"
