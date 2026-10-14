@@ -26,7 +26,7 @@ echo ""
 
 SCRIPTS=/net/mmx/fs/sda0/mod/carplay_maps_vc
 if [ -s "$SCRIPTS/cpmap_restore_core.sh" ]; then
-on -f rcc "$SCRIPTS/cpmap_restore_core.sh"
+/bin/ksh "$SCRIPTS/cpmap_restore_core.sh"
 
 /net/mmx/fs/sda0/apps/reboot -t 10
 

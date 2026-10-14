@@ -76,8 +76,8 @@ fi
 CORE="$PAYLOAD/profiles/$EXPECTED_MU/$INSTRUMENT/core.so"
 WRAPPER="$PAYLOAD/common/dio_manager.wrapper.sh"
 CONTROL_JAR="$PAYLOAD/common/CarPlayClusterControls.jar"
-if [ "$EXPECTED_MU" = "MU1440" ] && [ -s "$PAYLOAD/profiles/MU1440/790/CarPlayClusterControls.jar" ]; then
-    CONTROL_JAR="$PAYLOAD/profiles/MU1440/790/CarPlayClusterControls.jar"
+if [ "$EXPECTED_MU" = "MU1440" ] && [ -s "$PAYLOAD/common/CarPlayClusterControls_MU1440.jar" ]; then
+    CONTROL_JAR="$PAYLOAD/common/CarPlayClusterControls_MU1440.jar"
 fi
 NAV_JAR="$PAYLOAD/common/CarPlayNavigationPatch.jar"
 NAV_TARGET="$JARS/CarPlayNavigationPatch.jar"
