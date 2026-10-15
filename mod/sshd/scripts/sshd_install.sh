@@ -81,13 +81,9 @@ sed -i -r 's:^.*sshd.*\n*::p' /net/mmx/mnt/system/etc/inetd.conf
 # Add new command for sshd
 echo "ssh        stream tcp nowait root ${SSD_INSTALL_DIR}/usr/sbin/start_sshd in.sshd" >> /net/mmx/mnt/system/etc/inetd.conf
 
-# Open up sshd port in firewall, WiFi only
+# Open up sshd port in firewall
 echo "Add firewall configuration"
 for PF in /net/mmx/mnt/system/etc/pf*.conf ; do
-  if ! grep -q '\$wlan_if' ${PF}; then
-    continue
-  fi
-
   if [ ! -f ${PF}.bu ]; then
     cp -pv ${PF} ${PF}.bu
   fi
