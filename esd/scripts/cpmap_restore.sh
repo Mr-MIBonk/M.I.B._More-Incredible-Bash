@@ -28,8 +28,6 @@ SCRIPTS=/net/mmx/fs/sda0/mod/carplay_maps_vc
 if [ -s "$SCRIPTS/cpmap_restore_core.sh" ]; then
 /bin/ksh "$SCRIPTS/cpmap_restore_core.sh"
 
-/net/mmx/fs/sda0/apps/reboot -t 10
-
 fi
 
 trap 2

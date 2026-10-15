@@ -571,10 +571,10 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> CarPlay Maps VC for VW and Skoda by omonob (QCDWJ)
+# Main -> M.I.B. -> CarPlay -> Maps in VC -> CarPlay -> VW and Skoda from omonob (QCDWJ)
 #
 ###########################################################################################
-screen carplay-maps-vc-vw-skoda =>M.I.B.<=
+screen maps_in_vc carplay_activation
 
 keyValue
     value   String sys 0x00000000 0

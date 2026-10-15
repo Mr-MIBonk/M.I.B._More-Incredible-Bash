@@ -5,11 +5,11 @@ EXPECTED_MU="$2"
 INSTRUMENT="$3"
 VERSION="V70-PLAINTEXT-TOOLBOX-1.1.0"
 
-#if ! command -v awk >/dev/null 2>&1; then
-#    AWK="$PAYLOAD/apps/sbin/awk"
-#else
-#	AWK="awk"
-#fi
+if ! command -v awk >/dev/null 2>&1; then
+    AWK="$PAYLOAD/apps/sbin/awk"
+else
+    AWK="awk"
+fi
 
 fail() {
     echo "CPMAP_INSTALL_FAIL=$1"
@@ -355,6 +355,7 @@ fi
 rm -rf "$OLD" "$STAGE" 2>/dev/null
 
 sync 2>/dev/null || true
+echo "$VERSION"
 echo "CPMAP_PROFILE=$DETECTED_MU/$INSTRUMENT"
 echo "CPMAP_PLAINTEXT_ROOT=/mnt/app/carplaymaps"
 echo "CPMAP_INSTALL_OK"
