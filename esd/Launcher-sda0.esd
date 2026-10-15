@@ -603,14 +603,6 @@ script
     value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/cpmap_install_791.sh"
     label   "Install 791 AID 12.3 (AUTO MU)"
 
-script
-    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/NavActiveIgnore_on.sh"
-    label   "Enable dual navigation"
-
-keyValue
-    value   String sys 0x00000000 0
-    label   "Unit will reboot after last patch is installed"
-
 keyValue
     value   String sys 0x00000000 0
     label   "___________________________________________________________________________"
@@ -622,7 +614,16 @@ script
 
 keyValue
     value   String sys 0x00000000 0
-    label   "Unit will reboot after restore is finished"
+    label   "___________________________________________________________________________"
+    poll    0
+
+button
+    value   per 0 1 1
+    label   "Press to save changes | Changes will apply after reboot"
+
+script
+    value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
+    label   "Reboot unit"
 
 keyValue
     value   String sys 0x00000000 0

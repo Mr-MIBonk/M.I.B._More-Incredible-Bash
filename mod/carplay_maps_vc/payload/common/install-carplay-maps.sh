@@ -5,11 +5,11 @@ EXPECTED_MU="$2"
 INSTRUMENT="$3"
 VERSION="V70-PLAINTEXT-TOOLBOX-1.1.0"
 
-if ! command -v awk >/dev/null 2>&1; then
-    AWK="$PAYLOAD/apps/sbin/awk"
-else
-	AWK="awk"
-fi
+#if ! command -v awk >/dev/null 2>&1; then
+#    AWK="$PAYLOAD/apps/sbin/awk"
+#else
+#	AWK="awk"
+#fi
 
 fail() {
     echo "CPMAP_INSTALL_FAIL=$1"
@@ -96,6 +96,8 @@ done
 # also recognizes a navigation patch merged with another user's metadata JAR.
 has_navigation_patch() {
     [ -s "$1" ] || return 1
+    local found_any=0
+    
     for nav_class in \
         de/esolutions/fw/comm/dsi/carplay/impl/DSICarplayProxy.class \
         de/esolutions/fw/dsi/androidauto2/DSIAndroidAuto2Dispatcher.class \
@@ -104,14 +106,21 @@ has_navigation_patch() {
         de/vw/mib/asl/internal/androidauto/target/RequestHandler.class \
         de/vw/mib/asl/internal/carplay/common/CarPlayModeHandling.class \
         de/vw/mib/asl/internal/exboxm/api/impl/guidance/ExboxGuidanceManagerImpl.class; do
-        grep -q "$nav_class" "$1" 2>/dev/null || return 1
+        
+        if grep -q "$nav_class" "$1" 2>/dev/null; then
+            echo "found: $nav_class"
+            found_any=1
+        fi
     done
+    
+    [ "$found_any" -eq 1 ] && return 1
     return 0
 }
+
 has_navigation_patch "$NAV_JAR" || fail "NAVIGATION_PAYLOAD_INVALID"
 NAV_INSTALL=yes
 NAV_EXISTING=""
-BOOT_JARS=`awk '
+BOOT_JARS=`$AWK '
     /^[ \t]*#/ { next }
     {
         line=$0
