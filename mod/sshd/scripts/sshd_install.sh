@@ -92,19 +92,25 @@ for PF in /net/mmx/mnt/system/etc/pf*.conf ; do
   # Insert suitable firewall rules just under the "allow dns" section
   # These often need to be in the same part of the config file as the other "allow" lines, doesn't always work appended to the end of the file.
   sed -i -r 's:^(.* port domain keep .*)$:\1\n\n# SSH Access:' "${PF}"
-  sed -i -r 's:^(# SSH Access)$:\1\npass in quick on \$wlan_if proto tcp from any to (\$wlan_if) port 22 keep state allow-opts:' "${PF}"
-
-  echo "Updated ${PF} (WiFi-only SSH access)"
+  
+  if grep -q '\$dbg_if' ${PF}; then
+    sed -i -r 's:^(# SSH Access)$:\1\npass in quick on \$dbg_if proto tcp from any to (\$dbg_if) port 22 keep state allow-opts:' "${PF}"
+  fi
+  if grep -q '\$wlan_if' ${PF}; then
+    sed -i -r 's:^(# SSH Access)$:\1\npass in quick on \$wlan_if proto tcp from any to (\$wlan_if) port 22 keep state allow-opts:' "${PF}"
+  fi
+  if grep -q '\$ext_if' ${PF}; then
+    sed -i -r 's:^(# SSH Access)$:\1\npass in quick on \$ext_if proto tcp from any to (\$ext_if) port 22 keep state allow-opts:' "${PF}"
+  fi
+  if grep -q '\$ppp_if' ${PF}; then
+    sed -i -r 's:^(# SSH Access)$:\1\npass in quick on \$ppp_if proto tcp from any to (\$ppp_if) port 22 keep state allow-opts:' "${PF}"
+  fi
+  
+  echo "Updated ${PF}"
 done
-if [ -f /net/mmx/mnt/system/etc/pf.conf ]; then
-  # Reload /etc/pf.conf specifically, matching startup.sh's own boot sequence
-  # ("pfctl -ef /etc/pf.conf"). pf.mlan0.conf is a different, smaller file -
-  # loading it instead silently drops rules for other interfaces (e.g. ppp0)
-  # even without a "-F all" flush, since "-f" fully replaces the ruleset.
-  # No "-F all" here either: that flushes state/NAT for every interface,
-  # which is what was killing the hotspot's own NAT/pass state in the first place.
-  /net/mmx/mnt/app/armle/sbin/pfctl -ef /net/mmx/mnt/system/etc/pf.conf
-  echo "Reloaded pf.conf with wlan rules (no global flush)."
+if [ -f /net/mmx/mnt/system/etc/pf.mlan0.conf ]; then
+  /net/mmx/mnt/app/armle/sbin/pfctl -F all -f /net/mmx/mnt/system/etc/pf.mlan0.conf
+  echo "Reloaded ${PF} with wlan rules."
 fi
 
 echo "Restart inetd"

@@ -36,14 +36,10 @@ fi
 
 
 	-restart) {
-
-	if [ -f /mnt/system/etc/pf.conf ]; then
-		# /etc/pf.conf, not pf.mlan0.conf: startup.sh's own boot sequence
-		# ("pfctl -ef /etc/pf.conf") loads pf.conf as the real ruleset.
-		# pf.mlan0.conf is a different file and reloading it instead drops
-		# rules for other interfaces (e.g. ppp0) even without a "-F all" flush.
-		on -f mmx /mnt/app/armle/sbin/pfctl -ef /net/mmx/mnt/system/etc/pf.conf
-		echo "Reloaded sshd with wlan rules (no global flush)."
+	
+	if [ -f /mnt/system/etc/pf.mlan0.conf ]; then
+		on -f mmx /mnt/app/armle/sbin/pfctl -F all -f /net/mmx/mnt/system/etc/pf.mlan0.conf
+		echo "Reloaded sshd with wlan rules."
 	fi
 	
 	return 2> /dev/null
@@ -91,12 +87,7 @@ fi
 			mv -f ${PF}.bu ${PF}
 		fi
 	done
-
-	if [ -f /net/mmx/mnt/system/etc/pf.conf ]; then
-		/net/mmx/mnt/app/armle/sbin/pfctl -ef /net/mmx/mnt/system/etc/pf.conf
-		echo "Reloaded pf.conf with restored rules, hotspot should work again without a reboot."
-	fi
-
+	
 	mount -ur /net/mmx/mnt/app
 	mount -ur /net/mmx/mnt/system
 	echo "sshd now uninstalled!"
