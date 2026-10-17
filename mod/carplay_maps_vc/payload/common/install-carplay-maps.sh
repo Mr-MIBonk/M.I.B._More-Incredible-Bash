@@ -6,7 +6,7 @@ INSTRUMENT="$3"
 VERSION="V70-PLAINTEXT-TOOLBOX-1.1.0"
 
 if ! command -v awk >/dev/null 2>&1; then
-    AWK="$PAYLOAD/apps/sbin/awk"
+    AWK="${PAYLOAD%/mod/carplay_maps_vc/payload}/apps/sbin/awk"
 else
     AWK="awk"
 fi
@@ -261,7 +261,7 @@ else
     # Extend the existing prepend option if present. Do not emit a second
     # -Xbootclasspath/p option: some J9 builds keep only its last occurrence.
     # On a stock script, add one line immediately before J9 instead.
-    awk -v prepend="$ADD_CLASSPATH" '
+    $AWK -v prepend="$ADD_CLASSPATH" '
         BEGIN { done=0 }
         {
             if (!done && $0 ~ /^[ \t]*BOOTCLASSPATH="\$BOOTCLASSPATH -Xbootclasspath\/p:/) {
