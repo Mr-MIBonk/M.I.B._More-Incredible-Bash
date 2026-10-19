@@ -571,10 +571,22 @@ keyValue
 
 ###########################################################################################
 #
-# Main -> M.I.B. -> CarPlay -> Maps in VC -> CarPlay -> VW and Skoda from omonob (QCDWJ)
+# Main -> M.I.B. -> CarPlay -> Maps in VC
 #
 ###########################################################################################
 screen maps_in_vc carplay_activation
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
+
+###########################################################################################
+#
+# Main -> M.I.B. -> CarPlay -> Maps in VC -> VW and Skoda from omonob (QCDWJ)
+#
+###########################################################################################
+screen omonob_vw_skoda maps_in_vc
 
 keyValue
     value   String sys 0x00000000 0
@@ -624,6 +636,11 @@ button
 script
     value   sys 1 0x0100 "/net/mmx/fs/sda0/esd/scripts/reboot.sh"
     label   "Reboot unit"
+
+keyValue
+    value   String sys 0x00000000 0
+    label   "___________________________________________________________________________"
+    poll    0
 
 keyValue
     value   String sys 0x00000000 0

@@ -24,11 +24,11 @@ echo "flash or programming process! Power failure during flasing/programming wil
 echo "brick your unit! - All you do and use at your own risk!"
 echo ""
 
-SCRIPTS=/net/mmx/fs/sda0/mod/carplay_maps_vc
+SCRIPTS=/net/mmx/fs/sda0/mod/carplay_maps_vc/omonob
 if [ -s "$SCRIPTS/cpmap_common.sh" ]; then
     . "$SCRIPTS/cpmap_common.sh"
 else
-    echo "FAIL: mod/carplay_maps_vc/payload was not found on SD media"
+    echo "FAIL: mod/carplay_maps_vc/omonob/payload was not found on SD media"
     trap 2; exit 1
 fi
 

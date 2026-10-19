@@ -2,14 +2,14 @@
 
 find_cpmap_payload() {
     for medium in /fs/sda0 /fs/sdb0 /net/mmx/fs/sda0 /net/mmx/fs/sdb0 /media/mp000 /media/mp001 /media/mp002; do
-        candidate="$medium/mod/carplay_maps_vc/payload"
+        candidate="$medium/mod/carplay_maps_vc/omonob/payload"
         if [ -s "$candidate/common/install-carplay-maps.sh" ]; then
             CPMAP_PAYLOAD="$candidate"
             export CPMAP_PAYLOAD
             return 0
         fi
     done
-    echo "FAIL: mod/carplay_maps_vc/payload was not found on SD media"
+    echo "FAIL: mod/carplay_maps_vc/omonob/payload was not found on SD media"
     return 1
 }
 
